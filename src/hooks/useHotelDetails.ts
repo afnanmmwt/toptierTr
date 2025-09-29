@@ -14,7 +14,6 @@ export interface HotelForm {
   nationality: string;
   currency: string; // Add this line
 }
-
 // Validation schema
 export const hotelSearchSchema = z
   .object({
@@ -40,7 +39,6 @@ interface UseHotelDetailsOptions {
   // ✅ NEW: for refetching on same page
   onSearchRefetch?: (formData: HotelForm) => void;
 }
-
 export const useHotelDetails = ({
   initialCheckin,
   initialCheckout,
@@ -56,7 +54,6 @@ export const useHotelDetails = ({
   const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
   };
-
   const today = new Date();
   const defaultCheckin = initialCheckin || formatDate(today);
   const tomorrow = new Date();

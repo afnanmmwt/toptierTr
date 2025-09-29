@@ -577,7 +577,7 @@ export const hotel_search_multi = async (
 
 
 
-
+console.log('multi search result ', results)
   const successful = results
   .map((result) => {
     if (result.status === "fulfilled") {

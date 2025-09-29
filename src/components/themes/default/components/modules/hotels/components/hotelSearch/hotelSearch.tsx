@@ -91,6 +91,7 @@ setIsSearching(true)
     nationality: form.nationality,
   });
   // ✅ Build the same path format
+  localStorage.setItem("hotelSearchForm", JSON.stringify(form));
   const destinationSlug = form.destination.trim().replace(/\s+/g, "-");
  const url = `/hotel/${destinationSlug}/${params.get("checkin")}/${params.get(
   "checkout"

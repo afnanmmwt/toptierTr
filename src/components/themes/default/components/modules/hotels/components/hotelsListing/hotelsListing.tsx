@@ -625,7 +625,6 @@ const onShowMaphandler=(hotel:any)=>{
             {/* ============>>>NO DATA FOUND  */}
             {!(isLoading || isFilterLoading) && !isloadingMore && filteredHotels?.length === 0 && (
               <div className="text-center py-6 sm:py-8 md:py-15  min-w-full min-h-full flex items-center justify-start flex-col">
-
                 <Icon icon="mdi:hotel-off" className="h-16 w-16 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">No hotels found</h3>
                 <p className="text-gray-600 mb-4">Try adjusting your filters or search criteria</p>

@@ -211,14 +211,15 @@ const updatePriceRange = useCallback(
     setFilters(prev => ({ ...prev, priceRange: newRange }));
 
     try {
+
       setIsFilterLoading(true);
       dispatch(setHotels([])); // ✅ Clear old data
 
       const savedForm = localStorage.getItem("hotelSearchForm");
       if (!savedForm) return;
-
+ console.log("hotel updatePriceRange ========================",)
       const parsedForm = JSON.parse(savedForm);
-
+console.log('updatePriceRange===============')
       // ✅ Use hotel_search_multi instead of manual loop
       const result = await hotel_search_multi(
         {
