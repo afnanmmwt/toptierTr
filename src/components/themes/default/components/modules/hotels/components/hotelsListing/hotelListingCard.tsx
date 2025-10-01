@@ -9,11 +9,13 @@ import { getCurrencySymbol } from "@src/utils/getCurrencySymbals";
 
 interface HotelListingCardProps {
   hotel: any;
-  activeHotelId: string | null; // ✅ Changed from number to string (since hotel_id is string)
-  setActiveHotelId: (id: string | null) => void; // ✅ Updated type
+  activeHotelId: string ;
+  setActiveHotelId: (id: string ) => void;
   onMapShow?: (hotel: any) => void;
   viewMode: any;
   onBookNow: any;
+
+
 }
 
 const HotelCard = memo(function HotelCard({
@@ -21,12 +23,13 @@ const HotelCard = memo(function HotelCard({
   viewMode,
   onBookNow,
   onMapShow,
-  activeHotelId,        // ✅ Receive from parent
-  setActiveHotelId,     // ✅ Receive from parent
+  activeHotelId,
+  setActiveHotelId
+
+
 }: HotelListingCardProps) {
   const { user } = useUser();
-  // ❌ Removed: const [activeHotelId, setActiveHotelId] = useState<number | null>(null);
-  // (We now use the one passed from parent)
+
 
   // Normalize favorite state to boolean for easier handling
   const [isFav, setIsFav] = useState<boolean>(() => {
@@ -100,13 +103,13 @@ const HotelCard = memo(function HotelCard({
             type="button"
             onClick={() => {
               if (activeHotelId === hotel.hotel_id) {
-                setActiveHotelId(null); // unselect
+                setActiveHotelId(""); // unselect
               } else {
                 setActiveHotelId(hotel.hotel_id); // select this one
               }
               onMapShow?.(hotel);
             }}
-            className={`cursor-pointer rounded-full w-9 h-9 sm:w-10 sm:h-10 lg:w-9 lg:h-9 flex items-center justify-center absolute top-3 right-3 shadow transition-colors duration-300 
+            className={`cursor-pointer rounded-full w-9 h-9 sm:w-10 sm:h-10 lg:w-9 lg:h-9 flex items-center justify-center absolute top-3 right-3 shadow transition-colors duration-300
               ${activeHotelId === hotel.hotel_id ? "bg-blue-800" : "bg-[#EBEFF4]"}`}
           >
             <svg

@@ -40,7 +40,7 @@ interface HotelSearchAppProps {
 export default function HotelSearchApp({ isLoading }: HotelSearchAppProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
-
+  const [activeHotelId, setActiveHotelId]=useState("")
 const [currentLocation, setCurrentLocation] = useState<{ lat: number; lon: number }>({
   lat: 0,
   lon: 0,
@@ -51,6 +51,7 @@ const onShowMaphandler=(hotel:any)=>{
     lat:hotel?.latitude,
     lon:hotel?.longitude
   })
+  setActiveHotelId(hotel?.hotel_id)
 // console.log('map icons is clicked for current loaction ', hotel)
 }
 
@@ -427,6 +428,9 @@ const onShowMaphandler=(hotel:any)=>{
                     hotel={hotel}
                     viewMode={viewMode}
                     onBookNow={(hotel: any) => detailsBookNowHandler(hotel)}
+                     setActiveHotelId={setActiveHotelId}
+                        activeHotelId={activeHotelId}
+
                   />
                 ))}
               </div>
@@ -450,9 +454,9 @@ const onShowMaphandler=(hotel:any)=>{
                         viewMode={viewMode}
                         onBookNow={(hotel: any) => detailsBookNowHandler(hotel)}
                         onMapShow={(hotel: any) => onShowMaphandler(hotel)}
-                        // ✅ Pass active state to child
-                        activeHotelId={activeHotelId}
+                        // //  Pass active state to child
                         setActiveHotelId={setActiveHotelId}
+                        activeHotelId={activeHotelId}
                       />
                     ))}
                   </div>
