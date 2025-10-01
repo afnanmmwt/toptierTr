@@ -66,7 +66,7 @@ const HotelsDetails = () => {
   // ✅ Helper to update URL
   const updateUrl = useCallback((params: typeof searchParams, hotelName: string) => {
     const slugName = hotelName.toLowerCase().replace(/\s+/g, "-");
-    const newUrl = `/hotel/${hotel_id}/${slugName}/${params.checkin}/${params.checkout}/${params.rooms}/${params.adults}/${params.children}/${params.nationality}/${supplier_name}`;
+    const newUrl = `/hotelDetails/${hotel_id}/${slugName}/${params.checkin}/${params.checkout}/${params.rooms}/${params.adults}/${params.children}/${params.nationality}/${supplier_name}`;
 
     router.replace(newUrl);
   }, [hotel_id, supplier_name, router]);
@@ -368,7 +368,7 @@ const HotelsDetails = () => {
                   options={opt}
                   getAmenityIcon={getAmenityIcon}
                   onReserve={(room, option) => {
-                    // ✅ This runs in parent when Reserit ve is clicked
+                    //  This runs in parent when Reserit ve is clicked
 
 
                     // Example: Navigate to booking page

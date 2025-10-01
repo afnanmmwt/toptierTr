@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   MapContainer,
   TileLayer,
@@ -11,13 +10,13 @@ import {
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "@iconify/react";
+import Image from "next/image";
 
 const containerStyle = {
   width: "100%",
   height: "800px",
 };
 
-// Fallback center (London)
 const fallbackCenter: [number, number] = [51.505, -0.09];
 
 interface HotelMapProps {
@@ -39,78 +38,37 @@ interface HotelMapProps {
   } | null;
 }
 
-// Regular price icon (red pin)
+// ✅ NEW: Simple price-only icon (no red pin)
 const priceIcon = (price: number | string) =>
   L.divIcon({
     html: `
-      <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
-        <div style="
-          background: white;
-          border: 1px solid gray;
-          color: black;
-          font-size: 12px;
-          font-weight: 700;
-          padding: 5px 10px;
-          border-radius: 16px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          text-align: center;
-          min-width: 48px;
-          z-index: 1;
-        ">
-          $${price}
-        </div>
-        <svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M14 0C10.134 0 7 3.13401 7 7C7 12.25 14 24 14 24C14 24 21 12.25 21 7C21 3.13401 17.866 0 14 0Z"
-            fill="#E53E3E"
-          />
-        </svg>
+      <div class="price-tag bg-white border border-gray-300 text-black font-bold rounded-full px-2 py-1.5 text-xs shadow-sm min-w-[48px] w-18 text-center">
+        $${price}
       </div>
     `,
     className: "",
-    iconSize: [28, 40],
-    iconAnchor: [14, 24],
+    iconSize: [60, 30],
+    iconAnchor: [30, 30],
   });
 
-// Highlighted icon (blue for current location)
+// ✅ NEW: Highlighted price icon (blue, white text, slightly larger)
 const highlightedIcon = (price: number | string) =>
   L.divIcon({
     html: `
-      <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
-        <div style="
-          background: #ADD8E6;
-          border: 1px solid #1E90FF;
-          color: black;
-          font-size: 12px;
-          font-weight: 700;
-          padding: 5px 10px;
-          border-radius: 16px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-          text-align: center;
-          min-width: 48px;
-          z-index: 1;
-        ">
-          $${price}
-        </div>
-        <svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M14 0C10.134 0 7 3.13401 7 7C7 12.25 14 24 14 24C14 24 21 12.25 21 7C21 3.13401 17.866 0 14 0Z"
-            fill="#1E90FF"
-          />
-        </svg>
+      <div class="price-tag-highlighted bg-blue-800 text-white font-bold rounded-full px-2 py-2 text-sm shadow-md min-w-[56px] w-18 text-center transform scale-120 z-10">
+        $${price}
       </div>
     `,
     className: "",
-    iconSize: [28, 40],
-    iconAnchor: [14, 24],
+    iconSize: [80, 40],
+    iconAnchor: [35, 40],
   });
 
-// Helper to check if hotel matches current location (with tolerance)
 const isSameLocation = (
   hotelLat: number,
   hotelLng: number,
   current: { lat: number; lon: number } | null,
-  tolerance = 0.0001 // ~10 meters
+  tolerance = 0.0001
 ): boolean => {
   if (!current) return false;
   return (
@@ -119,7 +77,6 @@ const isSameLocation = (
   );
 };
 
-// Auto-fit bounds
 function FitBounds({ hotels }: { hotels: any[] }) {
   const map = useMap();
   useEffect(() => {
@@ -132,7 +89,6 @@ function FitBounds({ hotels }: { hotels: any[] }) {
   return null;
 }
 
-// Custom Controls (Zoom In, Zoom Out, Locate)
 function CustomControls() {
   const map = useMap();
   const zoomIn = () => map.setZoom(map.getZoom() + 1);
@@ -178,10 +134,8 @@ function CustomControls() {
   );
 }
 
-
 export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
   const [validHotels, setValidHotels] = useState<typeof hotels>([]);
-  console.log(hotels)
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
@@ -210,8 +164,8 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
   }
 
   return (
-    <div className="relative w-full h-[800px] rounded-4xl overflow-hidden">
-      {/* Fullscreen toggle - MOVED to top-4 to avoid overlap */}
+    <div className="relative w-full h-[800px] rounded-2xl overflow-hidden">
+      {/* Fullscreen toggle */}
       <div
         className="absolute top-9 right-5 z-[1001] cursor-pointer"
         onClick={() => setShowModal(true)}
@@ -262,31 +216,42 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
                     position={[lat, lng]}
                     icon={isCurrent ? highlightedIcon(hotel.actual_price) : priceIcon(hotel.actual_price)}
                   >
-                    <Tooltip direction="top"
-                      offset={L.point(0, -10)}
-                      opacity={1}
-                    >
+                    <Tooltip direction="top" offset={L.point(0, -10)} opacity={1}>
                       <div
-                        className={`text-sm w-70 h-auto overflow-hidden text-wrap py-1 leading-[1.4]   ${isCurrent ? "bg-blue-100 border border-gray-400 rounded-sm" : "bg-white border rounded-sm border-gray-300"
+                        className={`text-sm w-[230px] text-wrap h-auto overflow-hidden break-words rounded-xl border ${isCurrent
+                          ? 'bg-blue-800 border-blue-700 text-white'
+                          : 'bg-white border-gray-300 text-black'
                           }`}
                       >
-                        <div className="p-2">
-                          <h3 className="text-sm font-semibold text-wrap">{hotel.name || "Hotel"}</h3>
+                        {/* Hotel Image (if available) */}
+                        {hotel.img && (
+                          <div className="w-full h-30 overflow-hidden p-2">
+                            <img
+                              src={hotel.img}
+                              alt={hotel.name || "Hotel"}
+                              className="w-full h-full object-cover rounded-lg"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).style.display = 'none';
+                              }}
+                            />
+                          </div>
+                        )}
 
-                          <p className="text-gray-500 text-xs mt-1 text-wrap">
+                        <div className="p-3">
+                          <h3 className="font-semibold">{hotel.name || "Hotel"}</h3>
+                          <p className={`text-xs mt-1 ${isCurrent ? 'text-blue-100' : 'text-gray-500'}`}>
                             {hotel.address || hotel.city || ""}
                           </p>
-                          {/* Stars (agar hotel.stars aaye to show karein) */}
                           {hotel.stars && (
-                            <div className="flex items-center text-yellow-500 text-sm mt-1">
+                            <div className="flex items-center mt-1">
                               {Array.from({ length: Number(hotel.stars) }).map((_, i) => (
-                                <span key={i}>★</span>
+                                <span key={i} className={isCurrent ? 'text-yellow-300' : 'text-yellow-500'}>
+                                  ★
+                                </span>
                               ))}
                             </div>
                           )}
-
-
-                          <p className="text-black font-bold mt-1 text-sm">
+                          <p className="font-bold mt-2">
                             ${hotel.actual_price}
                           </p>
                         </div>
@@ -302,7 +267,7 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
       )}
 
       {/* MAIN MAP */}
-      <div className="relative z-0">
+      <div className="relative z-0 ">
         <MapContainer
           style={containerStyle}
           center={fallbackCenter}
@@ -323,41 +288,52 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
 
             return (
               <Marker
-                    key={hotel.hotel_id}
-                    position={[lat, lng]}
-                    icon={isCurrent ? highlightedIcon(hotel.actual_price) : priceIcon(hotel.actual_price)}
+                key={hotel.hotel_id}
+                position={[lat, lng]}
+                icon={isCurrent ? highlightedIcon(hotel.actual_price) : priceIcon(hotel.actual_price)}
+              >
+                <Tooltip direction="top" offset={L.point(0, -10)} opacity={1}>
+                  <div
+                    className={`text-sm w-[230px] text-wrap h-auto overflow-hidden break-words rounded-xl border p-2 ${isCurrent
+                      ? 'bg-blue-800 border-blue-700 text-white'
+                      : 'bg-white border-gray-300 text-black'
+                      }`}
                   >
-                    <Tooltip direction="top"
-                      offset={L.point(0, -10)}
-                      opacity={1}
-                    >
-                      <div
-                        className={`text-sm w-70 h-auto overflow-hidden text-wrap  px-2 py-1 leading-[1.4]   ${isCurrent ? "bg-blue-100 border border-gray-400 rounded-sm" : "bg-white border rounded-sm border-gray-300"
-                          }`}
-                      >
-                        <div className="p-2">
-                          <h3 className="text-sm font-semibold text-wrap">{hotel.name || "Hotel"}</h3>
-
-                          <p className="text-gray-500 text-xs mt-1 text-wrap">
-                            {hotel.address || hotel.city || ""}
-                          </p>
-                          {/* Stars (agar hotel.stars aaye to show karein) */}
-                          {hotel.stars && (
-                            <div className="flex items-center text-yellow-500 text-sm mt-1">
-                              {Array.from({ length: Number(hotel.stars) }).map((_, i) => (
-                                <span key={i}>★</span>
-                              ))}
-                            </div>
-                          )}
-
-
-                          <p className="text-black font-bold mt-1 text-sm">
-                            ${hotel.actual_price}
-                          </p>
-                        </div>
+                    {/* Hotel Image (if available) */}
+                    {hotel.img && (
+                      <div className="w-full h-30 overflow-hidden">
+                        <img
+                          src={hotel.img}
+                          alt={hotel.name || "Hotel"}
+                          className="w-full h-full object-cover rounded-lg"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                          }}
+                        />
                       </div>
-                    </Tooltip>
-                  </Marker>
+                    )}
+
+                    <div className="p-3">
+                      <h3 className="font-semibold">{hotel.name || "Hotel"}</h3>
+                      <p className={`text-xs mt-1 ${isCurrent ? 'text-blue-100' : 'text-gray-500'}`}>
+                        {hotel.address || hotel.city || ""}
+                      </p>
+                      {hotel.stars && (
+                        <div className="flex items-center mt-1">
+                          {Array.from({ length: Number(hotel.stars) }).map((_, i) => (
+                            <span key={i} className={isCurrent ? 'text-yellow-300' : 'text-yellow-500'}>
+                              ★
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <p className="font-bold mt-2">
+                        ${hotel.actual_price}
+                      </p>
+                    </div>
+                  </div>
+                </Tooltip>
+              </Marker>
             );
           })}
           <CustomControls />

@@ -41,6 +41,19 @@ const nextConfig: NextConfig = {
       port: "",
       pathname: "/**", // Unsplash doesn't need /storage
     },
+     {
+      protocol: "https",
+      hostname: "api.stuba.com",
+      port: "",
+      pathname: "/**", // Unsplash doesn't need /storage
+    },
+
+     {
+      protocol: "https",
+      hostname: "flagcdn.com",
+      port: "",
+      pathname: "/**", // Unsplash doesn't need /storage
+    },
     ],
   },
 };

@@ -111,7 +111,7 @@ const Footer = () => {
           ))}
 
           {/* Stay Connected */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-2 md:col-span-2">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">Stay Connected</h3>
             <p className="text-[#11223399] mb-6 leading-6 max-w-md">
               Subscribe to get travel tips, exclusive deals, and the latest updates.

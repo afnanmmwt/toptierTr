@@ -295,37 +295,7 @@ const callAllModulesAPI = useCallback(
 
 
   // FIX 2: Fixed initial load effect with proper loading state
-  useEffect(() => {
-    if (hasInitialLoadRun.current) return;
 
-    const savedForm = localStorage.getItem("hotelSearchForm");
-    if (!savedForm ) return;
-    if (!hotelSearch_path?.includes("/hotel_search")) return;
-// console.log("Initial load with saved form");
-    hasInitialLoadRun.current = true;
-    setIsInitialLoading(true); // Set initial loading state
-    const parsedForm: HotelForm = JSON.parse(savedForm);
-
-    // Clear existing data first
-    dispatch(setHotels([]));
-    queryClient.setQueryData(["hotel-search"], []);
-
-    callAllModulesAPI({
-      ...parsedForm,
-      price_from: "",
-      price_to: "",
-      rating: ""
-    }, 1).then((result) => {
-      if (result.success && result.data) {
-        // Update both cache and Redux with final data
-        queryClient.setQueryData(["hotel-search"], result.data);
-        dispatch(setHotels(result.data));
-        setPage(1);
-      }
-    }).finally(() => {
-      setIsInitialLoading(false); // Clear initial loading state
-    });
-  }, [callAllModulesAPI, dispatch, queryClient]);
   // FIX 3: Fixed handle submit with proper error handling
  const handleSubmit = useCallback(
   async (e: React.FormEvent) => {
@@ -392,69 +362,16 @@ const callAllModulesAPI = useCallback(
 );
 
   // Fixed load more data
-//   const loadMoreData = useCallback(
-//     async (e?: React.SyntheticEvent) => {
-//       e?.preventDefault();
-//     // console.log('loadmore hittting')
-//       if (isloadingMore || isProcessingRef.current) return;
-
-//       setIsLoadingMore(true);
-
-//       try {
-//         const savedForm = localStorage.getItem("hotelSearchForm");
-//         if (!savedForm) return;
-
-//         const parsedForm: HotelForm = JSON.parse(savedForm);
-//         const nextPage = page + 1;
-
-
-//         const result = await callAllModulesAPI({
-//           ...parsedForm,
-//           price_from: "",
-//           price_to: "",
-//           rating: ""
-//         }, nextPage);
-// console.log('load more data', result)
-//         if (result.success && result.data && result.data.length > 0) {
-//           // Get existing IDs
-
-//       setIsLoadingMore(false);
-//           const existingIds = new Set(allHotelsData.map(h => h.hotel_id));
-
-//           // Filter only truly new hotels
-//           const newHotels = result.data.filter(hotel => {
-//             return hotel && hotel.hotel_id && !existingIds.has(hotel.hotel_id);
-//           });
-
-//           if (newHotels.length > 0) {
-//             const updatedHotels = [...allHotelsData, ...newHotels];
-//             dispatch(setHotels(updatedHotels));
-//             queryClient.setQueryData(["hotel-search"], updatedHotels);
-//             setPage(nextPage);
-//             return { success: true, data: newHotels };
-//           } else {
-//             return { success: false, error: "No new data" };
-//           }
-//         } else {
-//           return { success: false, error: "No more data" };
-//         }
-//       } catch (err) {
-//         console.error('Load more error:', err);
-//         return { success: false, error: "Load more failed" };
-//       } finally {
-//         setIsLoadingMore(false);
-//       }
-//     },
-//     [page, allHotelsData, callAllModulesAPI, dispatch, queryClient, isloadingMore]
-//   );
 // multi module aproad in server
 const loadMoreData = useCallback(
-  async (e?: React.SyntheticEvent) => {
-    e?.preventDefault();
+  async (filters?:any) => {
+    // e?.preventDefault();
     if (isloadingMore || isProcessingRef.current) return;
+   const {priceRange, selectedRating}=filters
+   const from_price=priceRange[0];
+   const to_price=priceRange[1]
 
     setIsLoadingMore(true);
-
     try {
       const savedForm = localStorage.getItem("hotelSearchForm");
       if (!savedForm) return;
@@ -473,9 +390,9 @@ const loadMoreData = useCallback(
           children: parsedForm.children,
           nationality: parsedForm.nationality,
           page: nextPage, //  next page
-          price_from: "0", // or keep current filters if needed
-          price_to: "5000",
-          rating: "",
+          price_from: from_price, // or keep current filters if needed
+          price_to: to_price,
+          rating: selectedRating > 1 ? selectedRating : "1",
         },
         hotelModuleNames
       );
@@ -506,30 +423,15 @@ const loadMoreData = useCallback(
   },
   [page, allHotelsData, hotelModuleNames, dispatch, queryClient, isloadingMore]
 );
-  // Scroll effect for load more
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isloadingMore || !allHotelsData?.length || isProcessingRef.current) return;
 
-      if (listRef.current) {
-        const rect = listRef.current.getBoundingClientRect();
-        if (rect.bottom <= window.innerHeight) {
-          loadMoreData();
-        }
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [loadMoreData, isloadingMore, allHotelsData?.length]);
 // DETAISL BOOK NOW HANDLER
 const detailsBookNowHandler = async (hotel: any) => {
   // if (!hotel?.hotel_id || !hotel?.name || !hotel?.supplier_name) return;
 
-  // 👉 store full hotel object in localStorage
+  //  store full hotel object in localStorage
   localStorage.setItem("currentHotel", JSON.stringify(hotel));
   const selectedNationality=localStorage.getItem('hotelSearchForm')
-  // 👉 generate slug
+  //  generate slug
   const slugName = hotel.name.toLowerCase().replace(/\s+/g, "-");
   let nationality;
 if (selectedNationality) {
@@ -538,10 +440,10 @@ if (selectedNationality) {
    nationality = parsedData.nationality; // safely access nationality
   // console.log("Nationality:", nationality);
 }
-  // 👉 construct URL
+  //  construct URL
   const url = `/hotelDetails/${hotel.hotel_id}/${slugName}/${form.checkin}/${form.checkout}/${form.rooms}/${form.adults}/${form.children}/${nationality}/${hotel.supplier_name}`;
 
-  // 👉 navigate
+  //  navigate
   router.push(url);
 
   // console.log("Book Now clicked for hotel ID:", hotel.hotel_id);
@@ -655,6 +557,7 @@ if (selectedNationality) {
     hotelModuleNames,
     setIsSearching,
     callAllModulesAPI, // Export for use in filters
+    isProcessingRef,
 
     // Event handlers
     handleChange,

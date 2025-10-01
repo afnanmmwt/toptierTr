@@ -119,7 +119,7 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
             className="bg-[#E5E5E5] shadow-xl rotate-180 cursor-pointer rounded-full p-4 hover:bg-gray-300 transition-colors disabled:opacity-50"
           >
 
-            <svg width="13" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg width="13" height="13" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
               <g clip-path="url(#clip0_358_2931)">
                 <g clip-path="url(#clip1_358_2931)">
                   <g clip-path="url(#clip2_358_2931)">
@@ -150,7 +150,7 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
           className="bg-[#E5E5E5] shadow-xl cursor-pointer rounded-full p-4 hover:bg-gray-300 transition-colors disabled:opacity-50"
         >
 
-          <svg width="13" height="10" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <svg width="13" height="13" viewBox="0 0 14 10" fill="none" xmlns="http://www.w3.org/2000/svg">
             <g clipPath="url(#clip0_358_2931)">
               <g clipPath="url(#clip1_358_2931)">
                 <g clipPath="url(#clip2_358_2931)">

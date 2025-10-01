@@ -44,6 +44,13 @@ body:is(.dark *) {
 
 }
 
+.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
 .drawer-overlay-after-open {
     opacity: 1;
 }

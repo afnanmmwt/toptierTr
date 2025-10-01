@@ -17,6 +17,7 @@ export default function AgencyDisabled() {
         <div className="relative bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm rounded-3xl shadow-2xl shadow-blue-500/10 dark:shadow-blue-400/20 p-6  w-full text-center border border-blue-100/50 dark:border-slate-600/50 ring-1 ring-blue-200/20 dark:ring-slate-500/20">
 
           {/* Status Badge */}
+          {/* STATUS BADGE */}
           <div className="inline-flex items-center px-5 py-2 bg-gradient-to-r from-blue-100 to-sky-100 dark:from-blue-800/50 dark:to-sky-800/50 text-blue-700 dark:text-blue-300 rounded-full text-sm font-semibold mb-4 border border-blue-200/50 dark:border-blue-600/50 shadow-sm">
             <Icon icon="material-symbols:brightness-alert-outline" className="w-5 h-5 mr-2 animate-pulse" />
             Domain Disabled
