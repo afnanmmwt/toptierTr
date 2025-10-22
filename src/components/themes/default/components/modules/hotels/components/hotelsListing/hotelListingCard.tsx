@@ -9,6 +9,7 @@ import  getCurrencySymbol  from "@src/utils/getCurrencySymbals";
 import useLocale from "@hooks/useLocale";
 import useDictionary from "@hooks/useDict";
 import useCurrency from "@hooks/useCurrency";
+import { useAppDispatch, useAppSelector } from "@lib/redux/store";
 
 interface HotelListingCardProps {
   hotel: any;
