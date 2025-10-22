@@ -12,7 +12,7 @@ export default async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  await updateSession(request);
+  // await updateSession(request);
 
   // Use next-intl's middleware to handle locales
   const intlMiddleware = createMiddleware({

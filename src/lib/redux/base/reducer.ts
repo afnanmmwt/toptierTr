@@ -10,6 +10,8 @@ import {
   setDestination,
   setHotels,
   setSidebarExpanded,
+  setSeletecHotel,
+  setSeletecRoom
 } from "./actions";
 
 // Destination interface
@@ -58,6 +60,8 @@ interface State {
   destination: Destination[];
   sidebarExpanded?: boolean;
   hotels: HotelData[];
+  selectedRoom:any;
+  selectedHotel:any;
 }
 
 const initialState: State = {
@@ -70,8 +74,9 @@ const initialState: State = {
   destination: [],
   sidebarExpanded: true,
   hotels: [],
+  selectedRoom:{},
+  selectedHotel:{}
 };
-
 export const appReducer = createReducer(initialState, (builder) => {
   builder
     .addCase(setMode, (state, action: PayloadAction<string>) => {
@@ -100,5 +105,13 @@ export const appReducer = createReducer(initialState, (builder) => {
     })
     .addCase(setHotels, (state, action: PayloadAction<HotelData[]>) => {
       state.hotels = action.payload;
+    })
+    // ✅ new cases for selected hotel and room
+    .addCase(setSeletecHotel, (state, action: PayloadAction<any>) => {
+      state.selectedHotel = action.payload;
+    })
+    .addCase(setSeletecRoom, (state, action: PayloadAction<any>) => {
+      state.selectedRoom = action.payload;
     });
 });
+

@@ -53,10 +53,10 @@ const Breadcrumb: React.FC = () => {
                 <>
                   <Link
                     href={item.href}
-                    className="group text-gray-500 flex gap-1 items-center hover:text-blue-600 transition-colors duration-200"
+                    className="group text-gray-500 flex gap-1 items-center hover:text-blue-900 transition-colors duration-200"
                   >
                     {item.label === "Home" && (
-                      <span className=" group-hover:text-blue-600 mb-1">
+                      <span className=" group-hover:text-blue-900 mb-1">
                         <Icon icon="ic:outline-home" width="20" height="20" />
                       </span>
                     )}

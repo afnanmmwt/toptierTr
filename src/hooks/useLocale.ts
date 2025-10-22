@@ -21,7 +21,6 @@ const useLocale = () => {
   );
   // Find default language
   const defaultLang = languages?.find((lang: any) => lang.default === "1");
-
   const locale = foundLang
     ? foundLang.language_code
     : defaultLang

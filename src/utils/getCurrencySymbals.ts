@@ -1,5 +1,5 @@
 // utils/currency.ts
-export function getCurrencySymbol(code: string): string {
+export default function getCurrencySymbol(code: string): string {
   if (!code) return "";
 
   const map: Record<string, string> = {

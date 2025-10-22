@@ -18,6 +18,7 @@ const RoomOption: React.FC<{
   onReserve?: (room?: any, option?: any) => void;
   roomImage: string
 }> = ({ room, options, getAmenityIcon, onReserve, roomImage }) => {
+  console.log("New Room data:", room);
 
   // Normalize amenities into an array of strings
   const amenitiesList: string[] = React.useMemo(() => {
@@ -64,6 +65,7 @@ const RoomOption: React.FC<{
               if (opt?.cancellation === "1") merged.push("Free cancellation");
               if (opt?.room_booked === true) merged.push("Not Bookable")
               if (opt?.board) merged.push(opt.board)
+
               // if(amenitiesList && amenitiesList.length > 0) merged.push(...amenitiesList);
               let allAmenities = [...merged];
 
@@ -130,12 +132,8 @@ const RoomOption: React.FC<{
                     </span>
                   </td>
                   <td className="bg-gray-100  font-bold px-4 py-2">
-                    {/* // priceRateConverssion(
-                    //   parseFloat(String(opt?.price ?? options?.price ?? room?.price ?? 0))
-                    // ) */}
-                                   {getCurrencySymbol(opt.currency)} {" "}{ opt?.markup_price}
-
-                </td>
+                      {getCurrencySymbol(opt.currency)}{" "}{opt.markup_price}
+                   </td>
                   <td className="bg-gray-200 py-3 font-medium">
                     <div className="flex flex-col items-center text-center gap-2">
                       <button

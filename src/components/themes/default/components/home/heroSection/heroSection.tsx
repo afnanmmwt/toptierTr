@@ -33,9 +33,9 @@ const HeroSection = () => {
       : defaultImage;
 
   const [bgError, setBgError] = useState(false);
-console.log('img',)
+// console.log('img',)
   return (
-    // ✅ Animate the entire section
+    // Animate the entire section
     <motion.section
       className="relative w-full min-h-100 h-full "
       variants={variants}

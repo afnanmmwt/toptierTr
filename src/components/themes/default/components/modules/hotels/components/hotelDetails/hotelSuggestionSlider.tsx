@@ -4,14 +4,21 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
+import { AnyARecord } from "node:dns";
 
-type HotelSuggestionSliderProps = {
+interface HotelSuggestionSliderProps {
   hotels: any[];
-};
+  onHotelClick?: (hotel: any) => void;
+}
 
-const HotelSuggestionSlider = ({ hotels }: HotelSuggestionSliderProps) => {
-  const [isBeginning, setIsBeginning] = useState(true);
+
+const HotelSuggestionSlider = ({ hotels, onHotelClick }: HotelSuggestionSliderProps) => {
+      const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+
+  if (!hotels || hotels.length === 0) {
+  return null;
+}
 
   return (
     <section className="py-4 max-w-[1200px] mx-auto appHorizantalSpacing mb-10 relative">
@@ -44,10 +51,17 @@ const HotelSuggestionSlider = ({ hotels }: HotelSuggestionSliderProps) => {
           {hotels.map((hotel: any, index: number) => (
             <SwiperSlide
               key={`${hotel.hotel_id || "hotel"}-${index}`}
-              className="py-4  flex" // ✅ slide apne content ke hisaab se stretch hoga
+              className="py-4  flex" //
             >
               <div className="w-full h-full">
-                <HotelListingCard hotel={hotel} viewMode="map" />
+                <HotelListingCard
+  hotel={hotel}
+  viewMode="map"
+  activeHotelId=""
+  setActiveHotelId={() => {}}
+onBookNow={(selectedHotel: any) => onHotelClick?.(selectedHotel)}
+/>
+
               </div>
             </SwiperSlide>
           ))}
@@ -87,6 +101,7 @@ const HotelSuggestionSlider = ({ hotels }: HotelSuggestionSliderProps) => {
 
         {/* Right Arrow */}
         <button
+
           className={`custom-next absolute top-1/2 -right-3 cursor-pointer -translate-y-1/2 z-20 rounded-full w-11 h-11 flex items-center justify-center shadow-md transition ${
             isEnd
               ? "bg-gray-200 cursor-not-allowed opacity-50"

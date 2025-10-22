@@ -1,9 +1,12 @@
-import { useState, useMemo, useCallback, useEffect } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import useHotelSearch from "./useHotelSearch";
 import { setHotels } from "@lib/redux/base";
 import { useDispatch } from "react-redux";
-import { QueryClient, useQueryClient } from "@tanstack/react-query";
+import {  useQueryClient } from "@tanstack/react-query";
 import { hotel_search_multi } from "@src/actions";
+import { useAppSelector } from "@lib/redux/store";
+
+
 interface HotelData {
   hotel_id: string;
   name: string;
@@ -22,47 +25,51 @@ interface HotelData {
   supplier_name: string;
 }
 
+
 interface FilterState {
   priceRange: [number, number];
   selectedStars: number[];
   selectedRating: number;
   searchQuery: string;
   selectedAmenities: string[];
-  sortBy: 'price_low' | 'price_high' | 'rating' | 'name';
+  sortBy:string
 }
 
 interface UseHotelFilterProps {
-  hotelsData: HotelData[];
+  hotelsData: any[];
   isLoading?: boolean;
   // formData?: any;
   // setFormData?: (data: any) => void;
 }
 
-const useHotelFilter = ({ hotelsData}: UseHotelFilterProps) => {
+const useHotelFilter = () => {
   const [filters, setFilters] = useState<FilterState>({
-    priceRange: [0, 100000],
+    priceRange: [1, 5000],
     selectedStars: [],
     selectedRating:1,
     searchQuery: '',
     selectedAmenities: [],
-    sortBy: null as any, // default sort
+    sortBy: '', // default sort
   });
-const {hotelSearchMutation,form,hotelModuleNames,removeDuplicates,setIsSearching,isSearching,setIsInitialLoading,handleSubmit,callAllModulesAPI}=useHotelSearch()
+const {hotelSearchMutation,form,hotelModuleNames,removeDuplicates,setIsSearching,isSearching,setIsInitialLoading,handleSubmit,callAllModulesAPI,allHotelsData}=useHotelSearch()
     const dispatch = useDispatch();
+      const {country, currency, locale}=useAppSelector((state)=>state.root)
+
 const queryClient = useQueryClient();
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
+  const hotelsData=[...allHotelsData]
   // Calculate price range from actual data
-// ✅ static price range
+//  static price range
 const priceRange = useMemo(() => {
   return { min: 0, max: 5000 };
 }, []);
 
-// ✅ initialize filters once when component mounts
+//  initialize filters once when component mounts
 useEffect(() => {
   setFilters(prev => ({
     ...prev,
-    priceRange: [0, 5000],
+    priceRange: [1, 5000],
   }));
 }, []);
 
@@ -74,7 +81,7 @@ useEffect(() => {
     const amenitiesSet = new Set<string>();
     hotelsData.forEach(hotel => {
       if (hotel.amenities && Array.isArray(hotel.amenities)) {
-        hotel.amenities.forEach(amenity => amenitiesSet.add(amenity));
+        hotel.amenities.forEach((amenity:any) => amenitiesSet.add(amenity));
       }
     });
 
@@ -87,25 +94,25 @@ useEffect(() => {
 
      const filtered = hotelsData.filter(hotel => {
       // Price filter
-      const hotelPrice = parseFloat(hotel.actual_price_per_night) || 0;
-      if (hotelPrice < filters.priceRange[0] || hotelPrice > filters.priceRange[1]) {
-        return false;
-      }
+      // const hotelPrice = parseFloat(hotel.actual_price_per_night) || 0;
+      // if (hotelPrice <= filters.priceRange[0] || hotelPrice >= filters.priceRange[1]) {
+      //   return false;
+      // }
 
       // Stars filter
-      if (filters.selectedStars?.length > 0) {
-        const hotelStars = parseInt(hotel.stars) || 0;
-        if (!filters.selectedStars.includes(hotelStars)) {
-          return false;
-        }
-      }
+      // if (filters.selectedStars?.length > 0) {
+      //   const hotelStars = parseInt(hotel.stars) || 0;
+      //   if (!filters.selectedStars.includes(hotelStars)) {
+      //     return false;
+      //   }
+      // }
 
       // Rating filter
-      const hotelRating = parseFloat(hotel.rating) || 0;
+      // const hotelRating = parseFloat(hotel.rating) || 0;
 
-      if (hotelRating < filters.selectedRating) {
-        return false;
-      }
+      // if (hotelRating < filters.selectedRating) {
+      //   return false;
+      // }
 
       // Search query filter
       if (filters.searchQuery.trim()) {
@@ -154,160 +161,65 @@ useEffect(() => {
     }
   });
 }
-
     return filtered;
   }, [hotelsData, filters]);
 
   // Filter update functions
-//  const updatePriceRange = useCallback(
-//   async (newRange: [number, number]) => {
-//     setFilters(prev => ({ ...prev, priceRange: newRange }));
+const debounceTimeout = useRef<NodeJS.Timeout | null>(null);
 
-//     const [minPrice, maxPrice] = newRange;
-//     // if (!minPrice && !maxPrice) return;
-
-//     try {
-//       setIsFilterLoading(true);
-//       dispatch(setHotels([])); //  Clear old data
-//    const savedForm = localStorage.getItem("hotelSearchForm");
-//       if (!savedForm) return;
-
-//       const parsedForm: any = JSON.parse(savedForm);
-//       // ✅ Fetch for each module
-//       const results = await Promise.all(
-//         hotelModuleNames.map((mod: string) =>
-//           hotelSearchMutation
-//             .mutateAsync({
-//               ...parsedForm,
-//               page: 1,
-//               modules: mod,
-//               price_from: String(minPrice),
-//               price_to: String(maxPrice),
-//               rating:  "", // ⭐ still safe
-//             })
-//             .catch(() => null)
-//         )
-//       );
-
-//       // ✅ Collect valid results
-//    const finalData = results
-//   .filter((r) => r.status === "fulfilled" && r.value?.status === true) // only successful API responses
-//   .flatMap((r: any) => r.value.response || []); // collect all response arrays
-
-//       dispatch(setHotels(finalData));
-
-
-//     } catch (err) {
-//       console.error("Filter fetch failed", err);
-//       setIsFilterLoading(false);
-//     } finally {
-//       setIsFilterLoading(false);
-//     }
-//   },
-//   [hotelModuleNames, form, queryClient, dispatch, filters.selectedRating, removeDuplicates]
-// );
 const updatePriceRange = useCallback(
-  async (newRange: [number, number]) => {
+  (newRange: [number, number]) => {
+    // Update local state instantly
     setFilters(prev => ({ ...prev, priceRange: newRange }));
 
-    try {
-      setIsFilterLoading(true);
-      dispatch(setHotels([])); // ✅ Clear old data
-
-      const savedForm = localStorage.getItem("hotelSearchForm");
-      if (!savedForm) return;
-
-      const parsedForm = JSON.parse(savedForm);
-
-      // ✅ Use hotel_search_multi instead of manual loop
-      const result = await hotel_search_multi(
-        {
-          destination: parsedForm.destination,
-          checkin: parsedForm.checkin,
-          checkout: parsedForm.checkout,
-          rooms: parsedForm.rooms,
-          adults: parsedForm.adults,
-          children: parsedForm.children,
-          nationality: parsedForm.nationality,
-          page: 1,
-          price_from: String(newRange[0]),
-          price_to: String(newRange[1]),
-          rating: "", // keep current rating
-        },
-        hotelModuleNames
-      );
-
-      // ✅ Dispatch merged results
-      dispatch(setHotels(result.success));
-
-      // Optional: update React Query cache if used elsewhere
-      queryClient.setQueryData(["hotel-search"], result.success);
-    } catch (err) {
-      console.error("Price filter fetch failed", err);
-    } finally {
-      setIsFilterLoading(false);
+    // Clear any existing debounce timeout
+    if (debounceTimeout.current) {
+      clearTimeout(debounceTimeout.current);
     }
+
+    // Set a new debounce delay (e.g., 600ms)
+    debounceTimeout.current = setTimeout(async () => {
+      try {
+        setIsFilterLoading(true);
+        dispatch(setHotels([])); // Clear old data
+
+        const savedForm = localStorage.getItem("hotelSearchForm");
+        if (!savedForm) return;
+        const parsedForm = JSON.parse(savedForm);
+
+        const result = await hotel_search_multi(
+          {
+            destination: parsedForm.destination,
+            checkin: parsedForm.checkin,
+            checkout: parsedForm.checkout,
+            rooms: parsedForm.rooms,
+            adults: parsedForm.adults,
+            children: parsedForm.children,
+            nationality: parsedForm.nationality,
+            page: 1,
+            price_from: String(newRange[0]),
+            price_to: String(newRange[1]),
+            rating: "", // keep current rating
+            currency:currency,
+            language:locale
+          },
+          hotelModuleNames
+        );
+
+        dispatch(setHotels([...result.success]));
+        queryClient.setQueryData(["hotel-search"], result.success);
+      } catch (err) {
+        console.error("Price filter fetch failed", err);
+      } finally {
+        setIsFilterLoading(false);
+      }
+    }, 600);
   },
-  [hotelModuleNames, filters.selectedRating, dispatch, queryClient]
+  [hotelModuleNames, dispatch, queryClient]
 );
-// filter using api
-// useEffect(() => {
-//   const fetchFilteredHotels = async () => {
-//     if (!filters.priceRange || !filters.selectedRating) return;
 
-//     const [minPrice, maxPrice] = filters.priceRange;
-
-//     try {
-//       dispatch(setHotels([])); // ✅ Clear old data
-//       setIsSearching(true);
-
-//       // ✅ Fetch for each module
-//       const results = await Promise.all(
-//         hotelModuleNames.map((mod: string) =>
-//           hotelSearchMutation
-//             .mutateAsync({
-//               ...form,
-//               page: 1, // Always start from page 1 on filter change
-//               modules: mod,
-//               price_from: String(minPrice),
-//               price_to: String(maxPrice),
-//               rating: String(filters.selectedRating),
-//             })
-//             .catch(() => null)
-//         )
-//       );
-
-//       // ✅ Filter valid
-//       const validResults = results.filter(
-//         (res) => res && res.response && res.response?.length > 0
-//       );
-
-//       let finalData: any[] = [];
-//       if (validResults?.length === 1) {
-//         finalData = validResults[0].response;
-//       } else if (validResults?.length > 1) {
-//         finalData = validResults.flatMap((res) => res.response);
-//       }
-
-//       // ✅ DEDUPE before saving!
-//       finalData = removeDuplicates(finalData);
-
-//       // ✅ Update cache + Redux
-//       queryClient.setQueryData(["hotel-search"], finalData);
-//       dispatch(setHotels(finalData));
-
-//       // ✅ Reset page to 1
-//       // setPage(1);
-
-//     } catch (err) {
-//       console.error("Filter fetch failed", err);
-//     } finally {
-//       setIsSearching(false);
-//     }
-//   };
-
-//   fetchFilteredHotels();
-// }, [filters.priceRange, filters.selectedRating]);
+// attach static ref container to function
+(updatePriceRange as any).debounceRef = { current: null };
 
   const toggleStarFilter = useCallback((stars: number) => {
     setFilters(prev => ({
@@ -317,68 +229,6 @@ const updatePriceRange = useCallback(
         : [...prev.selectedStars, stars]
     }));
   }, []);
-
-// const updateRatingFilter = useCallback(
-//   async (rating: number) => {
-//     // console.log("Updating rating filter to:", rating);
-
-//     setFilters((prev) => ({ ...prev, selectedRating: rating }));
-
-//     try {
-//       dispatch(setHotels([])); // ✅ Clear old data
-//       setIsFilterLoading(true);
-
-//       const savedForm = localStorage.getItem("hotelSearchForm");
-//       if (!savedForm) return;
-
-//       const parsedForm: any = JSON.parse(savedForm);
-
-//       // ✅ Fetch for each module
-//       const results = await Promise.all(
-//         hotelModuleNames.map((mod: string) =>
-//           hotelSearchMutation
-//             .mutateAsync({
-//               ...parsedForm,
-//               page: 1,
-//               modules: mod,
-//               price_from: String(filters.priceRange[0]), // ✅ keep price range
-//               price_to: String(filters.priceRange[1]),
-//               rating: String(rating), // ✅ apply rating filter
-//             })
-//             .catch(() => null)
-//         )
-//       );
-
-//       // ✅ Collect valid results
-//       const finalData: any[] = [];
-//       results.forEach((res) => {
-//         if (res?.response?.length) {
-//           finalData.push(...res.response);
-//           setIsFilterLoading(false);
-//         }
-//       });
-
-//       // ✅ Remove duplicates
-//       // finalData = removeDuplicates(finalData);
-
-
-//       // ✅ Update cache + Redux
-//       queryClient.setQueryData(["hotel-search"], finalData);
-//       dispatch(setHotels(finalData));
-//     } catch (err) {
-//       console.error("Rating filter fetch failed", err);
-//     } finally {
-//       setIsFilterLoading(false);
-//     }
-//   },
-//     [
-//       hotelModuleNames,
-//       queryClient,
-//       dispatch,
-//       removeDuplicates,
-//       filters.priceRange,
-//     ]
-// );
 
 const updateRatingFilter = useCallback(
   async (rating: number) => {
@@ -393,7 +243,7 @@ const updateRatingFilter = useCallback(
 
       const parsedForm = JSON.parse(savedForm);
 
-      // ✅ Use hotel_search_multi instead of manual loop
+      //  Use hotel_search_multi instead of manual loop
       const result = await hotel_search_multi(
         {
           destination: parsedForm.destination,
@@ -407,13 +257,13 @@ const updateRatingFilter = useCallback(
           price_from: String(filters.priceRange[0]),
           price_to: String(filters.priceRange[1]),
           rating: String(rating),
+          currency:currency,
+          language:locale
         },
         hotelModuleNames
       );
-console.log('filter range', result)
-      // ✅ Sync to Redux
+      //  Sync to Redux
       dispatch(setHotels(result.success));
-
       // Optional: update React Query cache if you're using it elsewhere
       queryClient.setQueryData(["hotel-search"], result.success);
     } catch (err) {
@@ -450,7 +300,6 @@ console.log('filter range', result)
 const resetFilters = useCallback(async (e?: any) => {
     try {
       setIsFilterLoading(true);
-
       // Reset filter state first
       setFilters({
         priceRange: [priceRange.min, priceRange.max],
@@ -532,6 +381,7 @@ const resetFilters = useCallback(async (e?: any) => {
     toggleAmenityFilter,
     updateSortBy,
     resetFilters,
+
     selectedStars, setSelectedStars,isFilterLoading
   };
 };

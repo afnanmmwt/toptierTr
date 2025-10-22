@@ -40,7 +40,7 @@ interface SessionUser {
   country_name: null | string;
 }
 
-export async function createSession(user: SessionUser) {
+export async function createSession(user: any) {
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const session = await encrypt({ user });
   (await cookies()).set("access-token", session, { httpOnly: true, expires });

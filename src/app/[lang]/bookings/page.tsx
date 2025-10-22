@@ -1,7 +1,8 @@
 import React from 'react'
-import { getDictionary } from '@src/get-dictionary'
+// import { getDictionary } from '@src/get-dictionary'
 import TransitionLayout from '@src/utils/pageTransition'
-
+import { Metadata } from 'next/types'
+export const metadata = { title: `Toptier | Booking` } satisfies Metadata;
 export default async function Page() {
 
   return (

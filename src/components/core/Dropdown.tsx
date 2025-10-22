@@ -88,7 +88,7 @@ const Dropdown: React.FC<DropdownProps> = ({
  className={
   buttonClassName ||
   `inline-flex items-center justify-between w-full cursor-pointer
-   border-0 hover:border-0 hover:outline-0
+   border-0 hover:border-0 hover:outline-0 hover:text-gray-600
    text-sm px-3.5 font-medium text-[#1E2939]
    dark:text-gray-400
    hover:bg-gray-50 dark:hover:bg-gray-600
@@ -98,26 +98,27 @@ const Dropdown: React.FC<DropdownProps> = ({
                 onClick={toggleDropdown}
             >
                 <span>{label}</span>
-                <svg
-                    className={`
-                        ml-2 h-5 w-5
-                        transition-transform duration-300 ease-out
-                        ${dropDirection === 'up'
-                            ? (open ? 'rotate-0 text-blue-500' : 'rotate-180')
-                            : (open ? 'rotate-180 text-blue-500' : 'rotate-0')
-                        }
-                    `}
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    aria-hidden="true"
-                >
-                    <path
-                        fillRule="evenodd"
-                        d="M5.23 7.21a.75.75 0 011.06.02L10 10.584l3.71-3.354a.75.75 0 111.02 1.1l-4.25 3.84a.75.75 0 01-1.02 0l-4.25-3.84a.75.75 0 01.02-1.06z"
-                        clipRule="evenodd"
-                    />
-                </svg>
+            <svg
+  className={`
+    ml-2 h-5 w-5 text-gray-500
+    transition-transform duration-300 ease-out
+    ${dropDirection === 'up'
+      ? (open ? 'rotate-0' : 'rotate-180')
+      : (open ? 'rotate-180' : 'rotate-0')
+    }
+  `}
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 20 20"
+  fill="currentColor"
+  aria-hidden="true"
+>
+  <path
+    fillRule="evenodd"
+    d="M5.23 7.21a.75.75 0 011.06.02L10 10.584l3.71-3.354a.75.75 0 111.02 1.1l-4.25 3.84a.75.75 0 01-1.02 0l-4.25-3.84a.75.75 0 01.02-1.06z"
+    clipRule="evenodd"
+  />
+</svg>
+
             </Button>
 
             <AnimatePresence>

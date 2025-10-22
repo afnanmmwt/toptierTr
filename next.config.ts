@@ -1,10 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    // distDir: "build",
-     productionBrowserSourceMaps: true,
-  async rewrites() {
+  productionBrowserSourceMaps: true,
 
+  async rewrites() {
     return [
       {
         source: "/robots.txt",
@@ -12,35 +11,75 @@ const nextConfig: NextConfig = {
       },
     ];
   },
- experimental: {
-    optimizeCss: false
+
+  experimental: {
+    optimizeCss: false,
   },
 
-   eslint: {
+  eslint: {
     ignoreDuringBuilds: true,
   },
-  // ✅ Add this block to allow images from iata.co
+
   images: {
     remotePatterns: [
-     {
-  protocol: "https",
-  hostname: "toptiertravel.vip",
-  port: "",
-  pathname: "/**", // allow everything
-}
-,
-        {
-      protocol: "https",
-      hostname: "images.unsplash.com",
-      port: "",
-      pathname: "/**", // Unsplash doesn't need /storage
-    },
-        {
-      protocol: "https",
-      hostname: "flagpedia.net",
-      port: "",
-      pathname: "/**", // Unsplash doesn't need /storage
-    },
+      // Your main domain
+      {
+        protocol: "https",
+        hostname: "toptiertravel.vip",
+        pathname: "/**",
+      },
+      // Common hotel image sources
+      {
+        protocol: "http",
+        hostname: "photos.hotelbeds.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "cdn.stuba.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.expedia.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "flagpedia.net",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
+        hostname: "api.stuba.com",
+        pathname: "/**",
+      },
+      // Optional wildcard (last fallback — only if needed)
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "/**",
+      },
+       {
+        protocol: "http",
+        hostname: "photos.hotelbeds.com", // allow hotelbeds images
+        pathname: "/**",
+      },
+         {
+        protocol: "http",
+        hostname: "**",
+        pathname: "/**",
+      },
     ],
   },
 };

@@ -3,27 +3,17 @@
 import { useState, useRef, useEffect } from "react";
 
 import { Icon } from "@iconify/react";
-// import { Swiper, SwiperSlide } from "swiper/react";
-// import { Navigation } from "swiper/modules";
 import useHotelFilter from "@hooks/useHotelFilter";
 import useHotelSearch from "@hooks/useHotelSearch";
 import Spinner from "@components/core/Spinner";
-// import RatingSlider from "./ratingSlider"
-// import useHotelFilter from "./useHotelFilter";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import HotelsListingCard from "./hotelListingCard";
 import { PriceRangeSlider } from "@components/core/priceRangeSlider";
 import HotelMap from "./hotelMap";
-// import { isPending } from "@reduxjs/toolkit";
+import useLocale from "@hooks/useLocale";
+import useDictionary from "@hooks/useDict";
 
-// Define types
-// interface FilterChip {
-//   icon?: string;
-//   label: string;
-//   category?: string;
-// }
 // Types for your actual hotel data
 interface HotelData {
   hotel_id: string;
@@ -46,15 +36,15 @@ interface HotelData {
   booking_currency: string;
 }
 interface HotelSearchAppProps {
-  // hotelData: HotelData[];
   isLoading?: boolean;
 }
-export default function HotelSearchApp({isLoading}:HotelSearchAppProps) {
+
+export default function HotelSearchApp({ isLoading }: HotelSearchAppProps) {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list' | 'map'>('grid');
-  // const [user, setUser] = useState(true);
-  // const [loadingMore, setLoadingMore] = useState(false)
-  // const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const [activeHotelId, setActiveHotelId]=useState("")
+  const { locale } = useLocale();
+  const { data: dict } = useDictionary(locale as any);
 const [currentLocation, setCurrentLocation] = useState<{ lat: number; lon: number }>({
   lat: 0,
   lon: 0,
@@ -65,115 +55,18 @@ const onShowMaphandler=(hotel:any)=>{
     lat:hotel?.latitude,
     lon:hotel?.longitude
   })
+  setActiveHotelId(hotel?.hotel_id)
 // console.log('map icons is clicked for current loaction ', hotel)
 }
-  // const swiperRef = useRef<any>(null);
-  // Filter chips data with placeholder SVGs (replace these with your actual SVGs)
-  // const filterChips: FilterChip[] = [
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <path d="M12 2L3.09 8.26L12 22L20.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-  //     </svg>`,
-  //     label: "Luxury Hotel",
-  //     category: "luxury"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
-  //       <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
-  //     </svg>`,
-  //     label: "Business",
-  //     category: "business"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <path d="M3 21L12 2L21 21H3Z" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
-  //     </svg>`,
-  //     label: "Resort",
-  //     category: "resort"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <path d="M12 1V3" stroke="currentColor" stroke-width="2"/>
-  //       <path d="M12 21V23" stroke="currentColor" stroke-width="2"/>
-  //       <path d="M4.22 4.22L5.64 5.64" stroke="currentColor" stroke-width="2"/>
-  //     </svg>`,
-  //     label: "Budget",
-  //     category: "budget"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" stroke="currentColor" stroke-width="2" fill="currentColor"/>
-  //     </svg>`,
-  //     label: "Top Rated",
-  //     category: "top-rated"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <circle cx="12" cy="10" r="3" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <path d="M12 21.7C17.3 17 20 13 20 10A8 8 0 1 0 4 10C4 13 6.7 17 12 21.7Z" stroke="currentColor" stroke-width="2" fill="none"/>
-  //     </svg>`,
-  //     label: "City Center",
-  //     category: "city-center"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <path d="M6 13.87A4 4 0 0 1 7.41 6A5.11 5.11 0 0 1 12 4A5.11 5.11 0 0 1 16.59 6A4 4 0 0 1 18 13.87V21H6Z" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <circle cx="12" cy="10" r="2" stroke="currentColor" stroke-width="2" fill="none"/>
-  //     </svg>`,
-  //     label: "Fine Dining",
-  //     category: "fine-dining"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <path d="M2 12C2 17.52 6.48 22 12 22S22 17.52 22 12C22 6.48 17.52 2 12 2" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <path d="M2 12C2 8.69 4.69 6 8 6S14 8.69 14 12" stroke="currentColor" stroke-width="2" fill="none"/>
-  //     </svg>`,
-  //     label: "Beachfront",
-  //     category: "beachfront"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <path d="M20 16V8A8 8 0 0 0 4 8V16C4 18.21 5.79 20 8 20H16C18.21 20 20 18.21 20 16Z" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <path d="M4 8C4 5.79 5.79 4 8 4H16C18.21 4 20 5.79 20 8" stroke="currentColor" stroke-width="2" fill="none"/>
-  //     </svg>`,
-  //     label: "Lake View",
-  //     category: "lake-view"
-  //   },
-  //   {
-  //     icon: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  //       <path d="M21 16V8A2 2 0 0 0 19 6H5A2 2 0 0 0 3 8V16A2 2 0 0 0 5 18H19A2 2 0 0 0 21 16Z" stroke="currentColor" stroke-width="2" fill="none"/>
-  //       <polyline points="7,8 12,13 17,8" stroke="currentColor" stroke-width="2" fill="none"/>
-  //     </svg>`,
-  //     label: "Near Airport",
-  //     category: "near-airport"
-  //   }
-  // ];
 
-
-
-
-  // const [showPrev, setShowPrev] = useState(false);
-
-
-
-  // const [showNext, setShowNext] = useState(true);
-  const { allHotelsData: hotelsData,  isloadingMore, listRef, allHotelsData: isInitialLoading, detailsBookNowHandler } = useHotelSearch()
-
-
-  // console.log('is searching ', isSearching)
-  // console.log('is laoding more', isloadingMore)
-  // console.log('is pendding', isPending)
+  const { allHotelsData: hotelsData,
+      isloadingMore, listRef,
+        detailsBookNowHandler,isProcessingRef,loadMoreData ,noMoreData} = useHotelSearch()
   const safeHotelsData = Array.isArray(hotelsData) && hotelsData?.length > 0
     ? hotelsData
     : Array.isArray(hotelsData)
       ? hotelsData
       : [];
-  //   console.log('hotelslisting after search',hotelsDa
-
 
   // Use the hotel filter hook
   const {
@@ -181,21 +74,17 @@ const onShowMaphandler=(hotel:any)=>{
     totalResults,
     filters,
     priceRange,
-    // availableAmenities,
     updatePriceRange,
-    // toggleStarFilter,
     updateRatingFilter,
     updateSearchQuery,
-    // toggleAmenityFilter,
-    // updateSortBy,
     resetFilters,
     hasActiveFilters,
     selectedStars,
     setSelectedStars,
-    isFilterLoading
+    isFilterLoading,
+updateSortBy
 
-  } = useHotelFilter({ hotelsData: safeHotelsData ?? [], isLoading });
-
+  } = useHotelFilter();
 
 
   const handlePriceChange = (index: number, value: number) => {
@@ -210,12 +99,26 @@ const onShowMaphandler=(hotel:any)=>{
     updatePriceRange(newRange);
   };
 
-
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState("Rating");
   const dropdownRef = useRef<HTMLDivElement>(null);
+// ================ FOR LOAD MORE DATA ===============
+ useEffect(() => {
+    const handleScroll = () => {
+      if (isloadingMore || !hotelsData?.length || isProcessingRef.current) return;
 
-  // ✅ close on outside click
+      if (listRef.current) {
+        const rect = listRef.current.getBoundingClientRect();
+        if (rect.bottom <= window.innerHeight) {
+          loadMoreData(filters);
+        }
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loadMoreData, isloadingMore, hotelsData?.length]);
+  // =========>>> close on outside click
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -225,11 +128,22 @@ const onShowMaphandler=(hotel:any)=>{
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+  const options = ['price_low' , 'price_high' , 'rating' , 'name'];
 
-  const options = ["Rating", "Price Low to High", "Price High to Low", "Name"];
-
-
-
+function getOptionLabel(option: string) {
+  switch (option) {
+    case "price_low":
+      return dict?.hotel_listing?.low_to_high || "Low to High";
+    case "price_high":
+      return dict?.hotel_listing?.high_to_low || "High to Low";
+    case "rating":
+      return dict?.hotel_listing?.rating || "Rating";
+    case "name":
+      return dict?.hotel_listing?.name_a_to_z || "Name (A–Z)";
+    default:
+      return option;
+  }
+}
 
   return (
     <div className="min-h-screen bg-gray-50" ref={listRef}>
@@ -287,38 +201,24 @@ const onShowMaphandler=(hotel:any)=>{
       `}</style>
 
       {/* Main Content */}
-
-      <div className="max-w-[1200px] mx-auto appHorizantalSpacing py-4 lg:py-8"  >
+      <div className="max-w-[1200px] mx-auto appHorizantalSpacing py-4 lg:py-8">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-8">
           {/* Desktop Sidebar - Advanced Search */}
           {viewMode !== "map" && <div className="hidden lg:block w-80 flex-shrink-0">
             <div className="bg-white rounded-xl border border-[#EBEBEB] p-4">
               <div className="flex items-center justify-between mb-6 border-b pb-5 border-gray-200">
-                <h2 className="text-lg font-bold text-[#112233]">Advanced Search</h2>
-
-                {/* <button
-                  type="button"
-                  onClick={resetFilters}
-                  className="w-8 h-8 flex cursor-pointer items-center justify-center rounded-full border border-gray-300 hover:bg-gray-50 transition-colors"
-                >
-                  <svg width="11" height="14" viewBox="0 0 11 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6.24242 1.0387L6.24242 12.9663C6.24242 13.378 5.90863 13.7118 5.49694 13.7118C5.08525 13.7118 4.75146 13.378 4.75146 12.9663L4.75146 1.0387C4.75146 0.627007 5.08525 0.293221 5.49694 0.293221C5.90863 0.293221 6.24242 0.627007 6.24242 1.0387Z" fill="#163C8C" />
-                    <path d="M10.7143 1.0387V12.9663C10.7143 13.378 10.3806 13.7118 9.96886 13.7118C9.55718 13.7118 9.22339 13.378 9.22339 12.9663V1.0387C9.22339 0.627007 9.55718 0.293037 9.96886 0.293037C10.3806 0.293037 10.7143 0.627007 10.7143 1.0387Z" fill="#163C8C" />
-                    <path d="M1.76927 1.03851L1.76927 12.9661C1.76927 13.3778 1.43549 13.7116 1.0238 13.7116C0.612107 13.7116 0.27832 13.3778 0.27832 12.9661L0.27832 1.03851C0.27832 0.626824 0.612107 0.293037 1.0238 0.293037C1.43549 0.293037 1.76927 0.626824 1.76927 1.03851Z" fill="#163C8C" />
-                  </svg>
-                </button> */}
-
+                <h2 className="text-lg font-bold text-[#112233]">{dict?.hotel_listing?.advanced_search || "Advance Search"}</h2>
               </div>
               {/* Search Location */}
               <div className="mb-8">
-                <label className="block text-base font-semibold text-[#112233] mb-3">Search Hotels</label>
+                <label className="block text-base font-semibold text-[#112233] mb-3">{dict?.hotel_listing?.search_hotels || "Search Hotels"}</label>
                 <div className="relative">
                   <svg width="18" height="17" className="absolute cursor-pointer left-4 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M13.5098 13.4063L16.3686 16.2651M15.4655 8.37544C15.4655 10.2217 14.732 11.9924 13.4265 13.298C12.121 14.6035 10.3503 15.3369 8.50398 15.3369C6.65767 15.3369 4.88699 14.6035 3.58146 13.298C2.27592 11.9924 1.54248 10.2217 1.54248 8.37544C1.54248 6.52913 2.27592 4.75845 3.58146 3.45292C4.88699 2.14738 6.65767 1.41394 8.50398 1.41394C10.3503 1.41394 12.121 2.14738 13.4265 3.45292C14.732 4.75845 15.4655 6.52913 15.4655 8.37544Z" stroke="#0F172B" strokeOpacity="0.6" strokeWidth="1.3923" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                   <input
                     type="text"
-                    placeholder="search by hotel names"
+                    placeholder={dict?.hotel_listing?.search_by_hotel_name || "search by hotel name"}
                     value={filters.searchQuery}
                     onChange={(e) => updateSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl font-medium text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:border-transparent"
@@ -326,27 +226,23 @@ const onShowMaphandler=(hotel:any)=>{
                 </div>
               </div>
               {/* Price Range */}
-              <div className="mb-8">
+              <div className="mb-8 ">
                 <p className="block text-base font-semibold text-[#112233] mb-3">
-                  Price Range (per night)
+                  {dict?.hotel_listing?.price_range || "Price Range"} {dict?.hotel_listing?.per_night || "per night"}
                 </p>
-                {/* <PriceSlider
-                  min={priceRange.min}
-                  max={priceRange.max}
-                  values={filters.priceRange}
-                  onChange={handlePriceChange}
-                /> */}
                 <PriceRangeSlider
                   min={priceRange.min}
                   max={priceRange.max}
+
                   values={filters.priceRange}   // ← [min, max] tuple
                   onChange={handlePriceChange}  // ← (index, value) => void
+
                 />
               </div>
 
               <div className="mb-8">
                 <label className="block text-base font-semibold text-[#112233] mb-3">
-                  Hotel Stars
+                  {dict?.hotel_listing?.hotel_stars || "Hotel Stars"}
                 </label>
                 <div className="space-y-3">
                   {[5, 4, 3, 2, 1].map((stars) => (
@@ -354,12 +250,11 @@ const onShowMaphandler=(hotel:any)=>{
                       key={stars}
                       className="flex items-center justify-between cursor-pointer"
                       onClick={() => {
-                        setSelectedStars(stars);   // ✅ update local state
-                        updateRatingFilter(stars); // ✅ call API filter
+                        setSelectedStars(stars);
+                        updateRatingFilter(stars);
                       }}
                     >
                       <div className="flex items-center gap-3">
-                        {/* Stars */}
                         <div className="flex">
                           {[...Array(stars)].map((_, i) => (
                             <Icon
@@ -370,16 +265,13 @@ const onShowMaphandler=(hotel:any)=>{
                             />
                           ))}
                         </div>
-
-
-                        {/* Label */}
                         <span
                           className={`text-sm ${selectedStars === stars
                             ? "text-yellow-600 font-medium"
                             : "text-gray-600"
                             }`}
                         >
-                          ({stars} Stars)
+                          ({stars} {dict?.hotel_listing?.stars || "Stars"})
                         </span>
                       </div>
                     </div>
@@ -387,14 +279,6 @@ const onShowMaphandler=(hotel:any)=>{
                 </div>
               </div>
 
-
-
-
-
-              {/* Guest Rating */}
-              <div className="mb-8 border-b border-gray-200 pb-6">
-
-              </div>
               {/* Buttons */}
               <div className="space-y-3">
                 <button
@@ -402,16 +286,14 @@ const onShowMaphandler=(hotel:any)=>{
                   disabled={!hasActiveFilters}
                   className="w-full py-3 bg-[#E5E7EB] border border-[#E5E7EB] cursor-pointer text-[#163C8C] rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Reset Filters
+                  {dict?.hotel_listing?.reset_filters || "Reset Filters"}
                 </button>
                 <button
-
                   onClick={resetFilters}
                   disabled={!hasActiveFilters}
                   className="w-full py-3 bg-[#163C8C] border border-[#163C8C] cursor-pointer text-white rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-
                 >
-                  Apply
+                  {dict?.hotel_listing?.apply || "Apply"}
                 </button>
               </div>
             </div>
@@ -437,7 +319,6 @@ const onShowMaphandler=(hotel:any)=>{
             {/* Sort and Results Header */}
             <div className="bg-white rounded-lg lg:rounded-xl border border-gray-200 p-3 lg:p-3 mb-4 lg:mb-6">
               <div className="flex flex-col space-y-4 lg:space-y-0 lg:flex-row lg:items-center justify-between gap-3 lg:gap-4">
-                {/* Left Side: Results Count & Map Filter Button */}
                 <div className="flex items-center gap-3 lg:gap-4">
                   {viewMode === "map" && (
                     <button
@@ -453,41 +334,38 @@ const onShowMaphandler=(hotel:any)=>{
                     </button>
                   )}
                   <span className="text-gray-500 font-medium text-sm lg:text-base pl-2">
-                    {/* {(isInitialLoading || isFilterLoading) ? "Loading..." :
-                    `${filteredHotels?.length} hotels found`} */}
-
-                    {filteredHotels?.length} hotels found
+                    {filteredHotels?.length} {dict?.hotel_listing?.hotels_found || "Hotels found"}
                   </span>
                 </div>
 
-                {/* Right Side: Sort Dropdown & View Mode Buttons */}
                 <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-2 w-full lg:w-auto">
-                  {/* Sort Dropdown */}
                   <div className="flex items-center gap-2 w-full lg:w-auto">
-                    <span className="text-gray-600 font-medium text-sm lg:text-base whitespace-nowrap">Sort :</span>
+                    <span className="text-gray-600 font-medium text-sm lg:text-base whitespace-nowrap">{dict?.hotel_listing?.sort || "Sort"} :</span>
                     <div className="relative flex-1 lg:flex-none" ref={dropdownRef}>
                       <button
                         onClick={() => setOpen(!open)}
                         className="flex items-center justify-between w-full lg:w-[200px] cursor-pointer bg-[#F3F3F5] px-4 py-2.5 rounded-3xl border border-[#DFE2E6] text-xs lg:text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-[#DFE2E6]"
                       >
-                        <span>{selected}</span>
+                        <span>{getOptionLabel(selected)}</span>
                         <Icon
                           icon="mdi:chevron-down"
                           className={`h-4 w-4 text-gray-500 transition-transform ${open ? "rotate-180" : ""}`}
                         />
                       </button>
                       {open && (
-                        <div className="absolute mt-1.5 w-full lg:w-[200px] bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        <div className="absolute mt-1.5 w-full min-w-[150px] px-2 py-2 rounded-lg max-w-xs md:max-w-[200px] bg-white border border-gray-200  shadow-lg z-12000">
                           {options.map((opt) => (
                             <button
                               key={opt}
                               onClick={() => {
                                 setSelected(opt);
                                 setOpen(false);
+                                updateSortBy(opt)
                               }}
-                              className={`w-full lg:w-[180px] cursor-pointer rounded-md mx-2 my-1.5 text-left px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 ${selected === opt ? "bg-gray-50 font-medium" : ""}`}
+                              className={`w-full cursor-pointer text-left px-4 py-2.5 text-sm text-gray-700 rounded-md hover:bg-gray-100 transition-colors ${selected === opt ? "bg-gray-100 font-medium" : ""
+                                }`}
                             >
-                              {opt}
+                               {getOptionLabel(opt)}
                             </button>
                           ))}
                         </div>
@@ -495,7 +373,6 @@ const onShowMaphandler=(hotel:any)=>{
                     </div>
                   </div>
 
-                  {/* ✅ View Mode Buttons - Now visible on all devices and stacked on mobile */}
                   <div className="flex space-x-1 px-2 py-1 bg-[#F3F3F5] rounded-lg overflow-hidden w-full lg:w-auto">
                     <button
                       onClick={() => setViewMode('grid')}
@@ -556,12 +433,8 @@ const onShowMaphandler=(hotel:any)=>{
                 </div>
               </div>
             </div>
-            {/* Loading State */}
 
-
-
-            {/*=================>>>>> FOR LIST AND GRID  Hotel Grid */}
-
+            {/* Hotel Grid / List */}
             {viewMode !== 'map' && (
               <div className={`${viewMode === 'grid'
                 ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 items-start'
@@ -572,92 +445,98 @@ const onShowMaphandler=(hotel:any)=>{
                     key={`${hotel.hotel_id}-${index}`}
                     hotel={hotel}
                     viewMode={viewMode}
-                    onBookNow={(hotel: any) => detailsBookNowHandler(hotel)} // pass hotel + form
+                    onBookNow={(hotel: any) => detailsBookNowHandler(hotel)}
+                     setActiveHotelId={setActiveHotelId}
+                        activeHotelId={activeHotelId}
 
-                  // onUpdateFavourite={handleUpdateFavourite}
                   />
-
                 ))}
               </div>
             )}
-            {/* ==============>>> MAP SECTION (Responsive: Stacked on mobile, side-by-side on desktop) */}
-           {viewMode === "map" && (
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-    {/* Map Section */}
-    <div className="order-1 lg:order-2 w-full h-[400px] lg:h-[800px] bg-gray-100 rounded-3xl shadow-md border border-gray-300 overflow-hidden">
-      <HotelMap hotels={filteredHotels} currentLocation={currentLocation} />
-    </div>
 
-    {/* Cards Section */}
-    <div className="order-2 lg:order-1">
-      <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2">
-        {filteredHotels.map((hotel: any, index: number) => (
-          <HotelsListingCard
-            key={`${hotel.hotel_id}-${index}`}
-            hotel={hotel}
-            viewMode={viewMode}
-            onBookNow={(hotel: any) => detailsBookNowHandler(hotel)}
-            onMapShow={(hotel:any) =>onShowMaphandler(hotel)}
-          />
-        ))}
-      </div>
-    </div>
-  </div>
-)}
+            {/* MAP SECTION */}
+            {viewMode === "map" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+                {/* Map */}
+                <div className={`${viewMode === 'map' ? 'lg:sticky static ' : ''} top-5 z-10 order-1 lg:order-2 w-full h-[400px] lg:h-[600px] bg-gray-100 rounded-3xl shadow-xl border border-gray-300 overflow-hidden`}>
+                  <HotelMap hotels={filteredHotels} currentLocation={currentLocation}
+                   detailHandler={(hotel: any) => detailsBookNowHandler(hotel)}
+                  />
+                </div>
 
-            {/* ============>>> LOAD MORE DATA ON SCROLL  */}
-            {isloadingMore &&
+                {/* Cards */}
+                <div className="order-2 lg:order-1">
+                  <div className="grid gap-4 md:gap-6 grid-cols-1 md:grid-cols-2">
+                    {filteredHotels.map((hotel: any, index: number) => (
+                      <HotelsListingCard
+                        key={`${hotel.hotel_id}-${index}`}
+                        hotel={hotel}
+                        viewMode={viewMode}
+                        onBookNow={(hotel: any) => detailsBookNowHandler(hotel)}
+                        onMapShow={(hotel: any) => onShowMaphandler(hotel)}
+                        // //  Pass active state to child
+                        setActiveHotelId={setActiveHotelId}
+                        activeHotelId={activeHotelId}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Load More */}
+            {isloadingMore  &&
               <div className="w-full flex items-center justify-center">
-                <div className="w-[50%] py-2 my-5 flex gap-2 items-center justify-center rounded-full border border-blue-900 bg-white ">
-                  <Spinner size={30} className="mr-1 text-blue-900" /> <p className="text-base font-medium text-blue-900 ">Loading more</p>
+                <div className="w-[50%] py-2 my-5 flex gap-2 items-center justify-center rounded-full border border-blue-900  ">
+                  <Spinner size={30} className="mr-1 text-blue-900" /> <p className="text-base font-medium text-blue-900 ">{dict?.hotel_listing?.loading_more || "Loading more"}</p>
+                </div>
+              </div> }
+             {noMoreData && !isloadingMore && !isLoading && !isFilterLoading && hotelsData?.length > 0 && <div className="w-full flex items-center justify-center">
+                <div className="w-[50%] py-2 my-5 flex gap-2 items-center justify-center rounded-full bg-white ">
+                  <p className="text-base font-medium text-blue-900 ">{dict?.hotel_listing?.no_more_Data || "No more data found"}</p>
                 </div>
               </div>
             }
-            {
-            (isLoading || isFilterLoading) && !isloadingMore && !hotelsData?.length &&
+
+            {/* Initial Loading */}
+            {(isLoading || isFilterLoading) && !isloadingMore && !hotelsData?.length &&
               <div className="w-full flex items-center justify-center">
                 <div className="w-full py-2 my-5 h-full flex gap-2 items-center justify-center  border-blue-900">
-                  <Spinner size={30} className="mr-1 text-blue-900" /> <p className="text-base font-medium text-blue-900 ">Searching for Hotels</p>
+                  <Spinner size={30} className="mr-1 text-blue-900" /> <p className="text-base font-medium text-blue-900 ">{dict?.hotel_listing?.searching_for_hotels || "Searching for Hotels"}</p>
                 </div>
               </div>
             }
 
-            {/* ============>>>NO DATA FOUND  */}
+            {/* No Results */}
             {!(isLoading || isFilterLoading) && !isloadingMore && filteredHotels?.length === 0 && (
               <div className="text-center py-6 sm:py-8 md:py-15  min-w-full min-h-full flex items-center justify-start flex-col">
-
                 <Icon icon="mdi:hotel-off" className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">No hotels found</h3>
-                <p className="text-gray-600 mb-4">Try adjusting your filters or search criteria</p>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{dict?.hotel_listing?.no_hotels_found || "No hotels found"}</h3>
+                <p className="text-gray-600 mb-4">{dict?.hotel_listing?.search_criteria || "Try adjusting your filters or search criteria"}</p>
                 <button
                   onClick={() => resetFilters(event)}
                   className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
-                  Reset All Filters
+                  {dict?.hotel_listing?.reset_all_filters || "Reset All Filters"}
                 </button>
               </div>
             )}
 
-
-
-
-            {/* End of Map Section */}
-
           </div>
         </div>
       </div>
+
       {/* Mobile Filters Overlay */}
       {mobileFiltersOpen && (
-        <div className=" fixed inset-0 z-50 overflow-hidden">
+        <div className=" fixed inset-0 z-2000 overflow-hidden">
           <div
             className="absolute inset-0 bg-black/50"
             onClick={() => setMobileFiltersOpen(false)}
           ></div>
 
-          <div className="absolute bottom-3 left-8 right-8 bg-white rounded-2xl max-h-[90vh] overflow-y-auto mx-4">
-            {/* Header */}
+          <div className="absolute bottom-3 left-8 right-8 bg-white rounded-2xl max-h-[90vh] overflow-y-auto mx-1">
             <div className="sticky z-20 top-0 bg-white border-b border-gray-200 px-4 py-4 flex items-center justify-between">
-              <h2 className="text-lg font-bold text-gray-900">Filters & Search</h2>
+              <h2 className="text-lg font-bold text-gray-900">{dict?.hotel_listing?.filters_search || "Filters & Search"}</h2>
               <button
                 onClick={() => setMobileFiltersOpen(false)}
                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
@@ -665,12 +544,10 @@ const onShowMaphandler=(hotel:any)=>{
                 <Icon icon="mdi:close" className="h-5 w-5 cursor-pointer" />
               </button>
             </div>
-            {/* Content */}
             <div className="p-4 space-y-6 max-w-lg mx-auto w-full">
-              {/* Mobile Search */}
               <div>
                 <label className="z-10 text-sm font-semibold text-gray-900 mb-3">
-                  Search Hotels
+                  {dict?.hotel_listing?.search_hotels || "Search Hotels"}
                 </label>
                 <div className="relative">
                   <svg width="18" height="17" className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" viewBox="0 0 18 17" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -685,23 +562,20 @@ const onShowMaphandler=(hotel:any)=>{
                   />
                 </div>
               </div>
-              {/* Mobile Price Range */}
               <div>
                 <label className="block text-sm font-semibold cursor-pointer text-gray-900 mb-3">
-                  Price Range (per night)
+                  {dict?.hotel_listing?.rice_range || "Price Range"} {dict?.hotel_listing?.per_night || "per night"}
                 </label>
                 <PriceRangeSlider
                   min={priceRange.min}
                   max={priceRange.max}
-                  values={filters.priceRange}   // ← [min, max] tuple
-                  onChange={handlePriceChange}  // ← (index, value) => void
+                  values={filters.priceRange}
+                  onChange={handlePriceChange}
                 />
               </div>
-              {/* Mobile Hotel Stars */}
-
               <div className="mb-8">
                 <label className="block text-base font-semibold text-[#112233] mb-3">
-                  Hotel Stars
+                  {dict?.hotel_listing?.hotel_stars || "Hotel Stars"}
                 </label>
                 <div className="space-y-3">
                   {[5, 4, 3, 2, 1].map((stars) => (
@@ -709,12 +583,11 @@ const onShowMaphandler=(hotel:any)=>{
                       key={stars}
                       className="flex items-center justify-between cursor-pointer"
                       onClick={() => {
-                        setSelectedStars(stars);   // ✅ update local state
-                        updateRatingFilter(stars); // ✅ call API filter
+                        setSelectedStars(stars);
+                        updateRatingFilter(stars);
                       }}
                     >
                       <div className="flex items-center gap-3">
-                        {/* Stars */}
                         <div className="flex">
                           {[...Array(stars)].map((_, i) => (
                             <Icon
@@ -725,8 +598,6 @@ const onShowMaphandler=(hotel:any)=>{
                             />
                           ))}
                         </div>
-
-                        {/* Label */}
                         <span
                           className={`text-sm ${selectedStars === stars
                             ? "text-yellow-600 font-medium"
@@ -740,32 +611,20 @@ const onShowMaphandler=(hotel:any)=>{
                   ))}
                 </div>
               </div>
-
-              {/* Mobile Rating */}
-              <div>
-                {/* <label className="block text-sm font-semibold cursor-pointer text-gray-900 mb-3">
-                  Minimum Rating
-                </label>
-                <RatingSlider
-                  value={filters.selectedRating}
-                  onChange={updateRatingFilter}
-                /> */}
-              </div>
             </div>
-            {/* Footer Buttons */}
             <div className="sticky bottom-0 bg-white border-t border-gray-200 p-4 space-y-3 max-w-lg mx-auto w-full">
               <button
                 onClick={(e) => resetFilters(e)}
                 disabled={!hasActiveFilters}
-                className="w-full py-3 bg-gray-100 text-blue-600 cursor-pointer rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-2.5 text-sm bg-gray-100 text-blue-600 cursor-pointer rounded-lg font-medium hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Reset Filters
+                {dict?.hotel_listing?.reset_filters || "Reset Filters"}
               </button>
               <button
                 onClick={() => setMobileFiltersOpen(false)}
-                className="w-full py-3 bg-[#163C8C] text-white cursor-pointer rounded-lg font-medium hover:bg-[#163C8C] transition-colors"
+                className="w-full py-2.5 text-sm bg-[#163C8C] text-white cursor-pointer rounded-lg font-medium hover:bg-[#163C8C] transition-colors"
               >
-                Apply Filters ({totalResults} hotels)
+                {dict?.hotel_listing?.apply_filters || "Apply Filters"} ({totalResults} {dict?.hotel_listing?.hotels || "hotels"})
               </button>
             </div>
           </div>

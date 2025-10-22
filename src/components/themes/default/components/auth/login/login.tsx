@@ -15,6 +15,7 @@ import Alert from "@components/core/alert";
 import Button from "@components/core/button";
 import Link from "next/link";
 import { toast } from 'react-toastify';
+import useDirection from "@hooks/useDirection";
 
 //--------------- validation object for inputs
 const schema = zod.object({
@@ -30,6 +31,13 @@ export default function Login({ ...props }): React.JSX.Element {
   const { dict } = props
   const { lang } = useParams();
   const router = useRouter();
+  const [direction]=useDirection();
+  //--------------- validation object for inputs
+const schema = zod.object({
+  email: zod.string().min(1, { message: dict?.login_form?.email_message }).email(),
+  password: zod.string().min(6, { message: dict?.login_form?.password_message  }),
+  keep_logged_in: zod.boolean().optional(),
+});
   const {
     control,
     handleSubmit,
@@ -74,10 +82,10 @@ export default function Login({ ...props }): React.JSX.Element {
         <div className="w-full max-w-md space-y-6 sm:space-y-8 animate-fade-in">
           <div className="text-start">
             <h2 className="text-lg sm:text-3xl font-meduim text-gray-900 mb-2 dark:text-gray-100">
-              Sign in
+              {dict?.login_form?.text|| "Sign in"}
             </h2>
             <p className="text-gray-600 text-base dark:text-gray-100">
-              { "New user ? "} <Link href={`/auth/signup`} className="text-blue-900 hover:underline">Create an account</Link>
+              {dict?.login_form?.new_user || "New user ? "} <Link href={`/auth/signup`} className="text-blue-900 hover:underline">{dict?.login_form?.create_account || "Create an account"}</Link>
             </p>
           </div>
 
@@ -91,7 +99,7 @@ export default function Login({ ...props }): React.JSX.Element {
               {errors.root ? <Alert showIcon className="my-2 font-medium text-sm" type="danger">{errors.root.message}</Alert> : null}
 
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-100 mb-2">
-                {dict?.login_form?.fields?.email?.label || "Email *"}
+                {dict?.login_form?.email || "Email *"}
               </label>
               <Controller
                 name="email"
@@ -101,9 +109,10 @@ export default function Login({ ...props }): React.JSX.Element {
                     <Input
                       {...field}
                       type="email"
-                      placeholder={dict?.login_form?.fields?.email?.placeholder || "Enter your email"}
+                      placeholder={dict?.login_form?.email_placeholder || "Enter your email"}
                       size="lg"
                       invalid={!!errors.email}
+                      className={` ${direction === "rtl" ? "pr-3" : "pl-0"} `}
 
                     />
                     {errors.email && (
@@ -123,7 +132,7 @@ export default function Login({ ...props }): React.JSX.Element {
 
             <div>
               <label className="block text-sm font-medium text-gray-700  dark:text-gray-100 mb-2">
-                {dict?.login_form?.fields?.password?.label || "Password *"}
+                {dict?.login_form?.password || "Password *"}
               </label>
               <Controller
                 name="password"
@@ -133,9 +142,10 @@ export default function Login({ ...props }): React.JSX.Element {
                     <Input
                       {...field}
                       type={showPassword ? "text" : "password"}
-                      placeholder={dict?.login_form?.fields?.password?.placeholder || "Enter your password"}
+                      placeholder={dict?.login_form?.password_placeholder || "Enter your password"}
                       size="lg"
                       invalid={!!errors.password}
+                      className={`ps-3 `}
 
                       suffix={<button
                         type="button"
@@ -183,7 +193,7 @@ export default function Login({ ...props }): React.JSX.Element {
                         // className=""
                         children={<p className="text-sm tex-gray-700 font-normal">
                           {/* {dict?.login_form?.keep_logged_in} */}
-                           Remmember me
+                          {dict?.login_form?.remember_me || "Remember me"}
                           </p>}
                       />
 
@@ -198,7 +208,7 @@ export default function Login({ ...props }): React.JSX.Element {
                 className="text-blue-900 hover:text-blue-800 font-medium "
               >
                 <span className="text-blue-900 dark:text-blue-100 hover:text-blue-600 text-sm">
-                  {dict?.login_form?.forgot_password}
+                  {dict?.login_form?.forgot_password || "Forgot Password?"}
                 </span>
               </Link>
             </div>

@@ -37,45 +37,14 @@ const profileSchema = zod.object({
 type ProfileFormValues = zod.infer<typeof profileSchema>;
 
 // Define user shape to fix TypeScript errors
-interface UserProfile {
-  id: string;
-  user_id: string;
-  first_name: string | null;
-  last_name: string | null;
-  email: string;
-  phone: string | null;
-  phone_country_code: string | null;
-  country_code: string | null;
-  state: string | null;
-  city: string | null;
-  address1: string | null;
-  address2: string | null;
-  // Add other fields if needed
-}
 
-interface UserContextType {
-  user: UserProfile;
-  iat: number;
-  exp: number;
-}
-interface ProfileUpdatePayload {
-  user_id: string | number;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password?: string;
-  phone: string;
-  phone_country_code: string | number;
-  country_code: string | number;
-  state: string;
-  city: string;
-  address1: string;
-  address2: string;
-}
+
+
+
 export default function CustomerProfile() {
   const { locale } = useLocale();
   const { data: dict, isLoading: dictLoading, isError, error } = useDictionary(locale as any);
- const { user } = useUser() as { user: UserContextType | null };
+ const { user } = useUser() as { user: any | null };
   const { countries } = useCountries();
   const router = useRouter();
 
@@ -105,8 +74,10 @@ export default function CustomerProfile() {
 
   // Populate form when user data loads
   useEffect(() => {
-    if (user?.user) {
-      const u = user.user;
+    // const usersession =  getSession();
+    // console.log('session user data', usersession);
+    if (user) {
+      const u = user;
       reset({
         first_name: u.first_name ?? "",
         last_name: u.last_name ?? "",
@@ -133,18 +104,18 @@ const phoneCodeOptions = (countries || []).map((c: any) => ({
   iso: c.iso,
   phonecode: c.phonecode?.toString() || "0",
 }));
- const onSubmit = async (data: ProfileFormValues) => {
-  if (!user?.user?.user_id) {
+ const onSubmit = async (data: any) => {
+  if (!user) {
     toast.error(dict?.profiletoasts?.unauthorized || "User not authenticated");
     return;
   }
 
-  const currentUser = user.user;
+  const currentUser = user;
 
   setIsSubmitting(true);
   try {
-    // ✅ Build a payload that satisfies ProfileUpdatePayload
-    const payload: ProfileUpdatePayload = {
+    //  Build a payload that satisfies ProfileUpdatePayload
+    const payload: any = {
       user_id: currentUser.user_id,
       first_name: data.first_name?.trim() || currentUser.first_name || "",
       last_name: data.last_name?.trim() || currentUser.last_name || "",

@@ -1,5 +1,5 @@
 'use client'
-import React from 'react'
+// import React from 'react'
 import useHotelSearch from '@hooks/useHotelSearch'
 import  HotelsDetails  from './hotelDetails'
 // import { BookingDetails } from '../bookingDetails'

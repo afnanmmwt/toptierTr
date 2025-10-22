@@ -44,6 +44,13 @@ body:is(.dark *) {
 
 }
 
+.leaflet-tooltip {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
 .drawer-overlay-after-open {
     opacity: 1;
 }
@@ -195,80 +202,84 @@ body:is(.dark *) {
 /* =============
    REACT DAY PICKER - GLOBAL STYLES (Tailwind-based)
 ============= */
+.rdrDefinedRangesWrapper{
+  @apply hidden
+}
+.rdrCalendarWrapper {
+  @apply rounded-xl border border-gray-200 shadow
+}
 
-@layer components {
-  .rdp {
-    @apply p-2;
-  }
+/* RTL Fixes for react-date-range */
+[dir="rtl"] .rdrCalendarWrapper {
+  direction: rtl;
+}
 
-  .rdp_caption {
-    @apply flex justify-center py-2 relative items-center;
-  }
+[dir="rtl"] .rdrMonth {
+  direction: rtl;
+}
 
-  .rdp_caption_label {
-    @apply text-sm font-medium text-blue-900 dark:text-blue-300;
-  }
+[dir="rtl"] .rdrWeekDays {
+  direction: rtl;
+}
 
-  .rdp_nav {
-    @apply flex items-center;
-  }
+[dir="rtl"] .rdrDays {
+  direction: rtl;
+}
 
-  .rdp_nav_button {
-    @apply h-6 w-6 bg-transparent hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full flex items-center justify-center;
-  }
+[dir="rtl"] .rdrMonthAndYearWrapper {
+  direction: rtl;
+}
 
-  .rdp_nav_button_previous {
-    @apply absolute left-1;
-  }
+[dir="rtl"] .rdrMonthPicker select,
+[dir="rtl"] .rdrYearPicker select {
+  text-align: right;
+}
 
-  .rdp_nav_button_next {
-    @apply absolute right-1;
-  }
+/* Fix range colors in RTL - Keep day cell in LTR but flip the edges */
+[dir="rtl"] .rdrDay {
+  direction: ltr;
+}
 
-  .rdp_table {
-    @apply w-full border-collapse;
-  }
+[dir="rtl"] .rdrDayNumber {
+  direction: rtl;
+   border-top-right-radius: 1.042em !important;
+  border-bottom-right-radius: 1.042em !important;
 
-  .rdp_head_row {
-    @apply flex;
-  }
-
-  .rdp_head_cell {
-    @apply text-blue-700 dark:text-blue-400 font-medium text-xs w-9 text-center;
-  }
-
-  .rdp_row {
-    @apply flex w-full mt-1;
-  }
-
-  .rdp_cell {
-    @apply h-9 w-9 text-center text-sm p-0;
-  }
-
-  .rdp_day {
-    @apply h-9 w-9 p-0 font-normal rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 aria-selected:opacity-100 focus:outline-none transition-colors;
-  }
-
-  .rdp_day_selected {
-    @apply bg-blue-900 text-white hover:bg-blue-800 dark:bg-blue-800 dark:hover:bg-blue-700 rounded-lg font-medium transition-colors;
-  }
-
-  .rdp_day_disabled {
-    @apply text-gray-300 dark:text-gray-600 cursor-not-allowed;
-  }
-
-  .rdp_day_today {
-    @apply text-blue-900 font-bold dark:text-blue-400;
-  }
-
-  .rdp_day_outside {
-    @apply text-gray-400 dark:text-gray-600 opacity-50;
-  }
-
-  .rdp_day:focus {
-    @apply outline outline-2 outline-blue-500 rounded-lg;
-  }
+}
+[dir="rtl"] .rdrDay:hover .rdrDayNumber span {
+  background-color: #f0f0f0;
+  border-top-right-radius: 1.042em !important;
+  border-bottom-right-radius: 1.042em !important;
+  display: inline-block; /* ensures the background & radius apply correctly */
+  transition: background-color 0.2s ease; /* smooth hover */
 }
 
 
+/* Swap start/end edge border-radius for RTL */
+[dir="rtl"] .rdrStartEdge {
+  border-top-right-radius: 1.042em !important;
+  border-bottom-right-radius: 1.042em !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
 
+[dir="rtl"] .rdrEndEdge {
+  border-top-left-radius: 1.042em !important;
+  border-bottom-left-radius: 1.042em !important;
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+[dir="rtl"] .rdrInRange {
+  border-radius: 0 !important;
+}
+
+/* Fix navigation buttons in RTL */
+[dir="rtl"] .rdrNextPrevButton {
+  transform: scaleX(-1);
+}
+
+/* Ensure proper spacing */
+[dir="rtl"] .rdrMonthAndYearPickers {
+  flex-direction: row-reverse;
+}

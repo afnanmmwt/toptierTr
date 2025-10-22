@@ -7,9 +7,9 @@ export default function GlobalError({ error, reset }: { error: Error; reset: () 
     //     console.error('error caught:', error);
     // }, [error]);
     useEffect(() => {
-  console.error('error caught:', error);
+//   console.error('error caught:', error);
   if (error?.stack) {
-    console.error('stack trace:', error.stack);
+    // console.error('stack trace:', error.stack);
   }
 }, [error]);
 

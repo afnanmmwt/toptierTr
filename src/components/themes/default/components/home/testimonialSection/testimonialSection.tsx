@@ -1,5 +1,7 @@
 "use client";
 
+import useDictionary from '@hooks/useDict';
+import useLocale from '@hooks/useLocale';
 import { useAppSelector } from '@lib/redux/store';
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
@@ -21,6 +23,7 @@ const TestimonialSection = () => {
     </svg>
   );
 
+  
   const ChevronRight = () => (
     <svg
       width="11"
@@ -62,6 +65,8 @@ const TestimonialSection = () => {
   const autoplayRef = useRef<NodeJS.Timeout | null>(null);
   const transitionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const { locale } = useLocale();
+   const { data: dict } = useDictionary(locale as any);
 
   const items = testimonials || [];
   const totalItems = items.length;
@@ -201,6 +206,11 @@ const TestimonialSection = () => {
     ));
   };
 
+  // No testimonials CHECK
+  if (!Array.isArray(testimonials) || testimonials.length === 0) {
+    return null;
+  }
+
   if (totalItems === 0) return null;
 
   // Single item case
@@ -256,7 +266,7 @@ const TestimonialSection = () => {
               />
               <div className="absolute bottom-3 right-7">
                 <button className="bg-black/70 text-white cursor-pointer px-3 py-2 rounded-md text-sm font-medium hover:bg-black transition">
-                  See Room
+                  {dict?.testi_sec?.testi_see_room || "See Room"}
                 </button>
               </div>
             </div>
@@ -275,8 +285,8 @@ const TestimonialSection = () => {
       <div className="flex flex-col sm:flex-row justify-between items-start mb-8 sm:mb-12 gap-6 sm:gap-8">
         <div className="flex-1">
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-[900] text-[#051036] lg:mb-2">
-            What Our<br />
-            Guests Are Saying
+           {dict?.testi_sec?.testi_heading || "What Our"} <br />
+           {dict?.testi_sec?.testi_heading_2 || "Guests Are Saying"}
           </h2>
         </div>
         <div className="flex-1 sm:max-w-md">
@@ -284,7 +294,7 @@ const TestimonialSection = () => {
             className="text-base sm:text-lg text-[#697488] max-w-md mx-auto mt-4 leading-relaxed px-6"
             style={{ fontFamily: "Urbanist, sans-serif" }}
           >
-            See why travelers trust us — real reviews of comfort, convenience, and unforgettable stays
+            {dict?.testi_sec?.testi_subheading || "See why travelers trust us — real reviews of comfort, convenience, and unforgettable stays"}
           </p>
         </div>
       </div>
@@ -351,7 +361,7 @@ const TestimonialSection = () => {
                       />
                       <div className="absolute bottom-3 right-7">
                         <button className="bg-black/70 text-white cursor-pointer px-3 py-2 rounded-md text-sm font-medium hover:bg-black transition">
-                          See Room
+                          {dict?.testi_sec?.testi_see_room || "See Room"}
                         </button>
                       </div>
                     </div>
@@ -399,7 +409,7 @@ const TestimonialSection = () => {
 
         {isMobile && totalItems > 1 && (
           <div className="flex md:hidden justify-center mt-2">
-            <div className="text-xs text-gray-500">Auto-playing • Touch to pause</div>
+            <div className="text-xs text-gray-500">{dict?.testi_sec?.testi_autoplay || "Auto-playing • Touch to pause"}</div>
           </div>
         )}
       </div>

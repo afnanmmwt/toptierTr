@@ -19,3 +19,6 @@ export const fetchDict = async (lang: string) => {
     return { error: (error as Error).message || "An error occurred" };
   }
 };
+
+
+

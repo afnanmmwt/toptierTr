@@ -144,8 +144,10 @@ export default function BookingForm() {
 
   const { countries: rawCountries } = useCountries();
   const { payment_gateways } = useAppSelector((state) => state.appData?.data);
-  const selectedHotel = useAppSelector((state) => state.root.selectedHotel);
   const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
+    const rootState = useAppSelector((state) => state.root);
+
+  console.log('rootState', rootState);
   const stripe = useStripe();
 const elements = useElements();
 const [bookingReference, setBookingReference] = useState<string>(

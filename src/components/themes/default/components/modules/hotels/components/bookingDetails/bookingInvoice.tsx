@@ -21,10 +21,9 @@ interface Traveller {
 
 interface RoomData {
   id: string;
-  room_name: string;
+  name: string;
   price: string;
   currency: string;
-  room_qaunitity:number
 }
 
 interface HotelInvoiceProps {
@@ -67,10 +66,7 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
   const data = invoiceDetails[0];
   const travellers: Traveller[] = JSON.parse(data.guest || "[]");
   const rooms: RoomData[] = JSON.parse(data.room_data || "[]");
-
-const hotelSearchForm = JSON.parse(localStorage.getItem("hotelSearchForm") || "{}");
-const childAges = hotelSearchForm?.children_ages || [];
-
+  const parsedBookingData = JSON.parse(invoiceDetails[0].booking_data || "{}");
 
   const invoiceUrl = `${window.location.origin}/hotel/invoice/${data.booking_ref_no}`;
 
@@ -97,8 +93,8 @@ const childAges = hotelSearchForm?.children_ages || [];
       checkin: data.checkin,
       checkout: data.checkout,
       totalNights: 1,
-      type: rooms[0]?.room_name || "N/A",
-      quantity: rooms[0].room_qaunitity,
+      type: rooms[0]?.name || "N/A",
+      quantity: rooms.length,
       price: rooms[0]?.price || data.price_markup,
       currency: rooms[0]?.currency || data.currency_markup,
     },
@@ -117,9 +113,126 @@ const childAges = hotelSearchForm?.children_ages || [];
   };
 
 
+  const handleDownloadPDF = async () => {
+    if (!invoiceRef.current) return;
 
+    setIsDownloading(true);
 
+    const style = document.createElement("style");
+    style.innerHTML = `
+      .pdf-rendering * {
+        color: rgb(0, 0, 0) !important;
+        background-color: rgb(255, 255, 255) !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        border-color: rgb(0, 0, 0) !important;
+        font-family: Arial, sans-serif !important;
+        font-size: 12px !important;
+      }
 
+      .pdf-rendering img {
+        filter: none !important;
+        max-width: 100% !important;
+        height: auto !important;
+      }
+
+      .pdf-rendering .hidden.pdf-rendering\\:hidden {
+        display: none !important;
+      }
+
+      .pdf-rendering .flex, .pdf-rendering .grid {
+        display: block !important;
+      }
+
+      .pdf-rendering .w-full, .pdf-rendering .max-w-4xl {
+        width: 100% !important;
+      }
+
+      .pdf-rendering table {
+        border-collapse: collapse !important;
+        width: 100% !important;
+      }
+
+      .pdf-rendering td, .pdf-rendering th {
+        padding: 4px !important;
+        border: 1px solid #ccc !important;
+      }
+
+      .pdf-rendering .text-right {
+        text-align: right !important;
+      }
+
+      .pdf-rendering .text-left {
+        text-align: left !important;
+      }
+
+      .pdf-rendering .font-bold {
+        font-weight: bold !important;
+      }
+
+      .pdf-rendering .bg-white {
+        background-color: #fff !important;
+      }
+
+      .pdf-rendering .border {
+        border: 1px solid #ddd !important;
+      }
+
+      .pdf-rendering .rounded-lg {
+        border-radius: 0 !important;
+      }
+    `;
+    document.head.appendChild(style);
+
+    invoiceRef.current.classList.add('pdf-rendering');
+
+    try {
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const element = invoiceRef.current;
+
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        allowTaint: true,
+        removeContainer: true,
+        imageTimeout: 0,
+        foreignObjectRendering: false,
+      });
+
+      const imgData = canvas.toDataURL("image/jpeg", 1.0);
+      const pdf = new jsPDF("p", "mm", "a4");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
+      heightLeft -= pdfHeight;
+
+      while (heightLeft > 0) {
+        position = -pdfHeight * Math.ceil((imgHeight - heightLeft) / pdfHeight);
+        pdf.addPage();
+        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+      }
+
+      pdf.save(`Hotel-Invoice-${bookingData.bookingReference}.pdf`);
+    } catch (error) {
+      console.error("PDF download error:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      invoiceRef.current?.classList.remove('pdf-rendering');
+      style.remove();
+      setIsDownloading(false);
+    }
+  };
 
 
   const handlePayNow = async () => {
@@ -184,121 +297,7 @@ View Invoice: ${invoiceUrl}`;
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, "_blank");
   };
-  const handleDownloadPDF = async () => {
-    if (!invoiceRef.current) return;
 
-    setIsDownloading(true);
-
-    // const style = document.createElement("style");
-    // style.innerHTML = `
-    //   .pdf-rendering * {
-    //     color: rgb(0, 0, 0) !important;
-    //     background-color: rgb(255, 255, 255) !important;
-    //     background-image: none !important;
-    //     box-shadow: none !important;
-    //     text-shadow: none !important;
-    //     border-color: rgb(0, 0, 0) !important;
-    //     font-family: Arial, sans-serif !important;
-    //     font-size: 12px !important;
-    //   }
-
-    //   .pdf-rendering img {
-    //     filter: none !important;
-    //     max-width: 100% !important;
-    //     height: auto !important;
-    //   }
-
-    //   .pdf-rendering .hidden.pdf-rendering\\:hidden {
-    //     display: none !important;
-    //   }
-
-    //   .pdf-rendering .flex, .pdf-rendering .grid {
-    //     display: block !important;
-    //   }
-
-    //   .pdf-rendering .w-full, .pdf-rendering .max-w-4xl {
-    //     width: 100% !important;
-    //   }
-
-    //   .pdf-rendering table {
-    //     border-collapse: collapse !important;
-    //     width: 100% !important;
-    //   }
-
-    //   .pdf-rendering td, .pdf-rendering th {
-    //     padding: 4px !important;
-    //     border: 1px solid #ccc !important;
-    //   }
-
-    //   .pdf-rendering .text-right {
-    //     text-align: right !important;
-    //   }
-
-    //   .pdf-rendering .text-left {
-    //     text-align: left !important;
-    //   }
-
-    //   .pdf-rendering .font-bold {
-    //     font-weight: bold !important;
-    //   }
-
-    //   .pdf-rendering .bg-white {
-    //     background-color: #fff !important;
-    //   }
-
-    //   .pdf-rendering .border {
-    //     border: 1px solid #ddd !important;
-    //   }
-
-    //   .pdf-rendering .rounded-lg {
-    //     border-radius: 0 !important;
-    //   }
-    // `;
-    // document.head.appendChild(style);
-
-    // invoiceRef.current.classList.add('pdf-rendering');
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      const element = invoiceRef.current;
-
-      const canvas = await html2canvas(element);
-
-      const imgData = canvas.toDataURL("image/jpeg");
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "px",
-        format: "a4",
-      });
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, "JPEG", 0, 0, pdfWidth, imgHeight);
-      heightLeft -= pdfHeight;
-
-      while (heightLeft > 0) {
-        position = -pdfHeight * Math.ceil((imgHeight - heightLeft) / pdfHeight);
-        pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
-      }
-
-      pdf.save(`Hotel-Invoice-${bookingData.bookingReference}.pdf`);
-    } catch (error) {
-      console.error("PDF download error:", error);
-      alert("Failed to generate PDF. Please try again.");
-    } finally {
-      invoiceRef.current?.classList.remove('pdf-rendering');
-      // style.remove();
-      setIsDownloading(false);
-    }
-  };
   return (
     <div className="min-h-screen bg-gray-100 py-6 sm:py-10 px-4 sm:px-6">
       <div
@@ -529,25 +528,18 @@ View Invoice: ${invoiceUrl}`;
                       </td>
                     </tr>
                   ))}
-                  {/* {travellers.filter((tr: any) => tr.traveller_type === "child").length === 0 &&
-    childAges.map((age: number, index: number) => (
-      <tr key={`local-child-${index}`}>
-        <td className="p-2">Child {index + 1}</td>
-        <td className="p-2">Child ({age} years old)</td>
-      </tr>
-    ))} */}
                 </tbody>
               </table>
             </div>
           </div>
 
           {/* Hotel Info */}
-          <div className="flex flex-col md:flex-row border max-h-50 border-gray-200 rounded-xl overflow-hidden bg-white">
+          <div className="flex flex-col md:flex-row border border-gray-200 rounded-xl overflow-hidden bg-white">
             <div className="md:w-1/3 w-full">
               <img
                 src={bookingData.hotel.image || "/images/default-hotel.jpg"}
                 alt={bookingData.hotel.name}
-                className="w-full h-full object-cover"
+                className="w-full h-40 md:h-full object-cover"
               />
             </div>
             <div className="flex-1 p-5 flex flex-col justify-center">
@@ -603,12 +595,6 @@ View Invoice: ${invoiceUrl}`;
                   </td>
                   <td className="py-2">{bookingData.room.type}</td>
                 </tr>
-                  <tr className="border-b border-gray-100">
-                  <td className="font-semibold py-2 pr-4">
-                    {dict?.hotelInvoice?.roomDetails?.quantity}
-                  </td>
-                  <td className="py-2">{bookingData.room.quantity}</td>
-                </tr>
                 <tr>
                   <td className="font-semibold py-2 pr-4">
                     {dict?.hotelInvoice?.roomDetails?.total}
@@ -622,7 +608,7 @@ View Invoice: ${invoiceUrl}`;
           {/* Fare + Tax Info */}
           <div className="border border-gray-200 rounded-xl p-4">
             {/* Rate Comment Section */}
-            {data.booking_data.ratecomments && (
+            {invoiceDetails[0]?.supplier && invoiceDetails[0].cancellation_request === "0" && (
               <div>
                 <div>
                   <h3 className="font-bold text-center pb-2">Rate Comment</h3>
@@ -630,8 +616,13 @@ View Invoice: ${invoiceUrl}`;
                 <ul className="border border-gray-200 rounded-lg mb-2">
                   <li className="p-3 border-b border-gray-200 last:border-b-0">
                     <p>
-                    {data.booking_data.ratecomments}
-
+                      Payable through{" "}
+                      <span className="font-medium">{invoiceDetails[0].supplier}</span>, acting as agent for the service operating company,
+                      details of which can be provided upon request. VAT:{" "}
+                      <span className="font-medium">{invoiceDetails[0].vat}</span> Reference:{" "}
+                      <span className="font-medium">
+                        {invoiceDetails[0].pnr ? invoiceDetails[0].pnr : "N/A"}
+                      </span>
                     </p>
                   </li>
                 </ul>
@@ -699,54 +690,53 @@ View Invoice: ${invoiceUrl}`;
         </div>
 
         {/* Bottom Action Buttons Row */}
-      <div className="border-t border-gray-200 bg-white py-5 px-6 flex flex-col sm:flex-row gap-3 justify-between items-center">
-  {/* Download PDF */}
-  <button
-    onClick={handleDownloadPDF}
-    disabled={isDownloading}
-    className="flex items-center justify-center gap-2 w-48 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm transition-opacity"
-  >
-    {isDownloading ? (
-      <>
-        <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
-        <span>Loading...</span>
-      </>
-    ) : (
-      <>
-        <Icon icon="mdi:tray-arrow-down" width="20" height="20" />
-        <span>{dict?.hotelInvoice?.buttons?.downloadPdf || "Download as PDF"}</span>
-      </>
-    )}
-  </button>
+        <div className="border-t border-gray-200 bg-white py-5 px-6 flex flex-col sm:flex-row gap-3 justify-between items-center">
+          {/* Download PDF Button — Loading without changing width */}
+          <button
+            onClick={handleDownloadPDF}
+            disabled={isDownloading}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm transition-opacity"
+          >
+            {isDownloading ? (
+              <>
+                <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
+                <span>Loading...</span>
+              </>
+            ) : (
+              <>
+                <Icon icon="mdi:tray-arrow-down" width="20" height="20" />
+                <span>{dict?.hotelInvoice?.buttons?.downloadPdf || "Download as PDF"}</span>
+              </>
+            )}
+          </button>
 
-  {/* Send to WhatsApp */}
-  <button
-    onClick={handleShareWhatsApp}
-    className="flex items-center justify-center gap-2 w-48 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm"
-  >
-    <Icon icon="mdi:whatsapp" width="20" height="20" />
-    <span>{dict?.hotelInvoice?.buttons?.sendToWhatsApp || "Send to WhatsApp"}</span>
-  </button>
+          {/* Send to WhatsApp Button — unchanged */}
+          <button
+            onClick={handleShareWhatsApp}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm"
+          >
+            <Icon icon="mdi:whatsapp" width="20" height="20" />
+            <span>{dict?.hotelInvoice?.buttons?.sendToWhatsApp || "Send to WhatsApp"}</span>
+          </button>
 
-  {/* Request for Cancellation */}
-  <button
-    onClick={handleCancellation}
-    className="flex items-center justify-center gap-2 w-48 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm"
-  >
-    {isCancelling ? (
-      <>
-        <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
-        <span>Cancelling...</span>
-      </>
-    ) : (
-      <>
-        <Icon icon="mdi:close" width="20" height="20" />
-        <span>{dict?.hotelInvoice?.buttons?.requestCancellation || "Request for Cancellation"}</span>
-      </>
-    )}
-  </button>
-</div>
-
+          {/* Request for Cancellation Button */}
+          <button
+            onClick={handleCancellation}
+            className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[180px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm"
+          >
+            {isCancelling ? (
+              <>
+                <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
+                <span>Cancelling...</span>
+              </>
+            ) : (
+              <>
+                <Icon icon="mdi:close" width="20" height="20" />
+                <span>{dict?.hotelInvoice?.buttons?.requestCancellation || "Request for Cancellation"}</span>
+              </>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

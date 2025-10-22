@@ -14,7 +14,7 @@ export default async function Page({ params }: {
 
   const response = await hotel_invoice(invoiceId)
   const result =response?.response
-
+  // console.log("invoice response",invoiceId)
   return (
     <TransitionLayout>
       <div className="flex flex-col bg-gray-100 dark:bg-gray-900 dark:text-gray-50 min-h-screen items-center justify-center ">
@@ -32,7 +32,9 @@ export default async function Page({ params }: {
               Invoice Not Found
             </h2>
             <p className="text-gray-600 dark:text-gray-300 max-w-md">
+
             </p>
+
           </div>
         )}
       </div>

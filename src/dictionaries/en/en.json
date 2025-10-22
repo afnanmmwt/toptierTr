@@ -1,687 +1,426 @@
 {
-  "header": {
-    "services": "Services",
-    "pages": "Company",
-    "flights": "Flights",
-    "hotels": "Hotels",
-    "cars": "Cars",
-    "tours": "Tours",
-    "visa": "Visa",
-    "cruises": "Cruises",
-    "settings": "Settings",
-    "login": "Login",
-    "agent": "Agent",
-    "sign_up": "Sign up",
-    "account": {
-      "dashboard":"Dashboard",
-      "btn_text": "Account",
-      "booking": "My Booking",
-      "profile": "My Profile",
-      "logout": "Logout"
-    }
-  },
-  "sidebar": {
-    "app_settings": "App Settings",
-    "dark_mode": "Dark Mode",
-    "dark_mode_sub": "Switch theme to dark mode",
-    "select_country": "Select Country",
-    "select_lang": "Select Language",
-    "select_currency": "Select Currency"
-  },
-  "home": {
-    "offer_section": {
-      "heading": "Exclusive Offers"
-    },
-    "services_section": {
-      "heading": "Featured Services",
-      "description": "Best deals on popular destinations and enjoy today"
+  "home_page": {
+    "hero_section": {
+      "where_to": "Where to?",
+      "hotel_search_placeholder": "Search city or hotel...",
+      "check_in": "Check - in",
+      "check_out": "Check - out",
+      "guests": "Guests",
+      "rooms": "Rooms",
+      "adults": "Adults",
+      "children": "Children",
+      "child_age": "Child Age",
+      "years": "years",
+      "nationality": "Nationality",
+      "search_hotels": "Search Hotels",
+      "searching": "Searching...",
+      "signup": "Sign Up",
+      "login": "Login"
     }
   },
   "signup_form": {
-    "image_section": {
-      "title": "Explore: Your Ultimate Travel Management Solution",
-      "subtext": "Streamline travel management with our all-in-one platform. Manage bookings, itineraries, and enhance client experiences effortlessly with our user-friendly tools.",
-      "lets_do": "LET'S DO IT"
-    },
-    "title": "Create Account",
-    "subtitle": "Join us and start your journey today",
-    "fields": {
-      "first_name": {
-        "label": "First Name *",
-        "placeholder": "Elon"
-      },
-      "last_name": {
-        "label": "Last Name *",
-        "placeholder": "Musk"
-      },
-      "email": {
-        "label": "Email *",
-        "placeholder": "john.doe@example.com"
-      },
-      "country": {
-        "label": "Country *",
-        "placeholder": "Country"
-      },
-      "password": {
-        "label": "Password *",
-        "placeholder": "6+ characters"
-      }
-    },
+    "heading": "Create an Account",
+    "already_account": "Already have an account?",
+    "sign_in": "Sign in",
+    "first_name": "First Name",
+    "first_name_placeholder": "Enter your first name",
+    "last_name": "Last Name",
+    "last_name_placeholder": "Enter your last name",
+    "country_label": "Select Country",
+    "country_placeholder": "Select Country",
+    "phone_label": "Phone Number",
+    "phone_placeholder": "Phone Number (+92xxxxxxxxxxx)",
+    "email_label": "Email",
+    "email_placeholder": "Email Address",
+    "password_label": "Password",
+    "password_placeholder": "Enter Password",
+    "human_label": "I am human",
+    "agree_text": "I agree to the",
+    "terms_of_use": "Terms of Use",
+    "and": "and",
+    "privacy_policy": "Privacy Policy",
     "create_account_button": "Create Account",
-    "sign_in_prompt": "Already have an Account?",
-    "sign_in_link": "Login in"
+    "success_message": "Signup successful! 🎉"
   },
-  "flight_search": {
-    "module_name": "Flight",
-    "flying_from": "Flying From",
-    "flying_to": "Flying To",
-    "trip_type": "Trip Type",
-    "class": "Flight Class",
-    "travelers": "Travelers",
-    "economy": "Economy",
-    "premium_economy": "Premium Economy",
-    "business": "Business",
-    "first_class": "First Class",
-    "one_way": "One-Way",
-    "round_trip": "Round-Trip",
-    "multi_city": "Multi-City",
-    "from_placeholder": "Airport Code Or City Name",
-    "to_placeholder": "Flying To",
-    "search": "Search",
-    "adults": "Adults",
-    "adults_age": "12+ years",
-    "children": "Children",
-    "children_age": "2-11 years",
-    "infants": "Infants",
-    "infants_age": "Under 2 years",
-    "add_segment": "Add Segment",
-    "remove_segment": "Remove",
-    "depart_date": "Depart Date",
-    "return_date": "Return Date",
-    "swap": "Swap",
-    "no_city_found": "No City or Airport found",
-    "try_different_search": "Try a different search term",
-    "Searching": "Searching...",
-    "segment": "Flight",
-    "error_required": "This field is required",
-    "error_invalid": "Invalid value",
-    "total": "Total",
-    "travelers_dropdown_header": "Select Travelers",
-    "add_more_flight": "Add Another Flights",
-    "errors": {
-      "required": "This field is required",
-      "invalid_date": "Invalid date",
-      "invalid_value": "Invalid value"
-    }
-  },
-  "hotel_search": {
-    "destination_input": {
-      "title": "Destination",
-      "placeholder": "City,hotel name or area"
-    },
-    "checkin": {
-      "title": "Check-in Date"
-    },
-    "checkout": {
-      "title": "Check-out Date"
-    },
-    "search_btnText": "Search Hotels",
-    "guest_button": {
-      "title": "Guest",
-      "guest_title": "Guest",
-      "room_title": "room",
-      "drop_down_title": "Select Guests and Rooms",
-      "rooms_text": "Rooms",
-      "rooms_subtex": "Numbers of rooms",
-      "adult_text": "Adults",
-      "adult_subtex": "18+ years",
-      "children_text": "Children",
-      "children_subtex": "0-17",
-      "nationality": "Nationality",
-      "for_booking": "Select your nationality for booking",
-      "total": "Total Guest"
-    }
-  },
-  "flight_listing": {
-    "passenger": "Passenger",
-    "economy": "Economy",
-    "roundtrip": "Roundtrip",
-    "show_search": "Show Search",
-    "hide_search": "Hide Search",
-    "filter": "Filters",
-    "clear_all": "Clear All",
-    "stops": "Stops",
-    "price": "Price Range",
-    "departure": "Departure Time",
-    "airlines": "Airlines",
-    "baggage": "Baggage Options",
-    "non_stop": "Non-stop",
-    "1_stop": "1 Stop",
-    "2+_stops": "2+ Stops",
-    "flights": "Flights",
-    "flight": "Flight",
-    "from": "From",
-    "early": "Early Morning",
-    "morning": "Morning",
-    "afternoon": "Afternoon",
-    "evening": "Evening",
-    "free_baggage": "Free Baggage",
-    "paid_baggage": "Paid Baggage",
-    "no_baggage": "No Baggage",
-    "showing": "Showing",
-    "subtitle_page": "Best deals sorted by price",
-    "direct": "Direct",
-    "per_person": "Per Person",
-    "pm": "PM",
-    "am": "AM",
-    "details": "Details",
-    "select_flight": "Select Flight",
-    "select": "Select",
-    "add_cart": "Add to Cart",
-    "cart": "Cart",
-    "flight_itinerary": "Flight Itinerary",
-    "depart": "Depart",
-    "arrival": "Arrival",
-    "segment": "Segment",
-    "more_details": "More Details",
-    "price_breakdown": "Price Breakdown",
-    "adult_price": "Adult Price",
-    "total_per_person": "Total Per Person",
-    "baggage_policy": "Baggage Policy",
-    "checked_baggage": "Checked Baggage",
-    "included_economy": "Included in Economy Class",
-    "cabin_baggage": "Cabin Baggage",
-    "cabin_bag_allowed": "Cabin bag + Personal items allowed",
-    "cancellation_policy": "Cancellation Policy",
-    "non_refundable_fare": "Non-Refundable Fare",
-    "non_refund_list_1": "No refund after booking",
-    "non_refund_list_2": "Date/time changes may be allowed for a fee",
-    "non_refund_list_3": "Name change is not allowed",
-    "non_refund_list_4": "Travel insurance is recommended",
-    "refundable_fare": "Refundable Fare",
-    "refundable_fare_list_1": "Full or partial refund available based on fare rules",
-    "refundable_fare_list_2": "Changes allowed with minimal fees",
-    "fare_rules_conditions": "Fare Rules & Conditions",
-    "ticket_validity": "Ticket Validity",
-    "ticket_validity_det": "Valid only for specified flight date and time. No same-day standby allowed.",
-    "seat_assignment": "Seat Assignment",
-    "seat_assignment_det": "Seat selection available during check-in or for a fee during booking.",
-    "special_services": "Meal preferences, wheelchair assistance, and other special services must be requested at least 48 hours in advance.",
-    "check_in_requirements": "Check-in Requirements",
-    "check_in_requirements_det": "Online check-in opens 24 hours before departure. Airport check-in closes 1 hour before domestic flights.",
-    "supplied_by": "Supplied By",
-    "ref": "Reference"
-  },
-  "appDownloadAndSubscribe": {
-    "subscribe": {
-      "badge": "Join 50K+ Happy Travelers",
-      "heading": "Get Exclusive Travel Deals",
-      "description": "Weekly flash sales, secret destinations, and personalized recommendations delivered to your inbox.",
-      "input_placeholder": "Enter your email address",
-      "button": "Subscribe Now",
-      "benefits": {
-        "free": "Free forever",
-        "privacy": "Privacy protected",
-        "no_spam": "No spam",
-        "weekly_deals": "Weekly deals"
-      },
-      "joined_this_week": "1,250+ joined this week",
-      "rating": "4.9/5 (2K+ reviews)"
-    },
-    "appdownload": {
-      "appStore_btn_title": "Download On",
-      "googlePlay_btn_title": "Get It On",
-      "appStore_btn_text": "App Store",
-      "googlePlay_btn_text": "Google Play",
-      "heading": "Your Travel Companion",
-      "subheading": "Always in Your Pocket",
-      "description": "Experience seamless booking with our premium mobile app. Get exclusive deals, instant confirmations, and 24/7 support.",
-      "app_store": "Download on App Store",
-      "google_play": "Get it on Google Play",
-      "features": {
-        "instant_booking": "Instant Booking",
-        "best_deals": "Best Deals",
-        "offline_access": "Offline Access",
-        "support": "24/7 Support"
-      }
-    }
-  },
-  "footer": {
-    "important_info":"Important Info",
-    "support_links":"Support Links",
-    "contact_info":"Contact Info"
+  "errors": {
+    "first_name_required": "First name is required",
+    "last_name_required": "Last name is required",
+    "email_invalid": "Invalid email address",
+    "phone_number_required": "Phone number is required",
+    "phone_number_invalid": "Enter a valid international phone number",
+    "country_code_required": "Country code is required",
+    "password_min_length": "Password must be at least 6 characters",
+    "terms_required": "You must accept the terms and conditions",
+    "human_required": "Please confirm you are human"
   },
   "login_form": {
-    "image_section": {
-      "title": "Explore: Your Ultimate Travel Management Solution",
-      "subtext": "Streamline travel management with our all-in-one platform. Manage bookings, itineraries, and enhance client experiences effortlessly with our user-friendly tools.",
-      "lets_do": "LET'S DO IT"
-    },
-    "title": "Login to Your Account",
-    "subtitle": "Welcome back! Please enter your details.",
-    "lets_do": "LET'S DO IT",
-    "fields": {
-      "email": {
-        "label": "Email *",
-        "placeholder": "Enter you Email"
-      },
-      "password": {
-        "label": "Password *",
-        "placeholder": "Enter your password"
-      }
-    },
-    "keep_logged_in": "Keep me logged in",
-    "forgot_password": "Forgot Password?",
-    "login_button": "Login",
-    "login_loading": "Logging in...",
-    "no_account_prompt": "Don't have an Account?",
-    "sign_up_link": "Sign up"
-  },
-  "forget_passForm": {
-    "title": "Forgot Password",
-    "subtex": "No worries, we will mail you a 6-digit code to your recovery email address to reset your password.",
-    "email_title": "Email *",
-    "email_placeholder": "Email Address",
-    "btn_text": "Send Code",
-    "back_to": "Back to",
-    "login": "Login",
-    "policy": {
-      "privacy": "Privacy Policy",
-      "terms": "Terms and Conditions",
-      "status": "System Status"
-    }
-  },
-  "userProfile": {
-    "profile_tab": "Profile",
-    "chanage_password": "Change Password",
-    "first_name": " First Name",
-    "fn_placeholder": "Enter First Name",
-    "last_name": "Last Name",
-    "ln_placeholder": "Enter Last Name",
+    "success_message": "Login successful!",
+    "text": "Sign in",
+    "email_message": "Email is required",
+    "password_message": "Password is required",
+    "new_user": "New user ? ",
+    "create_account": "Create an account",
     "email": "Email",
-    "email_placeholder": "Enter Email Address",
-    "phone": "Phone (without country code) (optional)",
-    "country": "Country",
-    "phone_placeholder": "Enter Phone Number",
+    "email_placeholder": "Enter your email",
     "password": "Password",
-    "password_placeholder": "New Password",
-    "current_password": " Old Password",
-    "confirm_password": "Confirm New Password",
-    "update": "Update",
-    "address": "Address (optional)",
-    "address_placeholder": "Enter Enter Address",
-    "form_btn": "Submit",
-    "change_password_btn": "Change Password",
-    "success": "Profile updated successfully"
+    "password_placeholder": "Enter your password",
+    "remember_me": "Remember me",
+    "forgot_password": "Forgot Password?",
+    "login_button": "Login"
   },
-  "dashboard": {
-    "dashboard": "Dashboard",
-    "profile": "Profile",
-    "logout": "Logout",
-    "my_bookings": "My Bookings",
-    "favourite": "Favourite",
-    "my_posts": "My Posts",
-    "price_alerts": "Price Alerts",
-    "my_cards": "My Cards",
-    "promo_codes": "Promo Codes",
-    "account": {
-      "account": "Account",
-      "profile": "Profile",
-      "logout": "Logout"
-    },
-    "booking_tabs": {
-      "all": "All",
-      "awaiting_payment": "Awaiting Payment",
-      "upcomming": "Upcomming",
-      "awaiting_review": "Awaiting Review"
-    },
-    "booking_card": {
-      "booking_no": "Booking No",
-      "booking_date": "Booking Date"
-    },
-    "dashboardPage": {
-      "title": "Dashboard",
-      "description": "Welcome back! Here's an overview of your trips",
-      "dashboardCards": {
-        "totalBookings": "Total Bookings",
-        "pending": "Pending",
-        "confirmed": "Confirmed",
-        "walletBalance": "Wallet Balance"
-      },
-      "dashbaordMainContent": {
-        "title": "Recent Bookings",
-        "viewAll": "View All",
-        "notFound": "No bookings found",
-        "notDesc": "Make your first booking"
-      },
-      "dashboardAside": {
-        "quickAction": "Quick Action",
-        "newBooking": "New Booking",
-        "editeProfile": "Edit Profile",
-        "paymentMethods": "Payment Methods",
-        "accountSummary": "Account Summary",
-        "memberSince": "Member Since",
-        "totalTrip": "Total Trips",
-        "loyaltyPoints": "Loyalty Points",
-        "recentActivity": "Recent Activity",
-        "recentConfirmed": "Flight booking confirmed",
-        "recentPayment": "Payment processed",
-        "profileUpdate": "Profile Updates"
-      }
-    }
+  "featured_dest": {
+    "dest_heading": "Featured Destination",
+    "dest_subheading": "Discover the most stunning and sought-after travel spots, curated for unforgettable experiences around the globe.",
+    "no_featured_dest": "No Featured Destination ",
+    "dest_explore": "Explore Now",
+    "error": "User must be logged in to mark as favourite"
   },
-
-"completeBookingPage":{
-  "title": "Complete Your Booking",
-  "subtitle": "Secure your flight reservation",
-  "timer": {
-    "label": "Time Remaining"
+  "featured_hotels": {
+    "heading": "Featured Hotels",
+    "subheading": "Experience world-class comfort and unmatched hospitality in the heart of paradise.",
+    "no_amenities": "No amenities found",
+    "book_now": "Book Now",
+    "loading": "Loading...",
+    "per_night": "/night",
+    "error_login_required": "User must be logged in to mark as favourite",
+    "error_failed_fav": "Failed to update favourite",
+    "success_updated_fav": "Updated favourites ",
+    "something_wrong": "Something went wrong"
   },
-  "bookingOption":{
-  "title": "Select Your Booking Type",
-  "guest": {
-    "label": "Guest Booking",
-    "description": "No account needed"
+  "offer_sec": {
+    "offer_heading": "Why Choose Us",
+    "offer_subheading": "Experience unparalleled travel services with us, where your satisfaction is our top priority."
   },
-  "login": {
-    "label": "Login Account",
-    "description": "Use existing account",
-    "emailPlaceholder": "Email Address",
-    "passwordPlaceholder": "Password",
-    "loginButton": "Login to Continue"
-  }
-},
-"bookingAside":{
-  "tripDetails": {
-    "title": "Trip details",
-    "outbound": {
-      "route": "Singapore → Bangkok",
-      "duration": "2h 30m",
-      "departureTime": "08:20",
-      "arrivalTime": "09:50",
-      "date": "Mon, 1 Sept",
-      "origin": {
-        "city": "Singapore • SIN",
-        "airport": "Singapore Changi"
-      },
-      "destination": {
-        "city": "Bangkok • BKK",
-        "airport": "Suvarnabhumi"
-      },
-      "airline": "Scoot",
-      "hotelSuggestion": "Rooms from $126 by Booking.com",
-      "stayDuration": "15 nights in Bangkok"
-    },
-    "return": {
-      "route": "Bangkok → Singapore",
-      "duration": "2h 25m",
-      "departureTime": "07:45",
-      "arrivalTime": "11:10",
-      "date": "Tue, 16 Sept",
-      "origin": {
-        "city": "Bangkok • DMK",
-        "airport": "Don Mueang International"
-      },
-      "destination": {
-        "city": "Singapore • SIN",
-        "airport": "Singapore Changi"
-      },
-      "airline": "Thai",
-      "warning": "Departure from different airport"
-    }
+  "testi_sec": {
+    "testi_see_room": "See Room",
+    "testi_heading": "What Our ",
+    "testi_heading_2": "Guests Are Saying ",
+    "testi_subheading": "See why travelers trust us — real reviews of comfort, convenience, and unforgettable stays",
+    "testi_autoplay": "Auto-playing • Touch to pause"
   },
-  "bookingSummary": {
-    "title": "Booking Summary",
-    "items": {
-      "adult": "1x Adult",
-      "cabinBaggage": "1x Cabin baggage",
-      "saverFare": "1x Saver fare",
-      "insurance": "1x Travel insurance (15 days)"
-    },
-    "included": "Included",
-    "total": {
-      "label": "Total (USD)",
-      "note": "Includes all taxes, fees, surcharges, and service fees"
-    }
-  },
-  "priceHold": {
-    "title": "Need more time to decide?",
-    "description1": "We'll hold this ticket price for <strong>3 days</strong> and you pay the locked price of <strong>$133</strong> when you're ready to finish your booking.",
-    "description2": "If the price goes down, you'll pay the new, lower price.",
-    "button": "Lock price for $13.30"
-  },
-  "help": {
-    "title": "Need Help?",
-    "call": "Call: +1 (555) 123-4567",
-    "email": "Email: support@flightbooking.com",
-    "chat": "Live Chat Support"
-  }
-},
-"paymentMethods":{
-  "title": "Payment Methods",
-  "options": {
-    "paypal": "PayPal",
-    "card": "Credit Card",
-    "bank": "Bank Transfer",
-    "later": "Pay Later"
-  }
-},
-"personalInfo":{
-  "title": "Personal Information",
-  "fields": {
-    "firstName": "First Name *",
-    "firstNamePlaceholder": "Enter first name",
-    "lastName": "Last Name *",
-    "lastNamePlaceholder": "Enter last name",
-    "email": "Email Address *",
-    "emailPlaceholder": "your.email@example.com",
-    "phone": "Phone Number *",
-    "phonePlaceholder": "+1 (555) 123-4567",
-    "address": "Address",
-    "addressPlaceholder": "Street address, city, state",
-    "country": "Country *",
-    "countryPlaceholder": "Select country",
-    "nationality": "Nationality *",
-    "nationalityPlaceholder": "Select nationality"
-  },
-  "countries": {
-    "US": "United States",
-    "UK": "United Kingdom",
-    "PK": "Pakistan",
-    "IN": "India",
-    "CA": "Canada"
-  }
-},
-"termsAndConditions":{
-  "title": "Legal Terms and Conditions",
-  "bookingConditions": {
-    "title": "IMPORTANT BOOKING CONDITIONS",
-    "cancellation": "<strong>Cancellation Policy:</strong> Tickets are non-refundable. Changes subject to fare difference and fees as per airline policy.",
-    "documentation": "<strong>Documentation:</strong> Valid passport required for all international flights. Ensure passport validity of at least 6 months from travel date.",
-    "baggage": "<strong>Baggage:</strong> Additional baggage fees may apply. Check airline baggage policy for restrictions.",
-    "insurance": "<strong>Travel Insurance:</strong> Recommended for trip protection. Coverage details available upon request."
-  },
-  "consent": {
-    "mandatory": {
-      "label": "MANDATORY ACKNOWLEDGMENT:",
-      "text": "I have read, understood, and agree to be bound by all {termsLink}, {privacyLink}, and {airlineLink}. I acknowledge that this constitutes a legally binding agreement."
-    },
-    "dataConsent": {
-      "label": "DATA PROCESSING CONSENT:",
-      "text": "I consent to the processing of my personal data for booking purposes and compliance with international travel regulations."
-    },
-    "newsletter": {
-      "label": "OPTIONAL:",
-      "text": "Subscribe to receive exclusive travel deals, promotions, and service updates via email."
-    }
-  },
-  "links": {
-    "terms": "Terms & Conditions",
-    "privacy": "Privacy Policy",
-    "airline": "Airline Policies"
-  },
-  "button": {
-    "confirm": "CONFIRM BOOKING & PROCEED TO PAYMENT",
-    "disabledHint": "Please accept all required terms to continue."
+  "news_letter_sec": {
+    "letter": "Newsletter",
+    "letter_name": "name",
+    "letter_name_placeholder": "Name",
+    "letter_email": "email",
+    "letter_email_placeholder": "Email",
+    "letter_continue": "Continue"
   },
   "footer": {
-    "security": "Secured by 256-bit SSL encryption",
-    "agreement": "By confirming, you authorize the transaction and agree to our booking terms"
-  }
-},
-"travlesInfo":{
-  "title": "Traveller Information",
-  "passenger": {
-    "title": "Adult Traveller 1",
-    "subtitle": "Passenger information"
+    "subheading": "Unlock extraordinary stays with our expert-curated hotels and exclusive access to the world's finest destinations.",
+    "connect": "Stay Connected",
+    "subconnect": "Subscribe to get travel tips, exclusive deals, and the latest updates.",
+    "email_placeholder": "Enter your email",
+    "subscribing": "Subscribing...",
+    "subscribe": "Subscribe",
+    "success": "Subscribed successfully",
+    "copyright": "All rights reserved.",
+    "title_explore": "Explore",
+    "title_support": "Support",
+    "title_company": "Company",
+    "title_downloads": "Downloads"
   },
-  "fields": {
-    "title": {
-      "label": "Title *",
-      "placeholder": "Select title",
-      "options": {
-        "mr": "Mr",
-        "mrs": "Mrs",
-        "ms": "Ms",
-        "miss": "Miss"
+  "hotel_listing": {
+    "advanced_search": "Advanced Search",
+    "search_hotels": "Search Hotels",
+    "search_by_hotel_name": "search by hotel name",
+    "per_night": "(per night)",
+    "price_range": "Price Range",
+    "hotel_stars": "Hotel Stars",
+    "stars": "stars",
+    "reset_filters": "Reset Filters",
+    "apply": "Apply",
+    "hotels_found": "hotels found",
+    "loading_more": "Loading more",
+    "no_more_Data": "No more data found",
+    "searching_for_hotels": "Searching for hotels...",
+    "no_hotels_found": "No hotels found",
+    "search_criteria": "Try adjusting your filters or search criteria",
+    "reset_all_filters": "Reset All Filters",
+    "filters_search": "Filters & Search",
+    "apply_filters": "Apply Filters",
+    "hotels": "hotels",
+    "sort": "Sort",
+    "rating": "Rating",
+    "low_to_high": "Low to High",
+    "high_to_low": "High to Low",
+    "name_a_to_z": "Name (A–Z)",
+    "book_now": "Book Now"
+  },
+  "contact": {
+    "contact_us": "Contact Us",
+    "address": "Address",
+    "email": "Email",
+    "phone": "Phone"
+  },
+  "hotelDetails": {
+    "hotelNamePlaceholder": "Hotel Name",
+    "aboutThisProperty": "About this Property",
+    "noAmenities": "No amenities found",
+    "showMore": "Show more",
+    "chooseYourRoom": "Choose your room",
+    "noRoomsAvailable": "No rooms available for your selected dates.",
+    "theToptierWayToTravel": "The Toptier Way to Travel",
+    "noBrandStories": "No brand stories available for this property.",
+    "needToKnowDetails": "Need-to-Know Details",
+    "frequentlyAskedQuestions": "Frequently asked questions",
+    "noSimilarHotels": "No similar hotels found.",
+    "readMore": "Read More",
+    "readLess": "Read Less",
+    "topRated": "Top Rated",
+    "freeCancellation": "Free Cancellation",
+    "bestPriceGuarantee": "Best Price Guarantee",
+    "map": "Map",
+    "unableToLoad": "Unable to load hotel details",
+    "pleaseTryAgain": "Please try again later.",
+    "allAmenities": "All Amenities",
+    "youmightAlsoLike": "You might also like"
+  },
+  "bookingForm": {
+    "personalInformation": {
+      "title": "Personal Information",
+      "subtitle": "Tell us the name of the person checking in.",
+      "firstNameLabel": "First Name",
+      "lastNameLabel": "Last Name",
+      "addressLabel": "Address"
+    },
+    "contactInformation": {
+      "title": "Contact Information",
+      "subtitle": "We'll send your confirmation to this email address.",
+      "emailLabel": "Email Address",
+      "nationalityLabel": "Nationality",
+      "currentCountryLabel": "Current Country",
+      "phoneCodeLabel": "Country Code",
+      "phoneNumberLabel": "Phone Number"
+    },
+    "travelersInformation": {
+      "title": "Travelers Information",
+      "subtitle": "Important details to complete your booking",
+      "adultTraveller": "Adult Traveller",
+      "childTraveller": "Child Traveller",
+      "titleLabel": "Title"
+    },
+    "paymentMethod": {
+      "title": "Payment Method",
+      "subtitle": "Safe, secure transactions. Your personal information is protected.",
+      "noPaymentMethods": "No payment methods available"
+    },
+    "cancellationPolicy": {
+      "title": "Cancellation Policy",
+      "acceptText": "I accept the cancellation policy for this booking and the",
+      "termsAndConditions": "Terms & Conditions"
+    },
+    "buttons": {
+      "confirmAndBook": "Confirm & Book",
+      "processing": "Processing..."
+    },
+    "errors": {
+      "firstNameRequired": "First name is required",
+      "lastNameRequired": "Last name is required",
+      "addressRequired": "Address is required",
+      "invalidEmail": "Invalid email address",
+      "nationalityRequired": "Nationality is required",
+      "currentCountryRequired": "Current country is required",
+      "countryCodeRequired": "Country code is required",
+      "phoneNumberRequired": "Phone number is required",
+      "invalidPhoneNumber": "Enter a valid international phone number",
+      "atLeastOneTraveller": "At least one traveller is required",
+      "titleRequired": "Title is required",
+      "paymentMethodRequired": "Please select a payment method",
+      "acceptPolicyRequired": "You must accept the cancellation policy"
+    },
+    "titles": {
+      "mr": "Mr",
+      "mrs": "Mrs",
+      "ms": "Ms",
+      "dr": "Dr"
+    }
+  },
+  "bookingDetails": {
+    "pageTitle": "Booking Details",
+    "bookingSummary": "Booking Summary",
+    "roomName": "Room Name",
+    "checkinDate": "Checkin Date",
+    "checkoutDate": "Checkout Date",
+    "roomQuantity": "Room Quantity",
+    "nights": "Nights",
+    "guests": "Guests",
+    "roomPrice": "Room Price",
+    "toptierFee": "TopTier Fee",
+    "total": "Total",
+    "adults": "Adults",
+    "children": "Children"
+  },
+  "hotelInvoice": {
+    "errors": {
+      "noInvoiceFound": "No invoice details found."
+    },
+    "header": {
+      "paymentStatus": "Payment Status:",
+      "bookingStatus": "Booking Status:",
+      "phone": "Phone:",
+      "email": "Email:"
+    },
+    "bookingNote": "Cancellation request sent. we will update as soon as we change the status",
+    "bookingInfo": {
+      "bookingId": "Booking ID",
+      "bookingpnr": "PNR",
+      "proceed": "Proceed",
+      "reference": "Reference",
+      "date": "Date",
+      "location": "Location"
+    },
+    "travellers": {
+      "title": "Travellers",
+      "table": {
+        "no": "No",
+        "sr": "SR",
+        "name": "Name"
       }
     },
-    "firstName": {
-      "label": "First Name *",
-      "placeholder": "First name"
+    "hotelInfo": {
+      "phone": "Phone:",
+      "email": "Email:",
+      "website": "Website:"
     },
-    "lastName": {
-      "label": "Last Name *",
-      "placeholder": "Last name"
+    "roomDetails": {
+      "title": "Room Details",
+      "checkin": "Checkin:",
+      "checkout": "Checkout:",
+      "type": "Type:",
+      "total": "Total:"
     },
-    "nationality": {
-      "label": "Nationality *",
-      "placeholder": "Select nationality"
+    "fareAndTax": {
+      "rateCommentTitle": "Rate Comment",
+      "taxMessage": "Estimated total amount of taxes & fees for this booking: {tax} payable on arrival. City tax may vary by accommodation. Check-in hour 14:00 - 00:00. Check-out hour 12:30 - 12:00.",
+      "taxLabel": "TAX",
+      "totalLabel": "Total"
     },
-    "dob": {
-      "label": "Date of Birth *",
-      "day": "Day",
-      "month": "Month",
-      "year": "Year"
+    "customer": {
+      "title": "Customer",
+      "email": "Email:",
+      "contact": "Contact:",
+      "address": "Address:"
     },
-    "passportNumber": {
-      "label": "Passport Number *",
-      "placeholder": "Enter passport or ID number"
+    "customerCare": {
+      "title": "Customer Care",
+      "email": "Email:",
+      "contact": "Contact:",
+      "website": "Website:"
     },
-    "issueDate": {
-      "label": "Passport Issue Date *"
+    "buttons": {
+      "downloadPdf": "Download PDF",
+      "payNow": "Pay Now",
+      "sendToWhatsApp": "Send to WhatsApp",
+      "requestCancellation": "Request for Cancellation"
     },
-    "expiryDate": {
-      "label": "Passport Expiry Date *"
+    "alert": {
+      "pdfNotImplemented": "PDF download functionality will be implemented later."
     }
   },
-  "countries": {
-    "US": "United States",
-    "UK": "United Kingdom",
-    "PK": "Pakistan",
-    "IN": "India"
-  }
-},
-"baggageSelection":{
-  "title": "Select Your Baggage",
-  "cabinBag": {
-    "label": "Cabin Bag - 7kg",
-    "dimensions": "20 × 30 × 40 cm • Overhead compartment",
-    "included": "Included"
+  "support": {
+    "heading": "Support",
+    "p_1": "At",
+    "p_3": ", we are passionate about helping you explore the world with comfort and confidence. Your support helps us continue offering the best travel experiences, hotel deals, and inspiration for every traveler.",
+    "contact_us": "Contact Us",
+    "empower_travelers": "Empower Travelers",
+    "empower_travelers_p": "Your contribution helps travelers discover hidden gems and trusted destinations worldwide.",
+    "sustain_quality": "Sustain Quality",
+    "sustain_quality_p": "We continuously enhance our services and create better travel experiences for everyone.",
+    "community_growth": "Community Growth",
+    "community_growth_p": "Join our mission to build a global community of passionate travelers who love to explore."
   },
-  "checkedBag": {
-    "label": "Checked Bag"
+  "profilelabels": {
+    "profileHeading": "Profile Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "password": "Password (Optional)",
+    "phoneCode": "Phone Code",
+    "phoneNumber": "Phone Number",
+    "country": "Country",
+    "state": "State",
+    "city": "City",
+    "address1": "Address 1",
+    "address2": "Address 2"
   },
-  "actions": {
-    "addMore": "Add More Baggage",
-    "remove": "Remove"
+  "profileplaceholders": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email Address",
+    "password": "New Password (leave blank to keep current)",
+    "phoneNumber": "Phone Number (e.g., 923483344559)",
+    "state": "State",
+    "city": "City",
+    "address1": "Address Line 1",
+    "address2": "Address Line 2",
+    "selectCountryCode": "Select Country Code",
+    "selectCountry": "Select Country"
   },
-  "price": {
-    "currency": "USD"
-  }
-}
-},
-"price_alert_page":{
-  "title": "Price Alerts",
-  "subtitle": "Rest easy as we keep an eye on changes to prices and flight availability for you.",
-  "notice": "Prices shown are our best estimates, but they might change in real time.",
-  "monitoring_active": "24-hour price monitoring is active!",
-  "from": "Lahore",
-  "to": "Doha",
-  "one_way": "One-way",
-  "date": "Sep 11, 2025",
-  "ideal_price": "Ideal price Rs 76,117",
-  "current_price": "--",
-  "view_button": "View",
-  "cta_title": "Price alerts let you track price changes so you can decide on the best time to book.",
-  "add_alert_button": "Add a Price Alert",
-  "modal": {
-    "title": "Price Alert",
-    "info_message": "Set departure time to find your ideal flights!",
-    "description": "Our price alert system monitors flight prices continuously and sends you notifications when prices drop for your selected routes. Simply set up an alert with your preferred destination and travel dates, and we'll do the rest. You'll receive email notifications whenever we detect significant price changes, helping you save money on your next trip.",
-    "email_label": "Receive alerts by email",
-    "email": "shayan.ali0908@gmail.com",
-    "enable_button": "Enable 24h Price Tracking"
+  "profiletoasts": {
+    "success": "Profile updated successfully!",
+    "error": "Failed to update profile"
   },
-  "icons": {
-    "settings": "Settings",
-    "delete": "Delete"
-  }
-},
-"my_card_page":{
-  "title": "Payment Methods",
-  "subtitle": "Manage your saved cards and payment options securely",
+  "profilebuttons": {
+    "updateProfile": "Update Profile",
+    "updating": "Updating..."
+  },
+  "profilemessages": {
+    "loginRequired": "Please log in to view your profile."
+  },
+  "profileerrors": {
+    "firstNameRequired": "First name is required",
+    "lastNameRequired": "Last name is required",
+    "invalidEmail": "Invalid email address",
+    "phoneRequired": "Phone number is required",
+    "invalidPhone": "Enter a valid international phone number",
+    "countryCodeRequired": "Country code is required",
+    "passwordTooShort": "Password must be at least 6 characters"
+  },
+  "dashboard": {
+    "welcome_back": "Welcome back,",
+    "overview_text": "Here’s a quick look at your travel account",
+    "wallet_balance": "Wallet Balance",
+    "wallet_balance_sub": "Total Wallet Balance",
+    "bookings": "Bookings",
+    "bookings_sub": "Total Bookings",
+    "pending_invoices": "Pending Invoices",
+    "pending_invoices_sub": "Pending Invoices",
+    "all": "All",
+    "paid": "Paid",
+    "unpaid": "Unpaid",
+    "cancelled": "Cancelled",
+    "search_placeholder": "Search...",
+    "client_name": "Client Name",
+    "booking_id": "Booking ID",
+    "pnr": "PNR",
+    "payment": "Payment",
+    "booking": "Booking",
+    "date": "Date",
+    "price": "Price",
+    "no_bookings_found": "No bookings found.",
+    "showing": "Showing",
+    "of": "of",
+    "entries": "entries",
+    "prev": "Prev",
+    "next": "Next"
+  },
 
-  "secure_storage": "Your card details will be stored securely on our system",
-
-  "tabs": {
-    "my_cards": "My Cards",
-    "other": "Other"
-  },
-
-  "add_card": "Add Card",
-  "modify_card": "Modify Card",
-
-  "empty_states": {
-    "my_cards": {
-      "title": "No payment cards added",
-      "description": "Add your first card to get started with faster payments."
+   "hotel_search": {
+    "check_in_out_label": "Check - in | Check - out",
+    "guest_button": {
+      "title": "Guests",
+      "guest_title": "Guests",
+      "room_title": "Room(s)"
     },
-    "other": {
-      "title": "Other payment methods are currently not supported",
-      "description": "More payment methods are available soon."
-    }
-  },
-
-  "card": {
-    "delete": "Delete",
-    "modify": "Modify",
-    "card_number": "Bank card no.",
-    "enter_card_number": "Enter card number",
-    "cardholder_name": "Cardholder name"
-  },
-
-  "form": {
-    "name_must_match": "Please ensure the cardholder name matches the name saved to your account.",
-    "accepted_cards_label": "Accepted cards:",
-    "pci_notice": "Trip.com is in compliance with PCI DSS requirements, your payment information is secured.",
-    "unverified_notice": "Your newly added card is currently unverified. We’ll verify your card during the payment process.",
-    "enter_number_to_continue": "Please enter your card number to continue"
-  },
-
-  "buttons": {
-    "cancel": "Cancel",
-    "submit": "Submit"
-  }
-},
- "promo_codes": {
-    "title": "My Promo Codes",
-    "placeholder": "Enter promo code",
-    "add": "Add",
-    "available": "Available",
-    "used": "Used",
-    "unavailable": "Unavailable",
-    "faq": "FAQ",
-    "noCodes": "You currently have no  promo codes"
+    "nationality_label": "Nationality",
+    "search_btnText": "Search Hotels",
+    "searching": "Searching...",
+    "search_btnText_mobile": "Search",
+    "rooms_label": "Rooms",
+    "adults_label": "Adults",
+    "children_label": "Children",
+    "child_age_label": "Child Age",
+    "years_label": "years"
   }
 }

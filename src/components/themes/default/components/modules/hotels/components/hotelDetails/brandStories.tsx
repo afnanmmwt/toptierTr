@@ -1,5 +1,8 @@
 
 const BrandStories = (story:any) => {
+  if (!story?.story?.desc_text && !story?.story?.picture) {
+    return null;
+  }
     // console.log("brand stories",story);
     const {picture, desc_text} = story?.story || {};
   return (

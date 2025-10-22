@@ -1,4 +1,3 @@
 export * from "./dashSidebar";
-
-// export * from "./myCards";
-// export * from "./PriceAlertsPage";
+export * from "./dashboardMain";
+export * from "./customerProfile";

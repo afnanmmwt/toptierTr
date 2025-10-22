@@ -6,12 +6,13 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signOut } from "@src/actions";
 import { useUser } from "@hooks/use-user";
+import { Icon } from "@iconify/react";
 
 export default function ProfileDropdown() {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const router = useRouter();
-  const { user } = useUser();
+  const { user, checkSession } = useUser();
 
   // close when clicking outside
   useEffect(() => {
@@ -28,7 +29,7 @@ export default function ProfileDropdown() {
     // add your logout logic here (clear token, call API, etc.)
 
           await signOut();
-          // await checkSession?.();
+          await checkSession?.();
           router.refresh();
   };
 
@@ -50,7 +51,7 @@ export default function ProfileDropdown() {
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0 h-45 w-57 md:w-75 mt-2 rounded-md border border-gray-200 bg-white shadow-lg">
+        <div className="absolute right-0 h-auto w-57 md:w-75 mt-2 rounded-md border border-gray-200 bg-white shadow-lg">
           <ul className="py-2 px-2 space-y-2">
             {/* My Profile */}
             <li>
@@ -70,7 +71,7 @@ export default function ProfileDropdown() {
             </li>
 
             {/* My Bookings */}
-            <li>
+            {/* <li>
               <Link
                 href="/bookings"
                 className="flex items-center gap-4 px-4 py-3  text-gray-500 hover:bg-gray-100 rounded-lg transition"
@@ -82,8 +83,21 @@ export default function ProfileDropdown() {
 </svg>
                 <span className="text-[15px] font-base font-medium">My Bookings</span>
               </Link>
-            </li>
+            </li> */}
+              <li>
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-4 px-4 py-3  text-gray-500 hover:bg-gray-100 rounded-lg transition"
+              >
 
+{/* <svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 8.11111C1 4.75911 1 3.08267 2.04178 2.04178C3.08356 1.00089 4.75911 1 8.11111 1H9.88889C13.2409 1 14.9173 1 15.9582 2.04178C16.9991 3.08356 17 4.75911 17 8.11111V11.6667C17 15.0187 17 16.6951 15.9582 17.736C14.9164 18.7769 13.2409 18.7778 9.88889 18.7778H8.11111C4.75911 18.7778 3.08267 18.7778 2.04178 17.736C1.00089 16.6942 1 15.0187 1 11.6667V8.11111Z" stroke="#112233" stroke-opacity="0.6" stroke-width="1.5"/>
+<path d="M5.44446 8.11115H12.5556M5.44446 11.6667H9.8889" stroke="#112233" stroke-opacity="0.6" stroke-width="1.5" stroke-linecap="round"/>
+</svg> */}
+<Icon icon="lucide:layout-dashboard" className="font-light text-gray-500" width="24" height="24" />
+                <span className="text-[15px] font-base font-medium">Dashbaord</span>
+              </Link>
+            </li>
             {/* Settings */}
             <li>
               {/* <Link

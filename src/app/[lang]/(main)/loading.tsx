@@ -1,7 +1,7 @@
 'use client'
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-import Spinner from '@components/core/Spinner';
+// import { motion } from 'framer-motion';
+// import Image from 'next/image';
+// import Spinner from '@components/core/Spinner';
 
 export default function LoadingScreen() {
     return (

@@ -60,7 +60,7 @@ const origin = req.headers.get("origin")
     const token = Buffer.from(JSON.stringify(tokenData)).toString("base64");
 
     // 6. Success URL
-    const root = process.env.NEXT_PUBLIC_BASE_URL || "https://toptiertravel.vercel.app/";
+    const root = process.env.NEXT_PUBLIC_BASE_URL;
     const success_url = `${root}payment/success/?token=${token}&gateway=stripe&type=0&key=&trx_id=${paymentIntent.id}`;
 
     // 7. Send response

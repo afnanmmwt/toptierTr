@@ -58,7 +58,7 @@ export default function PusherClient() {
             className="flex items-center gap-3 bg-white shadow-lg rounded-xl px-4 py-3 border border-gray-100 min-w-[300px]"
           >
             <div className="relative">
-            
+
               <Icon icon="mdi:person-circle-outline" className="w-10 h-10 text-gray-600" />
               <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white" />
             </div>

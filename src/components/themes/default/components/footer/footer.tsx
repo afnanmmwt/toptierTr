@@ -8,6 +8,8 @@ import LanguageDropdown from './languageDropdown'
 import CurrencyDropdown from './currenciesDropDown'
 import { subscribe_to_newsLatter } from '@src/actions'
 import { toast } from 'react-toastify'
+import useDictionary from '@hooks/useDict'
+import useLocale from '@hooks/useLocale'
 
 const Footer = () => {
   const app = useAppSelector((state) => state.appData?.data)
@@ -20,11 +22,12 @@ const Footer = () => {
     // business_name,
     home_title,
   } = app.app
-// const {languages,currencies }=useAppSelector((state) => state.appData?.data)
-  // states
+
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [alert, setAlert] = useState<{ type: 'success' | 'danger'; msg: string } | null>(null)
+  const { locale } = useLocale();
+   const { data: dict } = useDictionary(locale as any);
 
   // dummy API call
   const handleSubscribe = async (e: React.FormEvent) => {
@@ -45,7 +48,7 @@ const Footer = () => {
                      toast.error(res.error);
               // setMessage({ type: "danger", text: res.error });
             } else {
-              toast.success("Subscribed successfully!");
+              toast.success(dict?.footer?.success || "Subscribed successfully!");
              setEmail("")
             }
       //      // success
@@ -63,12 +66,11 @@ const Footer = () => {
   const supportPages = app?.cms?.filter((page: any) => page.name === 'Footer' && page.category === 'support')
   const companyPages = app?.cms?.filter((page: any) => page.name === 'Footer' && page.category === 'company')
   const downloadsPages = app?.cms?.filter((page: any) => page.name === 'Footer' && page.category === 'downloads')
-
   const footerItems = [
-    { title: 'Explore', links: [...explorePages] },
-    { title: 'Support', links: [...supportPages] },
-    { title: 'Company', links: [...companyPages] },
-    { title: 'Downloads', links: [...downloadsPages] },
+    { title: dict?.footer?.title_explore || 'Explore', links: [...explorePages] },
+    { title: dict?.footer?.title_support || 'Support', links: [...supportPages] },
+    { title: dict?.footer?.title_company || 'Company', links: [...companyPages] },
+    { title: dict?.footer?.title_downloads || 'Downloads', links: [...downloadsPages] },
   ]
 
   return (
@@ -80,8 +82,7 @@ const Footer = () => {
             <h1 className="text-2xl font-bold text-blue-900">{home_title}</h1>
           </div>
           <div className="text-base text-[#11223399] max-w-md  md:mt-0 lead-6">
-            Unlock extraordinary stays with our expert-curated hotels and exclusive access to the world's finest
-            destinations.
+           {dict?.footer?.subheading || "Unlock extraordinary stays with our expert-curated hotels and exclusive access to the world's finest destinations."}
           </div>
         </div>
         </div>
@@ -89,7 +90,6 @@ const Footer = () => {
 
       </div>
       <div className="max-w-[1200px] mx-auto appHorizantalSpacing py-12 lg:py-12">
-
         {/* Grid Layout for Links */}
         <div className="mt-8 lg:mt-12 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8">
           {footerItems.map((page, index) => (
@@ -99,7 +99,7 @@ const Footer = () => {
                 {page.links.map((link: any, i: number) => (
                   <li key={i}>
                     <Link
-                      href={`/${link.slug_url}`}
+                      href={`/pages/${link.slug_url}`}
                       className="text-[#11223399] text-base hover:text-blue-700 transition-colors duration-200"
                     >
                       {link.page_name.charAt(0).toUpperCase() + link.page_name.slice(1)}
@@ -111,10 +111,10 @@ const Footer = () => {
           ))}
 
           {/* Stay Connected */}
-          <div className="lg:col-span-2">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Stay Connected</h3>
+          <div className="lg:col-span-2 md:col-span-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">{dict?.footer?.connect || "Stay Connected"}</h3>
             <p className="text-[#11223399] mb-6 leading-6 max-w-md">
-              Subscribe to get travel tips, exclusive deals, and the latest updates.
+              {dict?.footer?.subconnect || "Subscribe to get travel tips, exclusive deals, and the latest updates."}
             </p>
 
             {/* Alert */}
@@ -123,7 +123,7 @@ const Footer = () => {
             <form onSubmit={handleSubscribe} className="flex flex-col items-center gap-4">
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder={dict?.footer?.email_placeholder || "Enter your email"}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -138,10 +138,10 @@ const Footer = () => {
                   {loading ? (
                     <>
                       <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
-                      Subscribing...
+                      {dict?.footer?.subscribing || "Subscribing..."}
                     </>
                   ) : (
-                    'Subscribe'
+                    dict?.footer?.subscribe || 'Subscribe'
                   )}
                 </button>
               </div>
@@ -152,17 +152,17 @@ const Footer = () => {
 
      {/* <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-6"> */}
   <div className="max-w-[1200px] mx-auto py-6 border-t border-gray-200 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-    {/* Copyright */}
+
     <p className="text-base font-medium text-gray-800 dark:text-gray-400">
-      © 2025  {home_title.toUpperCase()} All rights reserved.
+      © 2025  {home_title.toUpperCase()} {dict?.footer?.copyright || "All rights reserved."}
     </p>
 
-    {/* Language & Currency Dropdowns */}
+
     <div className='flex items-center gap-5'>
    <div className="flex items-center gap-5">
   <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 space-x-4">
 
-  {/* Language Select with Custom Arrow */}
+
   <div className="relative w-19 text-gray-400"> {/* 👈 Fixed width for alignment */}
     {/* <select
       id="language-select"
@@ -178,27 +178,27 @@ const Footer = () => {
         ))}
     </select> */}
     <LanguageDropdown/>
-    {/* Custom Dropdown Arrow */}
+
 
   </div>
 
-  {/* Currency Select with Custom Arrow */}
-  <div className="relative w-15"> {/* 👈 Fixed width for alignment (USD, EUR, JPY are short) */}
+
+  <div className="relative w-15">
   <CurrencyDropdown/>
   </div>
 
 </div>
 
-  {/* Social Icons */}
+
   <div className="flex space-x-5">
-    {/* ... your social icons here ... */}
+
   </div>
 </div>
-    {/* Social Icons */}
+
 
 
 <div className="flex space-x-5 items-center">
-  {/* Facebook */}
+
   <a
     target="_blank"
     href={social_facebook}
@@ -289,7 +289,7 @@ const Footer = () => {
     </div>
 
   </div>
-{/* </footer> */}
+
     </footer>
   )
 }

@@ -1,23 +1,23 @@
 "use client";
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   MapContainer,
   TileLayer,
   Marker,
   Tooltip,
   useMap,
+  useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { Icon } from "@iconify/react";
+import { useRouter } from "next/navigation";
 
 const containerStyle = {
   width: "100%",
   height: "800px",
 };
 
-// Fallback center (London)
 const fallbackCenter: [number, number] = [51.505, -0.09];
 
 interface HotelMapProps {
@@ -37,80 +37,38 @@ interface HotelMapProps {
     lat: number;
     lon: number;
   } | null;
+  detailHandler?: (hotel: any) => void;
 }
 
-// Regular price icon (red pin)
 const priceIcon = (price: number | string) =>
   L.divIcon({
     html: `
-      <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
-        <div style="
-          background: white;
-          border: 1px solid gray;
-          color: black;
-          font-size: 12px;
-          font-weight: 700;
-          padding: 5px 10px;
-          border-radius: 16px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          text-align: center;
-          min-width: 48px;
-          z-index: 1;
-        ">
-          $${price}
-        </div>
-        <svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M14 0C10.134 0 7 3.13401 7 7C7 12.25 14 24 14 24C14 24 21 12.25 21 7C21 3.13401 17.866 0 14 0Z"
-            fill="#E53E3E"
-          />
-        </svg>
+      <div class="price-tag bg-white border border-gray-300 text-black font-bold rounded-full px-2 py-1.5 text-xs shadow-sm min-w-[48px] w-18 text-center">
+        $${price}
       </div>
     `,
     className: "",
-    iconSize: [28, 40],
-    iconAnchor: [14, 24],
+    iconSize: [60, 30],
+    iconAnchor: [30, 30],
   });
 
-// Highlighted icon (blue for current location)
 const highlightedIcon = (price: number | string) =>
   L.divIcon({
     html: `
-      <div style="display: flex; flex-direction: column; align-items: center; position: relative;">
-        <div style="
-          background: #ADD8E6;
-          border: 1px solid #1E90FF;
-          color: black;
-          font-size: 12px;
-          font-weight: 700;
-          padding: 5px 10px;
-          border-radius: 16px;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-          text-align: center;
-          min-width: 48px;
-          z-index: 1;
-        ">
-          $${price}
-        </div>
-        <svg width="28" height="24" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path
-            d="M14 0C10.134 0 7 3.13401 7 7C7 12.25 14 24 14 24C14 24 21 12.25 21 7C21 3.13401 17.866 0 14 0Z"
-            fill="#1E90FF"
-          />
-        </svg>
+      <div class="price-tag-highlighted bg-blue-800 text-white font-bold rounded-full px-2 py-2 text-sm shadow-md min-w-[56px] w-18 text-center transform scale-120 z-10">
+        $${price}
       </div>
     `,
     className: "",
-    iconSize: [28, 40],
-    iconAnchor: [14, 24],
+    iconSize: [80, 40],
+    iconAnchor: [35, 40],
   });
 
-// Helper to check if hotel matches current location (with tolerance)
 const isSameLocation = (
   hotelLat: number,
   hotelLng: number,
   current: { lat: number; lon: number } | null,
-  tolerance = 0.0001 // ~10 meters
+  tolerance = 0.0001
 ): boolean => {
   if (!current) return false;
   return (
@@ -119,7 +77,6 @@ const isSameLocation = (
   );
 };
 
-// Auto-fit bounds
 function FitBounds({ hotels }: { hotels: any[] }) {
   const map = useMap();
   useEffect(() => {
@@ -132,14 +89,13 @@ function FitBounds({ hotels }: { hotels: any[] }) {
   return null;
 }
 
-// Custom Controls (Zoom In, Zoom Out, Locate)
 function CustomControls() {
   const map = useMap();
   const zoomIn = () => map.setZoom(map.getZoom() + 1);
   const zoomOut = () => map.setZoom(map.getZoom() - 1);
   const locateUser = () => map.locate({ setView: true, maxZoom: 14 });
   return (
-    <div className="absolute top-22 right-5 flex flex-col gap-3 z-[1000]">
+    <div className="absolute top-22 right-5 flex flex-col gap-3 z-[500]">
       <button
         onClick={zoomIn}
         className="w-10 h-10 flex cursor-pointer items-center justify-center rounded-full bg-white shadow-md hover:bg-gray-100"
@@ -178,11 +134,31 @@ function CustomControls() {
   );
 }
 
+function MapClickHandler({ onClose }: { onClose: () => void }) {
+  useMapEvents({
+    click: () => {
+      onClose();
+    },
+  });
+  return null;
+}
 
-export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
+export default function HotelMap({ hotels, currentLocation, detailHandler }: HotelMapProps) {
+  const router = useRouter();
   const [validHotels, setValidHotels] = useState<typeof hotels>([]);
-  console.log(hotels)
   const [showModal, setShowModal] = useState(false);
+  const [openTooltipId, setOpenTooltipId] = useState<string | null>(null);
+
+  const closeTooltip = () => setOpenTooltipId(null);
+
+  const handleHotelClick = (hotel: any) => {
+    closeTooltip();
+    if (detailHandler) {
+      detailHandler(hotel);
+    } else {
+      router.push(`/hotel/${hotel.hotel_id}`);
+    }
+  };
 
   useEffect(() => {
     const filtered = hotels.filter((hotel) => {
@@ -209,11 +185,57 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
     );
   }
 
-  return (
-    <div className="relative w-full h-[800px] rounded-4xl overflow-hidden">
-      {/* Fullscreen toggle - MOVED to top-4 to avoid overlap */}
+  const renderTooltipContent = (hotel: (typeof hotels)[0], isCurrent: boolean) => {
+    return (
       <div
-        className="absolute top-9 right-5 z-[1001] cursor-pointer"
+        className={`text-sm w-[230px] text-wrap h-auto overflow-hidden break-words rounded-xl border cursor-pointer ${
+          isCurrent
+            ? 'bg-blue-800 border-blue-700 text-white'
+            : 'bg-white border-gray-300 text-black'
+        }`}
+        onClick={(e) => {
+          e.stopPropagation(); 
+          handleHotelClick(hotel);
+        }}
+      >
+        {hotel.img && (
+          <div className="w-full h-30 overflow-hidden p-2">
+            <img
+              src={hotel.img}
+              alt={hotel.name || "Hotel"}
+              className="w-full h-full object-cover rounded-lg"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+
+        <div className="p-3">
+          <h3 className="font-semibold">{hotel.name || "Hotel"}</h3>
+          <p className={`text-xs mt-1 ${isCurrent ? 'text-blue-100' : 'text-gray-500'}`}>
+            {hotel.address || hotel.city || ""}
+          </p>
+          {hotel.stars && (
+            <div className="flex items-center mt-1">
+              {Array.from({ length: Number(hotel.stars) }).map((_, i) => (
+                <span key={i} className={isCurrent ? 'text-yellow-300' : 'text-yellow-500'}>
+                  ★
+                </span>
+              ))}
+            </div>
+          )}
+          <p className="font-bold mt-2">${hotel.actual_price}</p>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="relative w-full h-[800px] rounded-2xl overflow-hidden">
+     
+      <div
+        className="absolute top-9 right-5 z-[30] cursor-pointer"
         onClick={() => setShowModal(true)}
         aria-label="Open fullscreen map"
       >
@@ -227,12 +249,12 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
         </div>
       </div>
 
-      {/* FULLSCREEN MODAL */}
+      {/*================== FULLSCREEN MODAL */}
       {showModal && (
-        <div className="fixed inset-0 z-[2000] rounded-md bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 z-[80] rounded-md bg-black bg-opacity-50 flex items-center justify-center">
           <div className="relative w-full h-full">
             <button
-              className="absolute top-11 cursor-pointer right-6 z-[3000] text-white bg-gray-600 rounded-full p-1.5"
+              className="absolute top-11 cursor-pointer right-6 z-[500] text-white bg-gray-600 rounded-full p-1.5"
               onClick={() => setShowModal(false)}
               aria-label="Close fullscreen map"
             >
@@ -251,6 +273,8 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
               />
               <FitBounds hotels={validHotels} />
+              <MapClickHandler onClose={closeTooltip} />
+
               {validHotels.map((hotel) => {
                 const lat = Number(hotel.latitude);
                 const lng = Number(hotel.longitude);
@@ -261,36 +285,25 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
                     key={hotel.hotel_id}
                     position={[lat, lng]}
                     icon={isCurrent ? highlightedIcon(hotel.actual_price) : priceIcon(hotel.actual_price)}
+                    eventHandlers={{
+                      mouseover: () => setOpenTooltipId(hotel.hotel_id),
+                      mouseout: () => {
+                        setTimeout(() => {
+                          if (openTooltipId === hotel.hotel_id) {
+                            setOpenTooltipId(null);
+                          }
+                        }, 200);
+                      },
+                      click: () => handleHotelClick(hotel), 
+                    }}
                   >
-                    <Tooltip direction="top"
+                    <Tooltip
+                      direction="top"
                       offset={L.point(0, -10)}
                       opacity={1}
+                      interactive
                     >
-                      <div
-                        className={`text-sm w-70 h-auto overflow-hidden text-wrap py-1 leading-[1.4]   ${isCurrent ? "bg-blue-100 border border-gray-400 rounded-sm" : "bg-white border rounded-sm border-gray-300"
-                          }`}
-                      >
-                        <div className="p-2">
-                          <h3 className="text-sm font-semibold text-wrap">{hotel.name || "Hotel"}</h3>
-
-                          <p className="text-gray-500 text-xs mt-1 text-wrap">
-                            {hotel.address || hotel.city || ""}
-                          </p>
-                          {/* Stars (agar hotel.stars aaye to show karein) */}
-                          {hotel.stars && (
-                            <div className="flex items-center text-yellow-500 text-sm mt-1">
-                              {Array.from({ length: Number(hotel.stars) }).map((_, i) => (
-                                <span key={i}>★</span>
-                              ))}
-                            </div>
-                          )}
-
-
-                          <p className="text-black font-bold mt-1 text-sm">
-                            ${hotel.actual_price}
-                          </p>
-                        </div>
-                      </div>
+                      {renderTooltipContent(hotel, isCurrent)} 
                     </Tooltip>
                   </Marker>
                 );
@@ -301,7 +314,7 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
         </div>
       )}
 
-      {/* MAIN MAP */}
+      {/*=================== MAIN MAP */}
       <div className="relative z-0">
         <MapContainer
           style={containerStyle}
@@ -316,6 +329,8 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>'
           />
           <FitBounds hotels={validHotels} />
+          <MapClickHandler onClose={closeTooltip} />
+
           {validHotels.map((hotel) => {
             const lat = Number(hotel.latitude);
             const lng = Number(hotel.longitude);
@@ -323,41 +338,30 @@ export default function HotelMap({ hotels, currentLocation }: HotelMapProps) {
 
             return (
               <Marker
-                    key={hotel.hotel_id}
-                    position={[lat, lng]}
-                    icon={isCurrent ? highlightedIcon(hotel.actual_price) : priceIcon(hotel.actual_price)}
-                  >
-                    <Tooltip direction="top"
-                      offset={L.point(0, -10)}
-                      opacity={1}
-                    >
-                      <div
-                        className={`text-sm w-70 h-auto overflow-hidden text-wrap  px-2 py-1 leading-[1.4]   ${isCurrent ? "bg-blue-100 border border-gray-400 rounded-sm" : "bg-white border rounded-sm border-gray-300"
-                          }`}
-                      >
-                        <div className="p-2">
-                          <h3 className="text-sm font-semibold text-wrap">{hotel.name || "Hotel"}</h3>
-
-                          <p className="text-gray-500 text-xs mt-1 text-wrap">
-                            {hotel.address || hotel.city || ""}
-                          </p>
-                          {/* Stars (agar hotel.stars aaye to show karein) */}
-                          {hotel.stars && (
-                            <div className="flex items-center text-yellow-500 text-sm mt-1">
-                              {Array.from({ length: Number(hotel.stars) }).map((_, i) => (
-                                <span key={i}>★</span>
-                              ))}
-                            </div>
-                          )}
-
-
-                          <p className="text-black font-bold mt-1 text-sm">
-                            ${hotel.actual_price}
-                          </p>
-                        </div>
-                      </div>
-                    </Tooltip>
-                  </Marker>
+                key={hotel.hotel_id}
+                position={[lat, lng]}
+                icon={isCurrent ? highlightedIcon(hotel.actual_price) : priceIcon(hotel.actual_price)}
+                eventHandlers={{
+                  mouseover: () => setOpenTooltipId(hotel.hotel_id),
+                  mouseout: () => {
+                    setTimeout(() => {
+                      if (openTooltipId === hotel.hotel_id) {
+                        setOpenTooltipId(null);
+                      }
+                    }, 200);
+                  },
+                  click: () => handleHotelClick(hotel), 
+                }}
+              >
+                <Tooltip
+                  direction="top"
+                  offset={L.point(0, -10)}
+                  opacity={1}
+                  interactive
+                >
+                  {renderTooltipContent(hotel, isCurrent)} 
+                </Tooltip>
+              </Marker>
             );
           })}
           <CustomControls />

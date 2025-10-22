@@ -143,7 +143,7 @@ function Select<
                         ),
                     valueContainer: ({ isMulti, hasValue, selectProps }) =>
                         cn(
-                            'items-center flex-1 flex-wrap relative overflow-hidden px-3 py-2 gap-y-2',
+                            'items-center flex-1 flex-row relative overflow-hidden px-3 py-2 gap-y-2',
                             isMulti &&
                                 hasValue &&
                                 selectProps.controlShouldRenderValue
@@ -162,7 +162,7 @@ function Select<
                             isSelectInvalid ? 'text-error' : 'text-gray-400',
                         ),
                     indicatorsContainer: () => 'px-3 text-2xl',
-                    singleValue: () => 'select-single-value capitalize max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 dark:text-gray-100 font-semibold',
+                    singleValue: () => 'select-single-value capitalize flex flex-row max-w-full overflow-hidden text-ellipsis whitespace-nowrap text-gray-800 dark:text-gray-100 font-semibold',
                     multiValue: () => 'flex rounded-lg mx-0.5 font-bold border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-800 dark:text-gray-100',
                     multiValueLabel: () => 'text-xs ltr:pl-2 rtl:pr-2 py-1.5 flex items-center',
                     multiValueRemove: () => 'flex items-center ltr:pr-2 ltr:pl-1 rtl:pr-1 rtl:pl-2',

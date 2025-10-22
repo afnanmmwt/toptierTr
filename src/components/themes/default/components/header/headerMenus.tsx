@@ -8,6 +8,7 @@ import { useUser } from "@hooks/use-user";
 // import Alert from "@components/core/alert";
 // import { signOut } from "@src/actions";
 // import { Router } from "next/router";
+import Dropdown from "@components/core/Dropdown";
 import ProfileDropdown from "./userDropDown"
 
 const HeaderMenus = () => {
@@ -43,7 +44,7 @@ const HeaderMenus = () => {
 
         {/* Right: Auth Buttons - Desktop Only */}
         {!(user ) ? <div className="hidden md:flex items-center gap-3">
-          <Link
+          {/* <Link
             href="/auth/signup"
             className="border border-[#061026] text-[#061026] cursor-pointer text-center text-[16px] rounded-full w-[113px] h-[39px] pt-1.5 hover:bg-blue-50"
           >
@@ -54,7 +55,89 @@ const HeaderMenus = () => {
             className="bg-[#163C8C] border border-[#061026] cursor-pointer text-center border-none hover:bg-gray-800 text-[16px] hover:text-white ring-0 text-white rounded-full w-[113px] h-[39px] pt-1.5 transition"
           >
             Login
+          </Link> */}
+           <Dropdown
+        label={
+          <div className="flex items-center gap-1.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#000"
+              className="pe-1"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Agents
+            {/* <ChevronDown className="w-4 h-4" /> */}
+          </div>
+        }
+      >
+        <div className="flex flex-col">
+          <Link
+            href="https://agents.toptiertravel.vip/login"
+            target="_blank"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Login
           </Link>
+          <Link
+            href="https://agents.toptiertravel.vip/signup"
+            target="_blank"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Signup
+          </Link>
+        </div>
+      </Dropdown>
+
+      {/* ===== Customers Dropdown ===== */}
+      <Dropdown
+        label={
+          <div className="flex items-center gap-1.5">
+            <svg
+              stroke="#000"
+              className="pe-1"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Customers
+            {/* <ChevronDown className="w-4 h-4" /> */}
+          </div>
+        }
+      >
+        <div className="flex flex-col">
+          <Link
+            href="/auth/login"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Login
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Signup
+          </Link>
+        </div>
+      </Dropdown>
         </div> :
         <div className="hidden md:block">
           <ProfileDropdown/>
