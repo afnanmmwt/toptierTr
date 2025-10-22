@@ -1,0 +1,689 @@
+{
+  "header": {
+    "services": "الخدمات",
+    "pages": "الصفحات",
+    "flights": "الرحلات",
+    "hotels": "الفنادق",
+    "cars": "السيارات",
+    "tours": "الجولات",
+    "visa": "التأشيرة",
+    "cruises": "الرحلات البحرية",
+    "settings": "الإعدادات",
+    "login": "تسجيل الدخول",
+    "agent": "الوكيل",
+    "sign_up": "إنشاء حساب",
+    "account": {
+      "dashboard": "لوحة التحكم",
+      "btn_text": "الحساب",
+      "booking": "حجوزاتي",
+      "profile": "ملفي الشخصي",
+      "logout": "تسجيل الخروج"
+    }
+  },
+  "sidebar": {
+    "app_settings": "إعدادات التطبيق",
+    "dark_mode": "الوضع الداكن",
+    "dark_mode_sub": "تبديل السمة إلى الوضع الداكن",
+    "select_country": "اختر الدولة",
+    "select_lang": "اختر اللغة",
+    "select_currency": "اختر العملة"
+  },
+  "home": {
+    "offer_section": {
+      "heading": "عروض حصرية"
+    },
+    "services_section": {
+      "heading": "الخدمات المميزة",
+      "description": "أفضل العروض على الوجهات الشهيرة واستمتع اليوم"
+    }
+  },
+  "signup_form": {
+    "image_section": {
+      "title": "استكشف: أفضل حل لإدارة السفر",
+      "subtext": "بسّط إدارة السفر من خلال منصتنا الشاملة. قم بإدارة الحجوزات وخطط الرحلات، وارتقِ بتجربة العملاء بسهولة باستخدام أدواتنا سهلة الاستخدام.",
+      "lets_do": "لنبدأ"
+    },
+    "title": "إنشاء حساب",
+    "subtitle": "انضم إلينا وابدأ رحلتك اليوم",
+    "fields": {
+      "first_name": {
+        "label": "الاسم الأول *",
+        "placeholder": "إيلون"
+      },
+      "last_name": {
+        "label": "اسم العائلة *",
+        "placeholder": "ماسك"
+      },
+      "email": {
+        "label": "البريد الإلكتروني *",
+        "placeholder": "john.doe@example.com"
+      },
+      "country": {
+        "label": "البلد *",
+        "placeholder": "اختر الدولة"
+      },
+      "password": {
+        "label": "كلمة المرور *",
+        "placeholder": "6+ أحرف"
+      }
+    },
+    "terms": "بإنشائك حسابًا، فإنك توافق على شروط الاستخدام وسياسة الخصوصية الخاصة بنا",
+    "create_account_button": "إنشاء حساب",
+    "sign_in_prompt": "هل لديك حساب بالفعل؟",
+    "sign_in_link": "تسجيل الدخول"
+  },
+  "login_form": {
+    "image_section": {
+      "title": "استكشف: أفضل حل لإدارة السفر",
+      "subtext": "بسّط إدارة السفر من خلال منصتنا الشاملة. قم بإدارة الحجوزات وخطط الرحلات، وارتقِ بتجربة العملاء بسهولة باستخدام أدواتنا سهلة الاستخدام.",
+      "lets_do": "لنبدأ"
+    },
+    "title": "تسجيل الدخول إلى حسابك",
+    "subtitle": "مرحبًا بعودتك! الرجاء إدخال بياناتك.",
+    "lets_do": "لنبدأ",
+    "fields": {
+      "email": {
+        "label": "البريد الإلكتروني *",
+        "placeholder": "john.doe@example.com"
+      },
+      "password": {
+        "label": "كلمة المرور *",
+        "placeholder": "6+ أحرف"
+      }
+    },
+    "keep_logged_in": "تذكرني",
+    "forgot_password": "هل نسيت كلمة المرور؟",
+    "login_button": "تسجيل الدخول",
+    "login_loading": "جاري تسجيل الدخول...",
+    "no_account_prompt": "ليس لديك حساب؟",
+    "sign_up_link": "إنشاء حساب"
+  },
+  "flight_search": {
+    "module_name": "الرحلات",
+    "flying_from": "المغادرة من",
+    "flying_to": "الذهاب إلى",
+    "trip_type": "نوع الرحلة",
+    "class": "درجة الرحلة",
+    "travelers": "المسافرون",
+    "economy": "اقتصادية",
+    "premium_economy": "اقتصادية مميزة",
+    "business": "رجال الأعمال",
+    "first_class": "الدرجة الأولى",
+    "one_way": "ذهاب فقط",
+    "round_trip": "ذهاب وعودة",
+    "multi_city": "مدن متعددة",
+    "from_placeholder": "رمز المطار أو اسم المدينة",
+    "to_placeholder": "الوجهة",
+    "search": "بحث",
+    "adults": "البالغون",
+    "adults_age": "12 سنة أو أكثر",
+    "children": "الأطفال",
+    "children_age": "من 2 إلى 11 سنة",
+    "infants": "الرضع",
+    "infants_age": "أقل من سنتين",
+    "add_segment": "إضافة مقطع",
+    "remove_segment": "إزالة",
+    "depart_date": "تاريخ المغادرة",
+    "return_date": "تاريخ العودة",
+    "swap": "تبديل",
+    "no_city_found": "لم يتم العثور على مدينة أو مطار",
+    "try_different_search": "جرب مصطلح بحث مختلف",
+    "Searching": "جاري البحث...",
+    "segment": "رحلة",
+    "error_required": "هذه الخانة مطلوبة",
+    "error_invalid": "قيمة غير صالحة",
+    "total": "الإجمالي",
+    "travelers_dropdown_header": "اختر المسافرين",
+    "add_more_flight": "إضافة رحلة أخرى",
+    "errors": {
+      "required": "هذه الخانة مطلوبة",
+      "invalid_date": "تاريخ غير صالح",
+      "invalid_value": "قيمة غير صالحة"
+    }
+  },
+  "hotel_search": {
+    "destination_input": {
+      "title": "الوجهة",
+      "placeholder": "مدينة، اسم الفندق أو المنطقة"
+    },
+    "checkin": {
+      "title": "تاريخ تسجيل الوصول"
+    },
+    "checkout": {
+      "title": "تاريخ تسجيل المغادرة"
+    },
+    "search_btnText": "ابحث عن فنادق",
+    "guest_button": {
+      "title": "الضيوف",
+      "guest_title": "الضيوف",
+      "room_title": "الغرفة",
+      "drop_down_title": "اختر عدد الضيوف والغرف",
+      "rooms_text": "الغرف",
+      "rooms_subtex": "عدد الغرف",
+      "adult_text": "البالغون",
+      "adult_subtex": "18 سنة فأكثر",
+      "children_text": "الأطفال",
+      "children_subtex": "من 0 إلى 17 سنة",
+      "nationality": "الجنسية",
+      "for_booking": "اختر جنسيتك لإتمام الحجز",
+      "total": "إجمالي الضيوف"
+    }
+  },
+  "appDownloadAndSubscribe": {
+    "subscribe": {
+      "badge": "انضم إلى أكثر من 50 ألف مسافر سعيد",
+      "heading": "احصل على عروض سفر حصرية",
+      "description": "عروض فلاش أسبوعية، وجهات سرية، وتوصيات مخصصة تصلك إلى بريدك الإلكتروني.",
+      "input_placeholder": "أدخل بريدك الإلكتروني",
+      "button": "اشترك الآن",
+      "benefits": {
+        "free": "مجاني للأبد",
+        "privacy": "الخصوصية محمية",
+        "no_spam": "بدون رسائل مزعجة",
+        "weekly_deals": "عروض أسبوعية"
+      },
+      "joined_this_week": "أكثر من 1250 انضموا هذا الأسبوع",
+      "rating": "4.9/5 (أكثر من 2000 تقييم)"
+    },
+    "appdownload": {
+      "appStore_btn_title": "حمّل من",
+      "googlePlay_btn_title": "احصل عليه من",
+      "appStore_btn_text": "متجر التطبيقات",
+      "googlePlay_btn_text": "متجر Google Play",
+      "heading": "رفيق سفرك",
+      "subheading": "دائمًا في جيبك",
+      "description": "استمتع بتجربة حجز سلسة عبر تطبيقنا المميز. احصل على عروض حصرية، تأكيدات فورية، ودعم متواصل على مدار الساعة.",
+      "app_store": "حمّل من متجر التطبيقات",
+      "google_play": "احصل عليه من متجر Google Play",
+      "features": {
+        "instant_booking": "حجز فوري",
+        "best_deals": "أفضل العروض",
+        "offline_access": "الوصول دون إنترنت",
+        "support": "دعم 24/7"
+      }
+    }
+  },
+"footer": {
+  "important_info": "معلومات مهمة",
+  "support_links": "روابط الدعم",
+  "contact_info": "معلومات الاتصال"
+},
+  "flight_listing": {
+    "passenger": "الركاب",
+    "economy": "الاقتصاد",
+    "roundtrip": "ذهابا وإيابا",
+    "show_search": "عرض البحث",
+    "hide_search": "إخفاء البحث",
+    "filter": "الفلاتر",
+    "clear_all": "مسح الكل",
+    "stops": "التوقف",
+    "price": "النطاق السعري",
+    "departure": "وقت المغادرة",
+    "airlines": "خطوط الطيران",
+    "baggage": "خيارات الأمتعة",
+    "non_stop": "بدون توقف",
+    "1_stop": "1 توقف",
+    "2+_stops": "2+ توقف",
+    "flights": "رحلات الطيران",
+    "flight": "الطيران",
+    "from": "من",
+    "early": "صباح الخير",
+    "morning": "الصباح",
+    "afternoon": "بعد الظهر",
+    "evening": "مساء الخير",
+    "free_baggage": "أمتعة مجانية",
+    "paid_baggage": "الأمتعة المدفوعة",
+    "no_baggage": "لا أمتعة",
+    "showing": "عرض",
+    "subtitle_page": "أفضل العروض مرتبة حسب السعر",
+    "direct": "مباشر",
+    "per_person": "للفرد الواحد",
+    "pm": "مساءً",
+    "am": "صباحا",
+    "details": "التفاصيل",
+    "select_flight": "اختر الطيران",
+    "select": "اختر",
+    "add_cart": "إضافة إلى سلة التسوق",
+    "cart": "عربة التسوق",
+    "flight_itinerary": "خط سير الرحلة",
+    "depart": "المغادرة",
+    "arrival": "الوصول",
+    "segment": "الجزء",
+    "more_details": "المزيد من التفاصيل",
+    "price_breakdown": "توزيع الأسعار",
+    "adult_price": "سعر البالغين",
+    "total_per_person": "المجموع للشخص الواحد",
+    "baggage_policy": "سياسة الأمتعة",
+    "checked_baggage": "الأمتعة المسجلة",
+    "included_economy": "مدرجة في الدرجة السياحية",
+    "cabin_baggage": "أمتعة المقصورة",
+    "cabin_bag_allowed": "حقيبة المقصورة + الأغراض الشخصية المسموح بها",
+    "cancellation_policy": "سياسة الإلغاء",
+    "non_refundable_fare": "الأجرة غير القابلة للاسترداد",
+    "non_refund_list_1": "لا يمكن استرداد الأموال بعد الحجز",
+    "non_refund_list_2": "قد يُسمح بتغيير التاريخ/الوقت مقابل رسوم",
+    "non_refund_list_3": "تغيير الاسم غير مسموح به",
+    "non_refund_list_4": "يوصى بالتأمين على السفر",
+    "refundable_fare": "الأجرة القابلة للاسترداد",
+    "refundable_fare_list_1": "الاسترداد الكامل أو الجزئي متاح حسب قواعد الأجرة",
+    "refundable_fare_list_2": "التغييرات المسموح بها بأقل رسوم",
+    "fare_rules_conditions": "قواعد وشروط الأجرة",
+    "ticket_validity": "صلاحية التذكرة",
+    "ticket_validity_det": "صالحة فقط لتاريخ ووقت الرحلة المحددين. لا يُسمح بالحجز الاحتياطي في نفس اليوم.",
+    "seat_assignment": "تخصيص المقاعد",
+    "seat_assignment_det": "يتوفر اختيار المقعد أثناء تسجيل الوصول أو مقابل رسوم إضافية أثناء الحجز.",
+    "special_services": "يجب طلب تفضيلات الوجبات والمساعدة على الكراسي المتحركة والخدمات الخاصة الأخرى قبل 48 ساعة على الأقل.",
+    "check_in_requirements": "متطلبات تسجيل الوصول",
+    "check_in_requirements_det": "يفتح تسجيل الوصول عبر الإنترنت قبل 24 ساعة من موعد الإقلاع. يغلق تسجيل الوصول في المطار قبل ساعة واحدة من موعد الرحلات الداخلية.",
+    "supplied_by": "مقدمة من",
+    "ref": "المرجع"
+  },
+  "forget_passForm": {
+    "title": "نسيت كلمة المرور",
+    "subtex": "لا تقلق، سنرسل إليك رمزًا مكونًا من 6 أرقام إلى بريدك الإلكتروني للاستعادة لتتمكن من إعادة تعيين كلمة المرور.",
+    "email_title": "البريد الإلكتروني *",
+    "email_placeholder": "عنوان البريد الإلكتروني",
+    "btn_text": "إرسال الرمز",
+    "back_to": "العودة إلى",
+    "login": "تسجيل الدخول",
+    "policy": {
+      "privacy": "سياسة الخصوصية",
+      "terms": "الشروط والأحكام",
+      "status": "حالة النظام"
+    }
+  },
+  "userProfile": {
+    "profile_tab": "الملف الشخصي",
+    "chanage_password": "تغيير كلمة المرور",
+    "first_name": "الاسم الأول",
+    "fn_placeholder": "أدخل الاسم الأول",
+    "last_name": "اسم العائلة",
+    "ln_placeholder": "أدخل اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "email_placeholder": "أدخل البريد الإلكتروني",
+    "phone": "رقم الهاتف (بدون رمز الدولة) (اختياري)",
+    "country": "الدولة",
+    "phone_placeholder": "أدخل رقم الهاتف",
+    "password": "كلمة المرور",
+    "password_placeholder": "كلمة مرور جديدة",
+    "current_password": "كلمة المرور القديمة",
+    "confirm_password": "تأكيد كلمة المرور الجديدة",
+    "update": "تحديث",
+    "address": "العنوان (اختياري)",
+    "address_placeholder": "أدخل العنوان",
+    "form_btn": "إرسال",
+    "change_password_btn": "تغيير كلمة المرور",
+    "success": "تم تحديث الملف الشخصي بنجاح"
+  },
+  "dashboard": {
+    "dashboard": "لوحة التحكم",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "my_bookings": "حجوزاتي",
+    "favourite": "المفضلة",
+    "my_posts": "منشوراتي",
+    "price_alerts": "تنبيهات الأسعار",
+    "my_cards": "بطاقاتي",
+    "promo_codes": "رموز الخصم",
+    "account": {
+      "account": "الحساب",
+      "profile": "الملف الشخصي",
+      "logout": "تسجيل الخروج"
+    },
+    "booking_tabs": {
+      "all": "الكل",
+      "awaiting_payment": "في انتظار الدفع",
+      "upcomming": "القادمة",
+      "awaiting_review": "في انتظار المراجعة"
+    },
+    "booking_card": {
+      "booking_no": "رقم الحجز",
+      "booking_date": "تاريخ الحجز"
+    },
+    "dashboardPage": {
+      "title": "لوحة التحكم",
+      "description": "مرحبًا بعودتك! إليك نظرة عامة على رحلاتك",
+      "dashboardCards": {
+        "totalBookings": "إجمالي الحجوزات",
+        "pending": "قيد الانتظار",
+        "confirmed": "تم التأكيد",
+        "walletBalance": "رصيد المحفظة"
+      },
+      "dashbaordMainContent": {
+        "title": "الحجوزات الأخيرة",
+        "viewAll": "عرض الكل",
+        "notFound": "لم يتم العثور على حجوزات",
+        "notDesc": "قم بإجراء أول حجز لك"
+      },
+      "dashboardAside": {
+        "quickAction": "إجراء سريع",
+        "newBooking": "حجز جديد",
+        "editeProfile": "تعديل الملف الشخصي",
+        "paymentMethods": "طرق الدفع",
+        "accountSummary": "ملخص الحساب",
+        "memberSince": "عضو منذ",
+        "totalTrip": "إجمالي الرحلات",
+        "loyaltyPoints": "نقاط الولاء",
+        "recentActivity": "النشاطات الأخيرة",
+        "recentConfirmed": "تم تأكيد حجز الرحلة",
+        "recentPayment": "تمت معالجة الدفع",
+        "profileUpdate": "تحديثات الملف الشخصي"
+      }
+    }
+  },
+
+  "completeBookingPage": {
+      "title": "أكمل حجزك",
+      "subtitle": "اقفل حجز رحلتك بأمان",
+      "timer": {
+        "label": "الوقت المتبقي"
+      },
+    "bookingOption": {
+      "title": "اختر نوع الحجز الخاص بك",
+      "guest": {
+        "label": "حجز كضيف",
+        "description": "لا يشترط وجود حساب"
+      },
+      "login": {
+        "label": "تسجيل الدخول إلى الحساب",
+        "description": "استخدم الحساب الموجود",
+        "emailPlaceholder": "عنوان البريد الإلكتروني",
+        "passwordPlaceholder": "كلمة المرور",
+        "loginButton": "سجّل الدخول للمتابعة"
+      }
+    },
+    "bookingAside": {
+      "tripDetails": {
+        "title": "تفاصيل الرحلة",
+        "outbound": {
+          "route": "سنغافورة → بانكوك",
+          "duration": "ساعتان و30 دقيقة",
+          "departureTime": "08:20",
+          "arrivalTime": "09:50",
+          "date": "الاثنين، 1 سبتمبر",
+          "origin": {
+            "city": "سنغافورة • SIN",
+            "airport": "تشانغي سنغافورة"
+          },
+          "destination": {
+            "city": "بانكوك • BKK",
+            "airport": "سوارنابومي"
+          },
+          "airline": "سكوت",
+          "hotelSuggestion": "غرف من $126 عبر Booking.com",
+          "stayDuration": "15 ليلة في بانكوك"
+        },
+        "return": {
+          "route": "بانكوك → سنغافورة",
+          "duration": "ساعتان و25 دقيقة",
+          "departureTime": "07:45",
+          "arrivalTime": "11:10",
+          "date": "الثلاثاء، 16 سبتمبر",
+          "origin": {
+            "city": "بانكوك • DMK",
+            "airport": "دون مويانغ الدولي"
+          },
+          "destination": {
+            "city": "سنغافورة • SIN",
+            "airport": "تشانغي سنغافورة"
+          },
+          "airline": "تايلاندية",
+          "warning": "مغادرة من مطار مختلف"
+        }
+      },
+      "bookingSummary": {
+        "title": "ملخص الحجز",
+        "items": {
+          "adult": "1 × بالغ",
+          "cabinBaggage": "1 × أمتعة يدوية",
+          "saverFare": "1 × تذكرة اقتصادية",
+          "insurance": "1 × تأمين سفر (15 يومًا)"
+        },
+        "included": "متضمن",
+        "total": {
+          "label": "المجموع (بالدولار الأمريكي)",
+          "note": "يتضمن جميع الضرائب والرسوم والتكاليف الإضافية ورسوم الخدمة"
+        }
+      },
+      "priceHold": {
+        "title": "تحتاج المزيد من الوقت للقرار؟",
+        "description1": "سنقوم باحجز سعر التذكرة هذا لمدة <strong>3 أيام</strong>، وستدفع السعر المثبت البالغ <strong>133 دولارًا</strong> عندما تكون جاهزًا لإكمال الحجز.",
+        "description2": "إذا انخفض السعر، فسوف تدفع السعر الجديد الأقل.",
+        "button": "احجز السعر مقابل 13.30 دولارًا"
+      },
+      "help": {
+        "title": "تحتاج مساعدة؟",
+        "call": "اتصل: +1 (555) 123-4567",
+        "email": "البريد الإلكتروني: support@flightbooking.com",
+        "chat": "دعم الدردشة المباشرة"
+      }
+    },
+    "paymentMethods": {
+      "title": "طرق الدفع",
+      "options": {
+        "paypal": "باي بال",
+        "card": "بطاقة ائتمان",
+        "bank": "تحويل بنكي",
+        "later": "ادفع لاحقًا"
+      }
+    },
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "fields": {
+        "firstName": "الاسم الأول *",
+        "firstNamePlaceholder": "أدخل الاسم الأول",
+        "lastName": "الاسم الأخير *",
+        "lastNamePlaceholder": "أدخل الاسم الأخير",
+        "email": "عنوان البريد الإلكتروني *",
+        "emailPlaceholder": "your.email@example.com",
+        "phone": "رقم الهاتف *",
+        "phonePlaceholder": "+1 (555) 123-4567",
+        "address": "العنوان",
+        "addressPlaceholder": "العنوان بالتفصيل، المدينة، الولاية",
+        "country": "الدولة *",
+        "countryPlaceholder": "اختر الدولة",
+        "nationality": "الجنسية *",
+        "nationalityPlaceholder": "اختر الجنسية"
+      },
+      "countries": {
+        "US": "الولايات المتحدة",
+        "UK": "المملكة المتحدة",
+        "PK": "باكستان",
+        "IN": "الهند",
+        "CA": "كندا"
+      }
+    },
+    "termsAndConditions": {
+      "title": "الشروط والأحكام القانونية",
+      "bookingConditions": {
+        "title": "شروط الحجز المهمة",
+        "cancellation": "<strong>سياسة الإلغاء:</strong> التذاكر غير قابلة للاسترداد. التعديلات تخضع للفرق في السعر والرسوم وفقًا لسياسة الخط الجوي.",
+        "documentation": "<strong>الوثائق:</strong> جواز سفر ساري المفعول مطلوب لجميع الرحلات الدولية. تأكد من صلاحية جواز السفر لمدة 6 أشهر على الأقل من تاريخ السفر.",
+        "baggage": "<strong>الأمتعة:</strong> قد تُفرض رسوم إضافية على الأمتعة. راجع سياسة الخط الجوي المتعلقة بالأمتعة للحصول على القيود.",
+        "insurance": "<strong>التأمين على السفر:</strong> يُوصى به لحماية الرحلة. تتوفر تفاصيل التغطية عند الطلب."
+      },
+      "consent": {
+        "mandatory": {
+          "label": "إقرار إلزامي:",
+          "text": "لقد قرأت وفهمت ووافقت على الالتزام بجميع {termsLink} و{privacyLink} و{airlineLink}. وأقر بأن هذا يشكل اتفاقًا قانونيًا ملزمًا."
+        },
+        "dataConsent": {
+          "label": "موافقة معالجة البيانات:",
+          "text": "أوافق على معالجة بياناتي الشخصية لأغراض الحجز والامتثال للوائح السفر الدولية."
+        },
+        "newsletter": {
+          "label": "اختياري:",
+          "text": "اشترك لتلقي عروض سفر حصرية وعروض ترويجية وتحديثات الخدمة عبر البريد الإلكتروني."
+        }
+      },
+      "links": {
+        "terms": "الشروط والأحكام",
+        "privacy": "سياسة الخصوصية",
+        "airline": "سياسات الخطوط الجوية"
+      },
+      "button": {
+        "confirm": "تأكيد الحجز والانتقال إلى الدفع",
+        "disabledHint": "يرجى قبول جميع الشروط المطلوبة للمتابعة."
+      },
+      "footer": {
+        "security": "محمي بتشفير SSL بطول 256 بت",
+        "agreement": "بالتأكيد، فإنك توافق على إتمام المعاملة وتوافق على شروط الحجز الخاصة بنا"
+      }
+    },
+    "travlesInfo": {
+      "title": "معلومات المسافر",
+      "passenger": {
+        "title": "مسافر بالغ 1",
+        "subtitle": "معلومات المسافر"
+      },
+      "fields": {
+        "title": {
+          "label": "اللقب *",
+          "placeholder": "اختر اللقب",
+          "options": {
+            "mr": "السيد",
+            "mrs": "السيدة",
+            "ms": "آنسة",
+            "miss": "آنسة"
+          }
+        },
+        "firstName": {
+          "label": "الاسم الأول *",
+          "placeholder": "الاسم الأول"
+        },
+        "lastName": {
+          "label": "الاسم الأخير *",
+          "placeholder": "الاسم الأخير"
+        },
+        "nationality": {
+          "label": "الجنسية *",
+          "placeholder": "اختر الجنسية"
+        },
+        "dob": {
+          "label": "تاريخ الميلاد *",
+          "day": "اليوم",
+          "month": "الشهر",
+          "year": "السنة"
+        },
+        "passportNumber": {
+          "label": "رقم الجواز *",
+          "placeholder": "أدخل رقم الجواز أو الهوية"
+        },
+        "issueDate": {
+          "label": "تاريخ إصدار الجواز *"
+        },
+        "expiryDate": {
+          "label": "تاريخ انتهاء صلاحية الجواز *"
+        }
+      },
+      "countries": {
+        "US": "الولايات المتحدة",
+        "UK": "المملكة المتحدة",
+        "PK": "باكستان",
+        "IN": "الهند"
+      }
+    },
+    "baggageSelection": {
+      "title": "اختر أمتعتك",
+      "cabinBag": {
+        "label": "حقيبة يدوية - 7 كجم",
+        "dimensions": "20 × 30 × 40 سم • حجرة الأمتعة العلوية",
+        "included": "متضمنة"
+      },
+      "checkedBag": {
+        "label": "حقيبة مسجلة"
+      },
+      "actions": {
+        "addMore": "إضافة المزيد من الأمتعة",
+        "remove": "إزالة"
+      },
+      "price": {
+        "currency": "USD"
+      }
+    }
+  },
+  "price_alert_page":{
+  "title": "تنبيهات الأسعار",
+  "subtitle": "استرخِ بينما نراقب تغييرات الأسعار وتوفر الرحلات لك.",
+  "notice": "الأسعار المعروضة هي تقديراتنا الأفضل، ولكن قد تتغير في الوقت الفعلي.",
+  "monitoring_active": "مُراقبة الأسعار لمدة 24 ساعة نشطة!",
+  "from": "لاهور",
+  "to": "الدوحة",
+  "one_way": "ذهاب فقط",
+  "date": "11 سبتمبر، 2025",
+  "ideal_price": "السعر المثالي 76,117 روبية",
+  "current_price": "--",
+  "view_button": "عرض",
+  "cta_title": "تتيح لك تنبيهات الأسعار تتبع تغيرات الأسعار لاتخاذ القرار في أفضل وقت للحجز.",
+  "add_alert_button": "إضافة تنبيه سعر",
+  "modal": {
+    "title": "تنبيه السعر",
+    "info_message": "عيّن وقت المغادرة للعثور على رحلاتك المثالية!",
+    "description": "يراقب نظام تنبيهات الأسعار لدينا أسعار الرحلات باستمرار ويرسل لك إشعارات عندما تنخفض الأسعار للوجهات المختارة. ما عليك سوى إعداد تنبيه مع وجهتك المفضلة وتواريخ السفر، وسنقوم بالباقي. ستتلقى إشعارات عبر البريد الإلكتروني كلما اكتشفنا تغيرات كبيرة في الأسعار، مما يساعدك على توفير المال في رحلتك القادمة.",
+    "email_label": "تلقي التنبيهات عبر البريد الإلكتروني",
+    "email": "shayan.ali0908@gmail.com",
+    "enable_button": "تفعيل مراقبة الأسعار لمدة 24 ساعة"
+  },
+  "icons": {
+    "settings": "الإعدادات",
+    "delete": "حذف"
+  }
+},
+"my_card_page":{
+  "title": "طرق الدفع",
+  "subtitle": "قم بإدارة بطاقاتك المحفوظة وخيارات الدفع الخاصة بك بشكل آمن",
+
+  "secure_storage": "سيتم تخزين تفاصيل بطاقة الدفع الخاصة بك بشكل آمن على نظامنا",
+
+  "tabs": {
+    "my_cards": "بطاقاتي",
+    "other": "غير ذلك"
+  },
+
+  "add_card": "إضافة بطاقة",
+  "modify_card": "تعديل البطاقة",
+
+  "empty_states": {
+    "my_cards": {
+      "title": "لم تُضف أي بطاقات دفع",
+      "description": "أضف بطاقتك الأولى لبدء استخدام الدفع السريع."
+    },
+    "other": {
+      "title": "طرق الدفع الأخرى غير مدعومة حاليًا",
+      "description": "ستصبح المزيد من طرق الدفع متاحة قريبًا."
+    }
+  },
+
+  "card": {
+    "delete": "حذف",
+    "modify": "تعديل",
+    "card_number": "رقم البطاقة المصرفية",
+    "enter_card_number": "أدخل رقم البطاقة",
+    "cardholder_name": "اسم حامل البطاقة"
+  },
+
+  "form": {
+    "name_must_match": "يرجى التأكد من أن اسم حامل البطاقة مطابق للاسم المسجل في حسابك.",
+    "accepted_cards_label": "البطاقات المقبولة:",
+    "pci_notice": "يتماشى موقع Trip.com مع متطلبات معايير أمان بيانات صناعة بطاقات الدفع (PCI DSS)، وبيانات الدفع الخاصة بك مؤمنة.",
+    "unverified_notice": "البطاقة المضافة حديثًا غير موثقة حاليًا. سنقوم بالتحقق من بطاقتك أثناء عملية الدفع.",
+    "enter_number_to_continue": "الرجاء إدخال رقم البطاقة للمتابعة"
+  },
+
+  "buttons": {
+    "cancel": "إلغاء",
+    "submit": "إرسال"
+  }
+},
+"promo_codes": {
+  "title": "الرموز الترويجية الخاصة بي",
+  "placeholder": "أدخل الرمز الترويجي",
+  "add": "إضافة",
+  "available": "متاح",
+  "used": "مستخدم",
+  "unavailable": "غير متاح",
+  "faq": "الأسئلة الشائعة",
+  "noCodes": "ليس لديك حاليًا أي رموز ترويجية {{status}}"
+}
+
+}
