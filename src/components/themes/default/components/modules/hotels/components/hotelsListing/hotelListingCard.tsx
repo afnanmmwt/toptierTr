@@ -28,8 +28,9 @@ const HotelCard = memo(function HotelCard({
   setActiveHotelId,
 }: HotelListingCardProps) {
   const { user } = useUser();
-  const {priceRateConverssion}=useCurrency()
   // Use number state to match API (0 = not fav, 1 = fav)
+        const { currency } = useAppSelector((state) => state.root || {});
+
   const [isFav, setIsFav] = useState<number>(() => {
     return hotel.favorite === 1 || hotel.favorite === "1" ? 1 : 0;
   });
@@ -178,7 +179,7 @@ const HotelCard = memo(function HotelCard({
           >
             <div className="flex gap-2 items-center mb-2 sm:mb-0">
               <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-[900]">
-                <span className="text-xl"> {getCurrencySymbol(hotel.currency)}{" "}{hotel.markup_price}</span>
+                <span className="text-xl"> {getCurrencySymbol(hotel.currency || currency)}{" "}{hotel.markup_price || hotel.price}</span>
                 {/* {hotel.actual_price || hotel.price} */}
                 <span className="text-[14px] sm:text-[16px] lg:text-xl font-[400] text-[#5B697E]">/night</span>
               </p>

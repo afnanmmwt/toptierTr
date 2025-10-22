@@ -44,18 +44,7 @@ const HeaderMenus = () => {
 
         {/* Right: Auth Buttons - Desktop Only */}
         {!(user ) ? <div className="hidden md:flex items-center gap-3">
-          {/* <Link
-            href="/auth/signup"
-            className="border border-[#061026] text-[#061026] cursor-pointer text-center text-[16px] rounded-full w-[113px] h-[39px] pt-1.5 hover:bg-blue-50"
-          >
-            Sign up
-          </Link>
-          <Link
-            href="/auth/login"
-            className="bg-[#163C8C] border border-[#061026] cursor-pointer text-center border-none hover:bg-gray-800 text-[16px] hover:text-white ring-0 text-white rounded-full w-[113px] h-[39px] pt-1.5 transition"
-          >
-            Login
-          </Link> */}
+
            <Dropdown
         label={
           <div className="flex items-center gap-1.5">
@@ -84,14 +73,14 @@ const HeaderMenus = () => {
         <div className="flex flex-col">
           <Link
             href="https://agents.toptiertravel.vip/login"
-            target="_blank"
+            target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
             href="https://agents.toptiertravel.vip/signup"
-            target="_blank"
+            target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Signup

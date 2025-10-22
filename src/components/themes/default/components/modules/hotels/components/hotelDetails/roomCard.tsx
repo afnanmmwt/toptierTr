@@ -20,7 +20,7 @@ export const RoomCard = ({ room, getAmenityIcon, options, onReserve }: RoomCardP
   const { user } = useUser();
   const {priceRateConverssion}=useCurrency()
   const option = options || {};
-  const price = option.markup_price
+  const price = room.markup_price
   const currency = room.currency || "USD";
   const imageUrl = room.img || "/images/auth_bg.jpg";
 
