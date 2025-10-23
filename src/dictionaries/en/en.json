@@ -259,7 +259,11 @@
       "paymentStatus": "Payment Status:",
       "bookingStatus": "Booking Status:",
       "phone": "Phone:",
-      "email": "Email:"
+      "email": "Email:",
+      "Agent": "Agent",
+      "Customer":"Customer",
+      "login":"Login",
+      "signup":"Signup"
     },
     "bookingNote": "Cancellation request sent. we will update as soon as we change the status",
     "bookingInfo": {

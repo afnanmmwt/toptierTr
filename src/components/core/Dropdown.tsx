@@ -100,7 +100,7 @@ const Dropdown: React.FC<DropdownProps> = ({
                 <span>{label}</span>
             <svg
   className={`
-    ml-2 h-5 w-5 text-gray-500
+    ms-2 h-5 w-5 text-gray-500
     transition-transform duration-300 ease-out
     ${dropDirection === 'up'
       ? (open ? 'rotate-0' : 'rotate-180')
