@@ -51,14 +51,15 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
       icon: p.icon || null,
     })) || [];
 
-  // ✅ New loading states
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
 
   if (!invoiceDetails?.length) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-gray-600 text-lg">
-        {dict?.hotelInvoice?.errors?.noInvoiceFound}
+      <div className="container">
+        <div className="invoiceCard flex items-center justify-center min-h-[500px] text-gray-600 text-lg">
+          {dict?.hotelInvoice?.errors?.noInvoiceFound}
+        </div>
       </div>
     );
   }
@@ -66,7 +67,9 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
   const data = invoiceDetails[0];
   const travellers: Traveller[] = JSON.parse(data.guest || "[]");
   const rooms: RoomData[] = JSON.parse(data.room_data || "[]");
-  const parsedBookingData = JSON.parse(invoiceDetails[0].booking_data || "{}");
+const invoiceDetailsBooking = JSON.parse(data.booking_data || "{}");
+console.log("quantity:", data,invoiceDetailsBooking);
+
 
   const invoiceUrl = `${window.location.origin}/hotel/invoice/${data.booking_ref_no}`;
 
@@ -93,8 +96,8 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
       checkin: data.checkin,
       checkout: data.checkout,
       totalNights: 1,
-      type: rooms[0]?.name || "N/A",
-      quantity: rooms.length,
+      type: rooms[0]?.room_name || "N/A",
+      quantity: rooms[0].room_qaunitity,
       price: rooms[0]?.price || data.price_markup,
       currency: rooms[0]?.currency || data.currency_markup,
     },
@@ -112,128 +115,558 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
     },
   };
 
+const handleDownloadPDF = async () => {
+  if (!invoiceRef.current) return;
 
-  const handleDownloadPDF = async () => {
-    if (!invoiceRef.current) return;
+  setIsDownloading(true);
 
-    setIsDownloading(true);
-
-    const style = document.createElement("style");
-    style.innerHTML = `
-      .pdf-rendering * {
-        color: rgb(0, 0, 0) !important;
-        background-color: rgb(255, 255, 255) !important;
-        background-image: none !important;
-        box-shadow: none !important;
-        text-shadow: none !important;
-        border-color: rgb(0, 0, 0) !important;
-        font-family: Arial, sans-serif !important;
-        font-size: 12px !important;
+  // Ensure all images have absolute URLs
+  const ensureAbsoluteUrls = () => {
+    const images = invoiceRef.current.querySelectorAll('img');
+    images.forEach(img => {
+      if (img.src && !img.src.startsWith('http')) {
+        try {
+          img.src = new URL(img.src, window.location.origin).href;
+        } catch (e) {
+          img.src = 'https://via.placeholder.com/150?text=No+Image';
+        }
       }
-
-      .pdf-rendering img {
-        filter: none !important;
-        max-width: 100% !important;
-        height: auto !important;
-      }
-
-      .pdf-rendering .hidden.pdf-rendering\\:hidden {
-        display: none !important;
-      }
-
-      .pdf-rendering .flex, .pdf-rendering .grid {
-        display: block !important;
-      }
-
-      .pdf-rendering .w-full, .pdf-rendering .max-w-4xl {
-        width: 100% !important;
-      }
-
-      .pdf-rendering table {
-        border-collapse: collapse !important;
-        width: 100% !important;
-      }
-
-      .pdf-rendering td, .pdf-rendering th {
-        padding: 4px !important;
-        border: 1px solid #ccc !important;
-      }
-
-      .pdf-rendering .text-right {
-        text-align: right !important;
-      }
-
-      .pdf-rendering .text-left {
-        text-align: left !important;
-      }
-
-      .pdf-rendering .font-bold {
-        font-weight: bold !important;
-      }
-
-      .pdf-rendering .bg-white {
-        background-color: #fff !important;
-      }
-
-      .pdf-rendering .border {
-        border: 1px solid #ddd !important;
-      }
-
-      .pdf-rendering .rounded-lg {
-        border-radius: 0 !important;
-      }
-    `;
-    document.head.appendChild(style);
-
-    invoiceRef.current.classList.add('pdf-rendering');
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 100));
-
-      const element = invoiceRef.current;
-
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: "#ffffff",
-        logging: false,
-        allowTaint: true,
-        removeContainer: true,
-        imageTimeout: 0,
-        foreignObjectRendering: false,
-      });
-
-      const imgData = canvas.toDataURL("image/jpeg", 1.0);
-      const pdf = new jsPDF("p", "mm", "a4");
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = pdf.internal.pageSize.getHeight();
-      const imgProps = pdf.getImageProperties(imgData);
-      const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      let heightLeft = imgHeight;
-      let position = 0;
-
-      pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
-      heightLeft -= pdfHeight;
-
-      while (heightLeft > 0) {
-        position = -pdfHeight * Math.ceil((imgHeight - heightLeft) / pdfHeight);
-        pdf.addPage();
-        pdf.addImage(imgData, "JPEG", 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
-      }
-
-      pdf.save(`Hotel-Invoice-${bookingData.bookingReference}.pdf`);
-    } catch (error) {
-      console.error("PDF download error:", error);
-      alert("Failed to generate PDF. Please try again.");
-    } finally {
-      invoiceRef.current?.classList.remove('pdf-rendering');
-      style.remove();
-      setIsDownloading(false);
-    }
+    });
   };
 
+  // Preload images
+  const preloadImages = async () => {
+    const images = Array.from(invoiceRef.current.querySelectorAll('img'));
+    await Promise.all(
+      images.map(img => {
+        if (img.complete && img.naturalHeight > 0) return Promise.resolve();
+        return new Promise(resolve => {
+          img.onload = img.onerror = resolve;
+        });
+      })
+    );
+  };
+
+  ensureAbsoluteUrls();
+  await preloadImages();
+
+  const style = document.createElement("style");
+  style.innerHTML = `
+    .pdf-rendering {
+      width: 800px !important;
+      margin: 0 auto !important;
+      padding: 15px !important; /* Reduced from 20px */
+      background: white !important;
+      box-sizing: border-box !important;
+      font-family: Arial, sans-serif !important;
+      font-size: 11px !important; /* Slightly smaller */
+      line-height: 1.3 !important;
+      color: #000 !important;
+      -webkit-print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+
+    .pdf-rendering * {
+      box-sizing: border-box !important;
+      font-family: inherit !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+      color: #000 !important;
+      background: none !important;
+      border: none !important;
+      outline: none !important;
+      padding: 0 !important;
+      margin: 0 !important;
+      text-align: left !important;
+      vertical-align: top !important;
+    }
+
+    /* Header */
+    .pdf-rendering .header {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 15px !important;
+      padding: 15px 0 !important;
+      border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    .pdf-rendering .logo {
+      height: 35px !important;
+      width: auto !important;
+      object-fit: contain !important;
+    }
+
+    .pdf-rendering .headerInfo {
+      flex: 1 !important;
+      text-align: left !important;
+    }
+
+    .pdf-rendering .headerText {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      display: inline-block !important;
+      margin-right: 5px !important;
+    }
+
+    .pdf-rendering .paymentStatus,
+    .pdf-rendering .bookingStatus {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+    }
+
+    .pdf-rendering .contactInfo {
+      font-size: 11px !important;
+      color: #4b5563 !important;
+      margin-top: 5px !important;
+    }
+
+    .pdf-rendering .qrCode {
+      width: 45px !important;
+      height: 45px !important;
+      cursor: pointer !important;
+    }
+
+    .pdf-rendering .qrImage {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain !important;
+    }
+
+    /* Booking Info in Header */
+    .pdf-rendering .bookingInfoInHeader {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 10px !important;
+      margin-top: 5px !important;
+    }
+
+    .pdf-rendering .bookingInfoItem {
+      display: flex !important;
+      flex-direction: column !important;
+      font-size: 10px !important;
+      gap: 2px !important;
+    }
+
+    .pdf-rendering .bookingInfoLabel {
+      font-weight: 600 !important;
+      color: #6b7280 !important;
+    }
+
+    .pdf-rendering .bookingInfoValue {
+      font-weight: 500 !important;
+      color: #111827 !important;
+    }
+
+    /* Payment Section */
+    .pdf-rendering .paymentSection {
+      margin-top: 15px !important;
+      padding: 10px !important;
+      background: white !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 6px !important;
+      display: grid !important;
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 10px !important;
+      align-items: center !important;
+    }
+
+    .pdf-rendering .paymentTitle {
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      color: #1f2937 !important;
+    }
+
+    .pdf-rendering .dropdownButton {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      padding: 6px 10px !important;
+      border: 1px solid #d1d5db !important;
+      border-radius: 4px !important;
+      background: white !important;
+      font-size: 11px !important;
+      color: #111827 !important;
+    }
+
+    .pdf-rendering .dropdownContent {
+      padding: 6px !important;
+      max-height: 120px !important;
+      overflow-y: auto !important;
+    }
+
+    .pdf-rendering .paymentOption {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      cursor: pointer !important;
+      padding: 6px !important;
+      font-size: 11px !important;
+      border-radius: 4px !important;
+    }
+
+    .pdf-rendering .paymentOptionSelected {
+      background: #dbeafe !important;
+      color: #1e40af !important;
+    }
+
+    .pdf-rendering .paymentIcon {
+      width: 18px !important;
+      height: 18px !important;
+      border-radius: 3px !important;
+    }
+
+    .pdf-rendering .iconPlaceholder {
+      width: 18px !important;
+      height: 18px !important;
+      background: #e5e7eb !important;
+      border-radius: 3px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 9px !important;
+    }
+
+    .pdf-rendering .payButton {
+      padding: 6px 12px !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      font-weight: 500 !important;
+      color: white !important;
+      width: 100% !important;
+      background: #1e3a8a !important;
+      text-align: center !important;
+    }
+
+    .pdf-rendering .payButton:disabled {
+      background: #9ca3af !important;
+      cursor: not-allowed !important;
+    }
+
+    .pdf-rendering .totalAmount {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      color: #1f2937 !important;
+      text-align: right !important;
+    }
+
+    /* Content */
+    .pdf-rendering .content {
+      padding: 15px 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 15px !important;
+    }
+
+    .pdf-rendering .bookingNote {
+      border: 1px solid #fecaca !important;
+      background: #fee2e2 !important;
+      border-radius: 4px !important;
+      padding: 8px !important;
+      text-align: start !important;
+    }
+
+    .pdf-rendering .bookingGrid {
+      display: grid !important;
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 8px !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 4px !important;
+      padding: 8px !important;
+    }
+
+    .pdf-rendering .bookingItem {
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    .pdf-rendering .bookingLabel {
+      font-size: 10px !important;
+      font-weight: 600 !important;
+      color: #6b7280 !important;
+      margin-bottom: 3px !important;
+    }
+
+    .pdf-rendering .bookingValue {
+      font-size: 11px !important;
+      font-weight: 500 !important;
+    }
+
+    .pdf-rendering .travellersSection {
+      border: 1px solid #e5e7eb !important;
+      border-radius: 4px !important;
+      padding: 8px !important;
+    }
+
+    .pdf-rendering .travellersTitle {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: #374151 !important;
+      margin-bottom: 6px !important;
+      text-transform: uppercase !important;
+    }
+
+    .pdf-rendering .tableContainer {
+      overflow-x: auto !important;
+    }
+
+    .pdf-rendering .table {
+      width: 100% !important;
+      font-size: 11px !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 3px !important;
+    }
+
+    .pdf-rendering .tableHeader {
+      background: #f9fafb !important;
+    }
+
+    .pdf-rendering .tableCell {
+      text-align: left !important;
+      padding: 6px !important;
+      font-weight: 600 !important;
+      color: #4b5563 !important;
+    }
+
+    .pdf-rendering .tableRow {
+      border-top: 1px solid #f3f4f6 !important;
+    }
+
+    .pdf-rendering .hotelCard {
+      display: flex !important;
+      flex-direction: row !important;
+      border: 1px solid #e5e7eb !important;
+      border-radius: 6px !important;
+      overflow: hidden !important;
+      background: white !important;
+    }
+
+    .pdf-rendering .hotelImage {
+      width: 280px !important; /* Reduced from 300px */
+      height: 80px !important;
+      object-fit: cover !important;
+    }
+
+    .pdf-rendering .hotelInfo {
+      flex: 1 !important;
+      padding: 8px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      justify-content: center !important;
+    }
+
+    .pdf-rendering .hotelName {
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      color: #111827 !important;
+      margin-bottom: 4px !important;
+    }
+
+    .pdf-rendering .starRating {
+      display: flex !important;
+      align-items: center !important;
+      margin-bottom: 6px !important;
+    }
+
+    .pdf-rendering .star {
+      color: #f97316 !important;
+      font-size: 12px !important;
+    }
+
+    .pdf-rendering .hotelAddress {
+      font-size: 11px !important;
+      color: #4b5563 !important;
+      margin-bottom: 6px !important;
+    }
+
+    .pdf-rendering .hotelContact {
+      font-size: 11px !important;
+      color: #374151 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 3px !important;
+    }
+
+    .pdf-rendering .roomSection {
+      border: 1px solid #e5e7eb !important;
+      border-radius: 4px !important;
+      padding: 8px !important;
+    }
+
+    .pdf-rendering .roomTitle {
+      font-size: 12px !important;
+      font-weight: 700 !important;
+      color: #1f2937 !important;
+      margin-bottom: 6px !important;
+      border-bottom: 1px solid #e5e7eb !important;
+      padding-bottom: 6px !important;
+    }
+
+    .pdf-rendering .roomTable {
+      width: 100% !important;
+      font-size: 11px !important;
+    }
+
+    .pdf-rendering .roomRow {
+      border-bottom: 1px solid #f3f4f6 !important;
+    }
+
+    .pdf-rendering .roomCell {
+      font-weight: 600 !important;
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+      padding-right: 8px !important;
+    }
+
+    .pdf-rendering .fareSection {
+      border: 1px solid #e5e7eb !important;
+      border-radius: 6px !important;
+      padding: 8px !important;
+    }
+
+    .pdf-rendering .rateComment {
+      margin-bottom: 6px !important;
+    }
+
+    .pdf-rendering .rateCommentTitle {
+      font-weight: 700 !important;
+      text-align: center !important;
+      padding-bottom: 6px !important;
+    }
+
+    .pdf-rendering .rateCommentList {
+      border: 1px solid #e5e7eb !important;
+      border-radius: 4px !important;
+      margin-bottom: 6px !important;
+    }
+
+    .pdf-rendering .rateCommentItem {
+      padding: 6px !important;
+      border-bottom: 1px solid #e5e7eb !important;
+    }
+
+    .pdf-rendering .rateCommentItem:last-child {
+      border-bottom: none !important;
+    }
+
+    .pdf-rendering .taxRow {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 6px !important;
+      background: #f9fafb !important;
+      border-radius: 3px !important;
+      margin-bottom: 6px !important;
+    }
+
+    .pdf-rendering .taxLabel {
+      font-size: 11px !important;
+      font-weight: 600 !important;
+    }
+
+    .pdf-rendering .totalRow {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: center !important;
+      padding: 6px !important;
+      background: #f3f4f6 !important;
+      border-radius: 3px !important;
+    }
+
+    .pdf-rendering .totalLabel {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+    }
+
+    .pdf-rendering .customerGrid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 8px !important;
+    }
+
+    .pdf-rendering .customerCard {
+      border: 1px solid #e5e7eb !important;
+      background: #f9fafb !important;
+      padding: 8px !important;
+      border-radius: 4px !important;
+    }
+
+    .pdf-rendering .customerTitle {
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      color: #374151 !important;
+      margin-bottom: 6px !important;
+    }
+
+    .pdf-rendering .customerInfo {
+      font-size: 11px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 3px !important;
+    }
+
+    .pdf-rendering .non-printable {
+      display: none !important;
+    }
+
+    /* Remove scrollbars */
+    .pdf-rendering ::-webkit-scrollbar {
+      display: none !important;
+    }
+    .pdf-rendering {
+      -ms-overflow-style: none !important;
+      scrollbar-width: none !important;
+    }
+  `;
+  document.head.appendChild(style);
+  invoiceRef.current.classList.add('pdf-rendering');
+
+  try {
+    await new Promise(resolve => setTimeout(resolve, 100));
+
+    const canvas = await html2canvas(invoiceRef.current, {
+      scale: 2,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+      allowTaint: false, // ← MUST be false when useCORS is true
+      removeContainer: true,
+      imageTimeout: 15000,
+      foreignObjectRendering: false,
+    });
+
+    const imgData = canvas.toDataURL("image/jpeg", 0.95);
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    // Fit entire canvas to A4 page
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const imgProps = pdf.getImageProperties(imgData);
+    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+    // If height exceeds A4, scale down
+    const maxHeight = 297; // A4 height in mm
+    let scale = 1;
+    if (imgHeight > maxHeight) {
+      scale = maxHeight / imgHeight;
+    }
+
+    const scaledWidth = pdfWidth * scale;
+    const scaledHeight = imgHeight * scale;
+
+    pdf.addImage(imgData, "JPEG", 0, 0, scaledWidth, scaledHeight);
+
+    pdf.save(`Hotel-Invoice-${bookingData.bookingReference}.pdf`);
+  } catch (error) {
+    console.error("PDF download error:", error);
+    alert("Failed to generate PDF. Some images may be blocked by CORS.");
+  } finally {
+    invoiceRef.current.classList.remove('pdf-rendering');
+    style.remove();
+    setIsDownloading(false);
+  }
+};
 
   const handlePayNow = async () => {
     const re_id = invoiceDetails[0].booking_ref_no;
@@ -257,32 +690,24 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
     }
   };
 
-const handleCancellation = async () => {
-  setIsCancelling(true);
-  try {
-    const response = await cancel_payment(invoiceDetails[0].booking_ref_no);
-    if (response.status) {
-      toast.success(response.message);
-
-      // ✅ Refresh the page after a short delay (optional)
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500); // wait for toast to show
+  const handleCancellation = async () => {
+    setIsCancelling(true);
+    try {
+      const response = await cancel_payment(invoiceDetails[0].booking_ref_no);
+      if (response.status) {
+        toast.success(response.message);
+        setTimeout(() => window.location.reload(), 1500);
+      }
+    } catch (error) {
+      console.error("Cancellation error:", error);
+    } finally {
+      setIsCancelling(false);
     }
-  } catch (error) {
-    console.error("Cancellation error:", error);
-  } finally {
-    setIsCancelling(false);
-  }
-};
-
+  };
 
   const handleSelectPayment = (payment: any) => {
     setSelectedPaymentMethod(payment.name.toLowerCase());
   };
-
-
-
 
   const handleShareWhatsApp = () => {
     const message = `Hotel Booking Confirmation
@@ -299,70 +724,54 @@ View Invoice: ${invoiceUrl}`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-6 sm:py-10 px-4 sm:px-6">
-      <div
-        ref={invoiceRef}
-        className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-lg overflow-hidden"
-      >
+    <div className="container">
+      {/* Printable Invoice Content */}
+      <div ref={invoiceRef} className="invoiceCard">
         {/* Header */}
-        <div className="border-b border-gray-200 p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="header">
           <img
             src={appData.header_logo_img || "https://via.placeholder.com/150"}
             alt="Hotel"
-            className="h-16 w-auto object-contain rounded-md"
+            className="logo"
           />
-
-          <div
-            className={`flex-1 ${lang === "ar" ? "text-right sm:text-left" : "text-left sm:text-right"}`}
-          >
+          <div className="headerRight">
+          <div className={lang === "ar" ? "headerInfoAr" : "headerInfo"}>
             <div>
-              <span className="text-sm font-semibold">
+              <span className="headerText">
                 {dict?.hotelInvoice?.header?.paymentStatus}
               </span>
-              <span className="text-sm text-green-600 font-semibold">
-                {bookingData.paymentStatus}
-              </span>
+              <span className="paymentStatus">{bookingData.paymentStatus}</span>
             </div>
             <div>
-              <span className="text-sm font-semibold">
+              <span className="headerText">
                 {dict?.hotelInvoice?.header?.bookingStatus}
               </span>
-              <span className="text-sm text-blue-600 font-semibold">
-                {bookingData.bookingStatus}
-              </span>
+              <span className="bookingStatus">{bookingData.bookingStatus}</span>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="contactInfo">
               <div>
-                <span className="font-semibold">
-                  {dict?.hotelInvoice?.header?.phone}
-                </span>{" "}
-                {bookingData.phone}
+                <span className="contactLabel">{dict?.hotelInvoice?.header?.phone}</span> {bookingData.phone}
               </div>
               <div>
-                <span className="font-semibold">
-                  {dict?.hotelInvoice?.header?.email}
-                </span>{" "}
-                {bookingData.email}
+                <span className="contactLabel">{dict?.hotelInvoice?.header?.email}</span> {bookingData.email}
               </div>
             </div>
           </div>
 
           {/* QR Code */}
-          <div
-            className="w-20 h-20 p-1 cursor-pointer"
-            onClick={() => setShowInvoiceImage(true)}
-          >
+          <div className="qrCode" onClick={() => setShowInvoiceImage(true)}>
             <img
               src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(invoiceUrl)}`}
               alt="QR Code"
-              className="w-full h-full object-contain"
+              className="qrImage"
             />
+          </div>
           </div>
         </div>
 
         {bookingData.paymentStatus === "unpaid" && (
-          <div className="mt-3 mx-6 p-4 bg-white border border-gray-200 rounded-xl grid grid-cols-1 md:grid-cols-4 items-center gap-6">
-            <div className="text-lg font-semibold text-gray-800">Pay With</div>
+          <div className="paymentSection">
+            <div className="paymentTitle">Pay With</div>
 
             <Dropdown
               label={
@@ -375,11 +784,11 @@ View Invoice: ${invoiceUrl}`;
                 </div>
               }
               dropDirection="down"
-              buttonClassName="w-full justify-between px-4 py-2.5 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 text-left"
+              buttonClassName="dropdownButton"
             >
               {({ onClose }) => (
-                <div className="p-1 max-h-60 overflow-y-auto">
-                  {activePayments.map((method: any) => (
+                <div className="dropdownContent">
+                  {activePayments.map((method) => (
                     <button
                       key={method.id}
                       type="button"
@@ -387,21 +796,12 @@ View Invoice: ${invoiceUrl}`;
                         handleSelectPayment(method);
                         onClose();
                       }}
-                      className={`w-full flex items-center gap-3 cursor-pointer px-3 py-2.5 text-sm rounded-lg ${selectedPaymentMethod === method.name.toLowerCase()
-                        ? "bg-blue-100 text-blue-900"
-                        : "text-gray-700 hover:bg-gray-100"
-                        }`}
+                      className={`paymentOption ${selectedPaymentMethod === method.name.toLowerCase() ? "paymentOptionSelected" : ""}`}
                     >
                       {method.icon ? (
-                        <img
-                          src={method.icon}
-                          alt={method.label}
-                          className="w-5 h-5 rounded"
-                        />
+                        <img src={method.icon} alt={method.label} className="paymentIcon" />
                       ) : (
-                        <div className="w-5 h-5 bg-gray-200 rounded flex items-center justify-center text-xs">
-                          {method.label.charAt(0)}
-                        </div>
+                        <div className="iconPlaceholder">{method.label.charAt(0)}</div>
                       )}
                       <span>{method.label}</span>
                     </button>
@@ -413,115 +813,72 @@ View Invoice: ${invoiceUrl}`;
             <button
               onClick={handlePayNow}
               disabled={!selectedPaymentMethod}
-              className={`px-6 py-2.5 rounded-lg cursor-pointer font-medium text-white w-full ${!selectedPaymentMethod
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-900 hover:bg-gray-800"
-                }`}
+              className="payButton"
             >
               {dict?.hotelInvoice?.bookingInfo?.proceed}
             </button>
 
-            <div className="text-xl font-bold text-gray-800 text-center md:text-right">
+            <div className="totalAmount">
               USD {bookingData.total.replace(/[^0-9.,]/g, "")}
             </div>
           </div>
         )}
 
         {/* Booking Details */}
-        <div className="p-6 space-y-6">
-          {/* Booking Note */}
+        <div className="content">
           {bookingData.paymentStatus === "paid" && data.cancellation_request === "0" && (
-            <div>
-              <ul className="border border-gray-200 rounded-lg mb-2">
-                <li className="p-3 border-b border-gray-200 last:border-b-0">
-                  <p>
-                    Payable through{" "}
-                    <span className="font-medium">{invoiceDetails[0]?.supplier}</span>, acting as agent for the service operating company,
-                    details of which can be provided upon request. VAT:{" "}
-                    <span className="font-medium">{invoiceDetails[0]?.vat}</span> Reference:{" "}
-                    <span className="font-medium">
-                      {invoiceDetails[0]?.pnr ? invoiceDetails[0]?.pnr : "N/A"}
-                    </span>
-                  </p>
-                </li>
-              </ul>
-            </div>
+            <ul className="rateCommentList">
+              <li className="rateCommentItem">
+                <p>
+         <span>
+        Payable through{" "}
+        <span className="font-semibold">{data.supplier}</span>, acting as agent for the service operating company, details of which can be provided upon request.
+        VAT:<span className="font-semibold">{data.vat}</span>{" "}
+        Reference:<span className="font-semibold">{data.pnr}</span>
+      </span>
+        </p>
+              </li>
+            </ul>
           )}
 
           {invoiceDetails[0].cancellation_request === "1" && (
-            <div className="border bg-red-100 border-red-200 rounded-lg p-4 text-start">
-              {dict?.hotelInvoice?.bookingNote}
-            </div>
+            <div className="bookingNote">{dict?.hotelInvoice?.bookingNote}</div>
           )}
 
-          {/* Booking Info */}
-          <div className="grid grid-cols-2 sm:grid-cols-5 gap-4 border border-gray-200 rounded-lg p-4">
-            <div>
-              <div className="text-xs font-semibold text-gray-500 mb-3">
-                {dict?.hotelInvoice?.bookingInfo?.bookingId}
+          <div className="bookingGrid">
+            {[
+              { label: dict?.hotelInvoice?.bookingInfo?.bookingId, value: bookingData.bookingId },
+              { label: dict?.hotelInvoice?.bookingInfo?.reference, value: bookingData.bookingReference },
+              { label: dict?.hotelInvoice?.bookingInfo?.bookingpnr, value: invoiceDetails[0]?.pnr || "N/A" },
+              { label: dict?.hotelInvoice?.bookingInfo?.date, value: bookingData.bookingDate },
+              { label: dict?.hotelInvoice?.bookingInfo?.location, value: bookingData.hotel.location },
+            ].map((item, i) => (
+              <div key={i} className="bookingItem">
+                <div className="bookingLabel">{item.label}</div>
+                <div className="bookingValue">{item.value}</div>
               </div>
-              <div className="text-sm font-medium">{bookingData.bookingId}</div>
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-gray-500 mb-3">
-                {dict?.hotelInvoice?.bookingInfo?.reference}
-              </div>
-              <div className="text-sm font-medium">{bookingData.bookingReference}</div>
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-gray-500 mb-3">
-                {dict?.hotelInvoice?.bookingInfo?.bookingpnr}
-              </div>
-              <div className="text-sm font-medium">
-                {invoiceDetails[0]?.pnr === null ? "N/A" : invoiceDetails[0]?.pnr}
-              </div>
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-gray-500 mb-3">
-                {dict?.hotelInvoice?.bookingInfo?.date}
-              </div>
-              <div className="text-sm font-medium">{bookingData.bookingDate}</div>
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-gray-500 mb-3">
-                {dict?.hotelInvoice?.bookingInfo?.location}
-              </div>
-              <div className="text-sm font-medium">{bookingData.hotel.location}</div>
-            </div>
+            ))}
           </div>
 
-          {/* Travellers */}
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h3 className="text-sm font-bold text-gray-700 mb-3 uppercase">
-              {dict?.hotelInvoice?.travellers?.title}
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm border border-gray-200 rounded-md">
-                <thead className="bg-gray-50">
+          <div className="travellersSection">
+            <h3 className="travellersTitle">{dict?.hotelInvoice?.travellers?.title}</h3>
+            <div className="tableContainer">
+              <table className="table">
+                <thead className="tableHeader">
                   <tr>
-                    <th className="text-left p-2 font-semibold text-gray-600">
-                      {dict?.hotelInvoice?.travellers?.table?.no}
-                    </th>
-                    <th className="text-left p-2 font-semibold text-gray-600">
-                      {dict?.hotelInvoice?.travellers?.table?.sr}
-                    </th>
-                    <th className="text-left p-2 font-semibold text-gray-600">
-                      {dict?.hotelInvoice?.travellers?.table?.name}
-                    </th>
-                    <th className="text-left p-2 font-semibold text-gray-600">
-                      {"Traveler Type"}
-                    </th>
+                    <th className="tableCell">{dict?.hotelInvoice?.travellers?.table?.no}</th>
+                    <th className="tableCell">{dict?.hotelInvoice?.travellers?.table?.sr}</th>
+                    <th className="tableCell">{dict?.hotelInvoice?.travellers?.table?.name}</th>
+                    <th className="tableCell">Traveler Type</th>
                   </tr>
                 </thead>
                 <tbody>
                   {travellers.map((t, index) => (
-                    <tr key={index} className="border-t border-gray-100">
-                      <td className="p-2">{index + 1}</td>
-                      <td className="p-2">{t.title}</td>
-                      <td className="p-2">
-                        {t.first_name} {t.last_name}
-                      </td>
-                      <td className="p-2">
+                    <tr key={index} className="tableRow">
+                      <td className="tableCell">{index + 1}</td>
+                      <td className="tableCell">{t.title}</td>
+                      <td className="tableCell">{t.first_name} {t.last_name}</td>
+                      <td className="tableCell">
                         {t.traveller_type === "child"
                           ? `${t.traveller_type} (${(t as any)?.age} year old)`
                           : t.traveller_type}
@@ -533,210 +890,141 @@ View Invoice: ${invoiceUrl}`;
             </div>
           </div>
 
-          {/* Hotel Info */}
-          <div className="flex flex-col md:flex-row border border-gray-200 rounded-xl overflow-hidden bg-white">
-            <div className="md:w-1/3 w-full">
+          <div className="hotelCard">
+            <div className="hotelImageWrapper">
               <img
                 src={bookingData.hotel.image || "/images/default-hotel.jpg"}
                 alt={bookingData.hotel.name}
-                className="w-full h-40 md:h-full object-cover"
+                className="hotelImage"
+
               />
             </div>
-            <div className="flex-1 p-5 flex flex-col justify-center">
-              <h2 className="text-2xl font-semibold text-gray-900 mb-1">
-                {bookingData.hotel.name}
-              </h2>
-              {/* Star Rating */}
-              <div className="flex items-center mb-2">
+            <div className="hotelInfo">
+              <h2 className="hotelName">{bookingData.hotel.name}</h2>
+              <div className="starRating">
                 {[...Array(bookingData.hotel.rating)].map((_, i) => (
-                  <span key={i} className="text-orange-400 text-lg">★</span>
+                  <span key={i} className="star">★</span>
                 ))}
               </div>
-              <p className="text-sm text-gray-600 mb-3">{bookingData.hotel.address}</p>
-              <div className="text-sm text-gray-700 space-y-1">
-                <div>
-                  <span className="font-semibold">{dict?.hotelInvoice?.hotelInfo?.phone}</span>{" "}
-                  {bookingData.hotel.phone || "N/A"}
-                </div>
-                <div>
-                  <span className="font-semibold">{dict?.hotelInvoice?.hotelInfo?.email}</span>{" "}
-                  {bookingData.hotel.email || "N/A"}
-                </div>
-                <div>
-                  <span className="font-semibold">{dict?.hotelInvoice?.hotelInfo?.website}</span>{" "}
-                  {bookingData.hotel.website || "N/A"}
-                </div>
+              <p className="hotelAddress">{bookingData.hotel.address}</p>
+              <div className="hotelContact">
+                <div><span className="contactLabel">{dict?.hotelInvoice?.hotelInfo?.phone}</span> {bookingData.hotel.phone || "N/A"}</div>
+                <div><span className="contactLabel">{dict?.hotelInvoice?.hotelInfo?.email}</span> {bookingData.hotel.email || "N/A"}</div>
+                <div><span className="contactLabel">{dict?.hotelInvoice?.hotelInfo?.website}</span> {bookingData.hotel.website || "N/A"}</div>
               </div>
             </div>
           </div>
 
-          {/* Room Details */}
-          <div className="border border-gray-200 rounded-lg p-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-3 border-b border-gray-200 pb-2">
-              {dict?.hotelInvoice?.roomDetails?.title}
-            </h3>
-            <table className="w-full text-sm">
+          <div className="roomSection">
+            <h3 className="roomTitle">{dict?.hotelInvoice?.roomDetails?.title}</h3>
+            <table className="roomTable">
               <tbody>
-                <tr className="border-b border-gray-100">
-                  <td className="font-semibold py-2 pr-4">
-                    {dict?.hotelInvoice?.roomDetails?.checkin}
-                  </td>
-                  <td className="py-2">{bookingData.room.checkin}</td>
+                <tr className="roomRow">
+                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.checkin}</td>
+                  <td className="roomCell">{bookingData.room.checkin}</td>
                 </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="font-semibold py-2 pr-4">
-                    {dict?.hotelInvoice?.roomDetails?.checkout}
-                  </td>
-                  <td className="py-2">{bookingData.room.checkout}</td>
+                <tr className="roomRow">
+                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.checkout}</td>
+                  <td className="roomCell">{bookingData.room.checkout}</td>
                 </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="font-semibold py-2 pr-4">
-                    {dict?.hotelInvoice?.roomDetails?.type}
-                  </td>
-                  <td className="py-2">{bookingData.room.type}</td>
+                <tr className="roomRow">
+                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.type}</td>
+                  <td className="roomCell">{bookingData.room.type}</td>
+                </tr>
+                  <tr className="roomRow">
+                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.quantity}</td>
+                  <td className="roomCell">{bookingData.room.quantity}</td>
                 </tr>
                 <tr>
-                  <td className="font-semibold py-2 pr-4">
-                    {dict?.hotelInvoice?.roomDetails?.total}
-                  </td>
-                  <td className="py-2">{bookingData.total}</td>
+                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.total}</td>
+                  <td className="roomCell">{bookingData.total}</td>
                 </tr>
               </tbody>
             </table>
           </div>
 
-          {/* Fare + Tax Info */}
-          <div className="border border-gray-200 rounded-xl p-4">
-            {/* Rate Comment Section */}
-            {invoiceDetails[0]?.supplier && invoiceDetails[0].cancellation_request === "0" && (
-              <div>
-                <div>
-                  <h3 className="font-bold text-center pb-2">Rate Comment</h3>
-                </div>
-                <ul className="border border-gray-200 rounded-lg mb-2">
-                  <li className="p-3 border-b border-gray-200 last:border-b-0">
-                    <p>
-                      Payable through{" "}
-                      <span className="font-medium">{invoiceDetails[0].supplier}</span>, acting as agent for the service operating company,
-                      details of which can be provided upon request. VAT:{" "}
-                      <span className="font-medium">{invoiceDetails[0].vat}</span> Reference:{" "}
-                      <span className="font-medium">
-                        {invoiceDetails[0].pnr ? invoiceDetails[0].pnr : "N/A"}
-                      </span>
-                    </p>
-                  </li>
-                </ul>
-              </div>
-            )}
+          <div className="fareSection">
+        {invoiceDetailsBooking?.rateComment !== undefined &&
+ invoiceDetailsBooking?.rateComment !== null && (
+  <div className="rateComment">
+    <h3 className="rateCommentTitle">Rate Comment</h3>
+    <ul className="rateCommentList">
+      <li className="rateCommentItem">
+        <p>
+        {invoiceDetailsBooking?.rateComment}
+        </p>
+      </li>
+    </ul>
+  </div>
+)}
 
-            <div className="flex justify-between items-center p-3 bg-gray-50 rounded mb-2">
-              <span className="text-sm font-semibold">
-                {dict?.hotelInvoice?.fareAndTax?.taxLabel}
-              </span>
-              <span className="text-sm font-semibold">
-                {"%"} {invoiceDetails[0].tax}
-              </span>
+
+            <div className="taxRow">
+              <span className="taxLabel">{dict?.hotelInvoice?.fareAndTax?.taxLabel}</span>
+              <span className="taxLabel">{"%"} {invoiceDetails[0].tax}</span>
             </div>
-            <div className="flex justify-between items-center p-3 bg-gray-100 rounded">
-              <span className="text-sm font-bold">
-                {dict?.hotelInvoice?.fareAndTax?.totalLabel}
-              </span>
-              <span className="text-sm font-bold">{bookingData.total}</span>
+            <div className="totalRow">
+              <span className="totalLabel">{dict?.hotelInvoice?.fareAndTax?.totalLabel}</span>
+              <span className="totalLabel">{bookingData.total}</span>
             </div>
           </div>
 
-          {/* Customer Info */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div className="border border-gray-200 bg-gray-50 p-4 rounded-lg">
-              <h4 className="text-sm font-bold text-gray-700 mb-3">
-                {dict?.hotelInvoice?.customer?.title}
-              </h4>
-              <div className="text-sm space-y-1">
-                <p>
-                  <span className="font-semibold">{dict?.hotelInvoice?.customer?.email}</span>{" "}
-                  {bookingData.customer.email}
-                </p>
-                <p>
-                  <span className="font-semibold">{dict?.hotelInvoice?.customer?.contact}</span>{" "}
-                  {bookingData.customer.contact}
-                </p>
-                <p>
-                  <span className="font-semibold">{dict?.hotelInvoice?.customer?.address}</span>{" "}
-                  {bookingData.customer.address}
-                </p>
+          <div className="customerGrid">
+            <div className="customerCard">
+              <h4 className="customerTitle">{dict?.hotelInvoice?.customer?.title}</h4>
+              <div className="customerInfo">
+                <p><span className="contactLabel">{dict?.hotelInvoice?.customer?.email}</span> {bookingData.customer.email}</p>
+                <p><span className="contactLabel">{dict?.hotelInvoice?.customer?.contact}</span> {bookingData.customer.contact}</p>
+                <p><span className="contactLabel">{dict?.hotelInvoice?.customer?.address}</span> {bookingData.customer.address}</p>
               </div>
             </div>
 
-            <div className="border border-gray-200 bg-gray-50 p-4 rounded-lg">
-              <h4 className="text-sm font-bold text-gray-700 mb-3">
-                {dict?.hotelInvoice?.customerCare?.title}
-              </h4>
-              <div className="text-sm space-y-1">
-                <p>
-                  <span className="font-semibold">{dict?.hotelInvoice?.customerCare?.email}</span>{" "}
-                  {appData.contact_email}
-                </p>
-                <p>
-                  <span className="font-semibold">{dict?.hotelInvoice?.customerCare?.contact}</span>{" "}
-                  {appData.contact_phone}
-                </p>
-                <p>
-                  <span className="font-semibold">{dict?.hotelInvoice?.customerCare?.website}</span>{" "}
-                  {appData.site_url}
-                </p>
+            <div className="customerCard">
+              <h4 className="customerTitle">{dict?.hotelInvoice?.customerCare?.title}</h4>
+              <div className="customerInfo">
+                <p><span className="contactLabel">{dict?.hotelInvoice?.customerCare?.email}</span> {appData.contact_email}</p>
+                <p><span className="contactLabel">{dict?.hotelInvoice?.customerCare?.contact}</span> {appData.contact_phone}</p>
+                <p><span className="contactLabel">{dict?.hotelInvoice?.customerCare?.website}</span> {appData.site_url}</p>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Bottom Action Buttons Row */}
-        <div className="border-t border-gray-200 bg-white py-5 px-6 flex flex-col sm:flex-row gap-3 justify-between items-center">
-          {/* Download PDF Button — Loading without changing width */}
-          <button
-            onClick={handleDownloadPDF}
-            disabled={isDownloading}
-            className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm transition-opacity"
-          >
-            {isDownloading ? (
-              <>
-                <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
-                <span>Loading...</span>
-              </>
-            ) : (
-              <>
-                <Icon icon="mdi:tray-arrow-down" width="20" height="20" />
-                <span>{dict?.hotelInvoice?.buttons?.downloadPdf || "Download as PDF"}</span>
-              </>
-            )}
-          </button>
+      {/* Action Buttons — Outside printable area */}
+      <div className="actionBarOutside">
+        <button onClick={handleDownloadPDF} disabled={isDownloading} className="actionButton">
+          {isDownloading ? (
+            <>
+              <Icon icon="eos-icons:loading" className="loadingIcon" width="20" height="20" />
+              <span>Loading...</span>
+            </>
+          ) : (
+            <>
+              <Icon icon="mdi:tray-arrow-down" width="20" height="20" />
+              <span>{dict?.hotelInvoice?.buttons?.downloadPdf || "Download as PDF"}</span>
+            </>
+          )}
+        </button>
 
-          {/* Send to WhatsApp Button — unchanged */}
-          <button
-            onClick={handleShareWhatsApp}
-            className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[160px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm"
-          >
-            <Icon icon="mdi:whatsapp" width="20" height="20" />
-            <span>{dict?.hotelInvoice?.buttons?.sendToWhatsApp || "Send to WhatsApp"}</span>
-          </button>
+        <button onClick={handleShareWhatsApp} className="actionButton">
+          <Icon icon="mdi:whatsapp" width="20" height="20" />
+          <span>{dict?.hotelInvoice?.buttons?.sendToWhatsApp || "Send to WhatsApp"}</span>
+        </button>
 
-          {/* Request for Cancellation Button */}
-          <button
-            onClick={handleCancellation}
-            className="flex items-center justify-center gap-2 w-full sm:w-auto min-w-[180px] bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-semibold cursor-pointer h-11 px-6 rounded-lg shadow-sm"
-          >
-            {isCancelling ? (
-              <>
-                <Icon icon="eos-icons:loading" className="animate-spin" width="20" height="20" />
-                <span>Cancelling...</span>
-              </>
-            ) : (
-              <>
-                <Icon icon="mdi:close" width="20" height="20" />
-                <span>{dict?.hotelInvoice?.buttons?.requestCancellation || "Request for Cancellation"}</span>
-              </>
-            )}
-          </button>
-        </div>
+        <button onClick={handleCancellation} className="actionButton cancellationButton">
+          {isCancelling ? (
+            <>
+              <Icon icon="eos-icons:loading" className="loadingIcon" width="20" height="20" />
+              <span>Cancelling...</span>
+            </>
+          ) : (
+            <>
+              <Icon icon="mdi:close" width="20" height="20" />
+              <span>{dict?.hotelInvoice?.buttons?.requestCancellation || "Request for Cancellation"}</span>
+            </>
+          )}
+        </button>
       </div>
     </div>
   );

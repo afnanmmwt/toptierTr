@@ -288,6 +288,7 @@
       "checkin": "Checkin:",
       "checkout": "Checkout:",
       "type": "Type:",
+      "quantity":"Quantity",
       "total": "Total:"
     },
     "fareAndTax": {
