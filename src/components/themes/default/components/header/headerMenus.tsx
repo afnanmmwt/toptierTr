@@ -72,14 +72,14 @@ const HeaderMenus = () => {
       >
         <div className="flex flex-col">
           <Link
-            href="https://toptier-agent-d.vercel.app/login"
+            href="https://toptier-agent-d-kwk7.vercel.app/login"
             target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
-            href="https://toptier-agent-d.vercel.app/signup"
+            href="https://toptier-agent-d-kwk7.vercel.app/signup"
             target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
@@ -219,14 +219,14 @@ const HeaderMenus = () => {
       >
         <div className="flex flex-col">
           <Link
-            href="https://toptier-agent-d.vercel.app/login"
+            href="https://toptier-agent-d-kwk7.vercel.app/login"
             target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
-            href="https://toptier-agent-d.vercel.app/signup"
+            href="https://toptier-agent-d-kwk7.vercel.app/signup"
             target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
