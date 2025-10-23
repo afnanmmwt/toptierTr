@@ -51,15 +51,21 @@ interface SessionUser {
   exp?: number;
 }
 
-export const fetchAppData = async () => {
+
+interface appDataPayload {
+  language: string;
+  currency: string;
+}
+export const fetchAppData = async (payload: appDataPayload) => {
+  console.log("fetchAppData payload", payload);
   try {
     // explicitly type userinfo
     const userinfo = (await getSession()) as SessionUser | null;
     const user_id = userinfo?.user?.user_id ?? "";
     const formData = new FormData();
     formData.append("api_key", api_key ?? "");
-    formData.append("language", "en");
-    formData.append("currency", "usd");
+    formData.append("language", payload.language);
+    formData.append("currency", payload.currency);
 
     if (user_id) {
       formData.append("user_id", user_id);

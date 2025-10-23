@@ -72,14 +72,15 @@ const HeaderMenus = () => {
       >
         <div className="flex flex-col">
           <Link
-            href="https://agents.toptiertravel.vip/login"
+            href="https://toptier-agent-d.vercel.app/login"
             target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
-            href="https://agents.toptiertravel.vip/signup"
+            href="https://toptier-agent-d.vercel.app
+            /signup"
             target=""
             className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
@@ -191,21 +192,89 @@ const HeaderMenus = () => {
 
           {/* Mobile Auth Buttons */}
           {!(user) ? <div className="flex flex-col gap-3 pt-4">
-            <Link
-              href="/auth/signup"
-              className="border border-[#061026] text-[#061026] text-center rounded-full px-7 py-2 hover:bg-blue-50"
-              onClick={() => setIsOpen(false)}
+               <Dropdown
+        label={
+          <div className="flex items-center gap-1.5">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#000"
+              className="pe-1"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              Sign up
-            </Link>
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Agents
+            {/* <ChevronDown className="w-4 h-4" /> */}
+          </div>
+        }
+      >
+        <div className="flex flex-col">
+          <Link
+            href="https://toptier-agent-d.vercel.app/login"
+            target=""
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Login
+          </Link>
+          <Link
+            href="https://toptier-agent-d.vercel.app
+            /signup"
+            target=""
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Signup
+          </Link>
+        </div>
+      </Dropdown>
 
-            <Link
-              href="/auth/login"
-              className="bg-[#163C8C] text-center border-none hover:text-white hover:bg-gray-800 ring-0 text-white rounded-full px-9 py-2 transition"
-              onClick={() => setIsOpen(false)}
+      {/* ===== Customers Dropdown ===== */}
+      <Dropdown
+        label={
+          <div className="flex items-center gap-1.5">
+            <svg
+              stroke="#000"
+              className="pe-1"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             >
-              Login
-            </Link>
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Customers
+            {/* <ChevronDown className="w-4 h-4" /> */}
+          </div>
+        }
+      >
+        <div className="flex flex-col">
+          <Link
+            href="/auth/login"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Login
+          </Link>
+          <Link
+            href="/auth/signup"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+          >
+            Signup
+          </Link>
+        </div>
+      </Dropdown>
           </div> :   <div className="">
           <ProfileDropdown/>
           </div>}

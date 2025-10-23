@@ -5,7 +5,11 @@ import { Icon } from "@iconify/react";
 import { useAppSelector } from "@lib/redux/store";
 import useDictionary from "@hooks/useDict";
 import useLocale from "@hooks/useLocale";
-import { cancel_payment, prapare_payment, processed_payment } from "@src/actions";
+import {
+  cancel_payment,
+  prapare_payment,
+  processed_payment,
+} from "@src/actions";
 import { useRouter } from "next/navigation";
 import Dropdown from "@components/core/Dropdown";
 import { toast } from "react-toastify";
@@ -24,6 +28,8 @@ interface RoomData {
   name: string;
   price: string;
   currency: string;
+  room_name: string;
+  room_qaunitity: string;
 }
 
 interface HotelInvoiceProps {
@@ -42,14 +48,15 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
     invoiceDetails[0]?.payment_gateway || ""
   );
   const { payment_gateways } = useAppSelector((state) => state.appData?.data);
-  const activePayments = payment_gateways
-    ?.filter((p: any) => p.status)
-    ?.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      label: p.label || p.name,
-      icon: p.icon || null,
-    })) || [];
+  const activePayments =
+    payment_gateways
+      ?.filter((p: any) => p.status)
+      ?.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        label: p.label || p.name,
+        icon: p.icon || null,
+      })) || [];
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -67,9 +74,8 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
   const data = invoiceDetails[0];
   const travellers: Traveller[] = JSON.parse(data.guest || "[]");
   const rooms: RoomData[] = JSON.parse(data.room_data || "[]");
-const invoiceDetailsBooking = JSON.parse(data.booking_data || "{}");
-console.log("quantity:", data,invoiceDetailsBooking);
-
+  const invoiceDetailsBooking = JSON.parse(data.booking_data || "{}");
+  console.log("quantity:", data, invoiceDetailsBooking);
 
   const invoiceUrl = `${window.location.origin}/hotel/invoice/${data.booking_ref_no}`;
 
@@ -115,43 +121,68 @@ console.log("quantity:", data,invoiceDetailsBooking);
     },
   };
 
-const handleDownloadPDF = async () => {
-  if (!invoiceRef.current) return;
+  const handleDownloadPDF = async () => {
+    if (!invoiceRef.current) return;
 
-  setIsDownloading(true);
+    setIsDownloading(true);
 
-  // Ensure all images have absolute URLs
-  const ensureAbsoluteUrls = () => {
-    const images = invoiceRef.current.querySelectorAll('img');
-    images.forEach(img => {
-      if (img.src && !img.src.startsWith('http')) {
-        try {
-          img.src = new URL(img.src, window.location.origin).href;
-        } catch (e) {
-          img.src = 'https://via.placeholder.com/150?text=No+Image';
+    // make src absolute + set crossorigin BEFORE load
+    const ensureAbsoluteUrls = () => {
+      const images = invoiceRef.current!.querySelectorAll("img");
+      images.forEach((img) => {
+        // VERY IMPORTANT: set crossOrigin first
+        img.setAttribute("crossorigin", "anonymous");
+
+        const raw = img.getAttribute("src") || "";
+        if (raw && !/^https?:\/\//i.test(raw)) {
+          try {
+            img.src = new URL(raw, window.location.origin).href;
+          } catch {
+            img.src = "https://via.placeholder.com/150?text=No+Image";
+          }
         }
-      }
-    });
-  };
+      });
+    };
 
-  // Preload images
-  const preloadImages = async () => {
-    const images = Array.from(invoiceRef.current.querySelectorAll('img'));
-    await Promise.all(
-      images.map(img => {
-        if (img.complete && img.naturalHeight > 0) return Promise.resolve();
-        return new Promise(resolve => {
-          img.onload = img.onerror = resolve;
-        });
-      })
-    );
-  };
+    // off-origin images ko apni proxy se guzaro (so canvas is readable)
+    const routeExternalThroughProxy = () => {
+      const origin = window.location.origin;
+      const images = invoiceRef.current!.querySelectorAll("img");
+      images.forEach((img) => {
+        try {
+          const u = new URL(img.src);
+          if (u.origin !== origin) {
+            img.setAttribute("crossorigin", "anonymous");
+            img.src = `${origin}/api/image-proxy?url=${encodeURIComponent(
+              img.src
+            )}`;
+          }
+        } catch {
+          // ignore
+        }
+      });
+    };
 
-  ensureAbsoluteUrls();
-  await preloadImages();
+    // Preload after swapping to proxy
+    const preloadImages = async () => {
+      const images = Array.from(invoiceRef.current!.querySelectorAll("img"));
+      await Promise.all(
+        images.map((img) =>
+          img.complete && img.naturalHeight > 0
+            ? Promise.resolve()
+            : new Promise((resolve) => {
+                img.onload = img.onerror = resolve;
+              })
+        )
+      );
+    };
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    ensureAbsoluteUrls();
+    routeExternalThroughProxy();
+    await preloadImages();
+
+    const style = document.createElement("style");
+    style.innerHTML = `
     .pdf-rendering {
       width: 800px !important;
       margin: 0 auto !important;
@@ -192,7 +223,7 @@ const handleDownloadPDF = async () => {
     }
 
     .pdf-rendering .logo {
-      height: 35px !important;
+      height: 70px !important;
       width: auto !important;
       object-fit: contain !important;
     }
@@ -209,10 +240,15 @@ const handleDownloadPDF = async () => {
       margin-right: 5px !important;
     }
 
-    .pdf-rendering .paymentStatus,
+    .pdf-rendering .paymentStatus{
+      font-size: 11px !important;
+      font-weight: 600 !important;
+      color: #16a34a !important;
+    }
     .pdf-rendering .bookingStatus {
       font-size: 11px !important;
       font-weight: 600 !important;
+      color: #4f63eb !important;
     }
 
     .pdf-rendering .contactInfo {
@@ -222,8 +258,8 @@ const handleDownloadPDF = async () => {
     }
 
     .pdf-rendering .qrCode {
-      width: 45px !important;
-      height: 45px !important;
+      width: 70px !important;
+      height: 70px !important;
       cursor: pointer !important;
     }
 
@@ -445,7 +481,7 @@ const handleDownloadPDF = async () => {
 
     .pdf-rendering .hotelImage {
       width: 280px !important; /* Reduced from 300px */
-      height: 80px !important;
+      height: 150px !important;
       object-fit: cover !important;
     }
 
@@ -620,53 +656,53 @@ const handleDownloadPDF = async () => {
       scrollbar-width: none !important;
     }
   `;
-  document.head.appendChild(style);
-  invoiceRef.current.classList.add('pdf-rendering');
+    document.head.appendChild(style);
+    invoiceRef.current.classList.add("pdf-rendering");
 
-  try {
-    await new Promise(resolve => setTimeout(resolve, 100));
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
-    const canvas = await html2canvas(invoiceRef.current, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: "#ffffff",
-      logging: false,
-      allowTaint: false, // ← MUST be false when useCORS is true
-      removeContainer: true,
-      imageTimeout: 15000,
-      foreignObjectRendering: false,
-    });
+      const canvas = await html2canvas(invoiceRef.current, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: "#ffffff",
+        logging: false,
+        allowTaint: false, // ← MUST be false when useCORS is true
+        // removeContainer: true,
+        imageTimeout: 15000,
+        // foreignObjectRendering: false,
+      });
 
-    const imgData = canvas.toDataURL("image/jpeg", 0.95);
-    const pdf = new jsPDF("p", "mm", "a4");
+      const imgData = canvas.toDataURL("image/jpeg", 0.95);
+      const pdf = new jsPDF("p", "mm", "a4");
 
-    // Fit entire canvas to A4 page
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const imgProps = pdf.getImageProperties(imgData);
-    const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      // Fit entire canvas to A4 page
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-    // If height exceeds A4, scale down
-    const maxHeight = 297; // A4 height in mm
-    let scale = 1;
-    if (imgHeight > maxHeight) {
-      scale = maxHeight / imgHeight;
+      // If height exceeds A4, scale down
+      const maxHeight = 297; // A4 height in mm
+      let scale = 1;
+      if (imgHeight > maxHeight) {
+        scale = maxHeight / imgHeight;
+      }
+
+      const scaledWidth = pdfWidth * scale;
+      const scaledHeight = imgHeight * scale;
+
+      pdf.addImage(imgData, "JPEG", 0, 0, scaledWidth, scaledHeight);
+
+      pdf.save(`Hotel-Invoice-${bookingData.bookingReference}.pdf`);
+    } catch (error) {
+      console.error("PDF download error:", error);
+      alert("Failed to generate PDF. Some images may be blocked by CORS.");
+    } finally {
+      invoiceRef.current.classList.remove("pdf-rendering");
+      style.remove();
+      setIsDownloading(false);
     }
-
-    const scaledWidth = pdfWidth * scale;
-    const scaledHeight = imgHeight * scale;
-
-    pdf.addImage(imgData, "JPEG", 0, 0, scaledWidth, scaledHeight);
-
-    pdf.save(`Hotel-Invoice-${bookingData.bookingReference}.pdf`);
-  } catch (error) {
-    console.error("PDF download error:", error);
-    alert("Failed to generate PDF. Some images may be blocked by CORS.");
-  } finally {
-    invoiceRef.current.classList.remove('pdf-rendering');
-    style.remove();
-    setIsDownloading(false);
-  }
-};
+  };
 
   const handlePayNow = async () => {
     const re_id = invoiceDetails[0].booking_ref_no;
@@ -735,37 +771,50 @@ View Invoice: ${invoiceUrl}`;
             className="logo"
           />
           <div className="headerRight">
-          <div className={lang === "ar" ? "headerInfoAr" : "headerInfo"}>
-            <div>
-              <span className="headerText">
-                {dict?.hotelInvoice?.header?.paymentStatus}
-              </span>
-              <span className="paymentStatus">{bookingData.paymentStatus}</span>
-            </div>
-            <div>
-              <span className="headerText">
-                {dict?.hotelInvoice?.header?.bookingStatus}
-              </span>
-              <span className="bookingStatus">{bookingData.bookingStatus}</span>
-            </div>
-            <div className="contactInfo">
+            <div className={lang === "ar" ? "headerInfoAr" : "headerInfo"}>
               <div>
-                <span className="contactLabel">{dict?.hotelInvoice?.header?.phone}</span> {bookingData.phone}
+                <span className="headerText">
+                  {dict?.hotelInvoice?.header?.paymentStatus}
+                </span>
+                <span className="paymentStatus">
+                {bookingData.paymentStatus.charAt(0).toUpperCase() + bookingData.paymentStatus.slice(1)}
+                </span>
               </div>
               <div>
-                <span className="contactLabel">{dict?.hotelInvoice?.header?.email}</span> {bookingData.email}
-              </div>
-            </div>
-          </div>
+                <span className="headerText">
+                  {dict?.hotelInvoice?.header?.bookingStatus}
+                </span>
+                <span className="bookingStatus">
 
-          {/* QR Code */}
-          <div className="qrCode" onClick={() => setShowInvoiceImage(true)}>
-            <img
-              src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(invoiceUrl)}`}
-              alt="QR Code"
-              className="qrImage"
-            />
-          </div>
+                   {bookingData.bookingStatus.charAt(0).toUpperCase() + bookingData.bookingStatus.slice(1)}
+                </span>
+              </div>
+              <div className="contactInfo">
+                <div>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.header?.phone}
+                  </span>{" "}
+                  {bookingData.phone}
+                </div>
+                <div>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.header?.email}
+                  </span>{" "}
+                  {bookingData.email}
+                </div>
+              </div>
+            </div>
+
+            {/* QR Code */}
+            <div className="qrCode" onClick={() => setShowInvoiceImage(true)}>
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(
+                  invoiceUrl
+                )}`}
+                alt="QR Code"
+                className="qrImage"
+              />
+            </div>
           </div>
         </div>
 
@@ -788,7 +837,7 @@ View Invoice: ${invoiceUrl}`;
             >
               {({ onClose }) => (
                 <div className="dropdownContent">
-                  {activePayments.map((method) => (
+                  {activePayments.map((method: any) => (
                     <button
                       key={method.id}
                       type="button"
@@ -796,12 +845,22 @@ View Invoice: ${invoiceUrl}`;
                         handleSelectPayment(method);
                         onClose();
                       }}
-                      className={`paymentOption ${selectedPaymentMethod === method.name.toLowerCase() ? "paymentOptionSelected" : ""}`}
+                      className={`paymentOption ${
+                        selectedPaymentMethod === method.name.toLowerCase()
+                          ? "paymentOptionSelected"
+                          : ""
+                      }`}
                     >
                       {method.icon ? (
-                        <img src={method.icon} alt={method.label} className="paymentIcon" />
+                        <img
+                          src={method.icon}
+                          alt={method.label}
+                          className="paymentIcon"
+                        />
                       ) : (
-                        <div className="iconPlaceholder">{method.label.charAt(0)}</div>
+                        <div className="iconPlaceholder">
+                          {method.label.charAt(0)}
+                        </div>
                       )}
                       <span>{method.label}</span>
                     </button>
@@ -826,20 +885,24 @@ View Invoice: ${invoiceUrl}`;
 
         {/* Booking Details */}
         <div className="content">
-          {bookingData.paymentStatus === "paid" && data.cancellation_request === "0" && (
-            <ul className="rateCommentList">
-              <li className="rateCommentItem">
-                <p>
-         <span>
-        Payable through{" "}
-        <span className="font-semibold">{data.supplier}</span>, acting as agent for the service operating company, details of which can be provided upon request.
-        VAT:<span className="font-semibold">{data.vat}</span>{" "}
-        Reference:<span className="font-semibold">{data.pnr}</span>
-      </span>
-        </p>
-              </li>
-            </ul>
-          )}
+          {bookingData.paymentStatus === "paid" &&
+            data.cancellation_request === "0" && (
+              <ul className="rateCommentList">
+                <li className="rateCommentItem">
+                  <p>
+                    <span>
+                      Payable through{" "}
+                      <span className="font-semibold">{data.supplier}</span>,
+                      acting as agent for the service operating company, details
+                      of which can be provided upon request. VAT:
+                      <span className="font-semibold">{data.vat}</span>{" "}
+                      Reference:
+                      <span className="font-semibold">{data.pnr}</span>
+                    </span>
+                  </p>
+                </li>
+              </ul>
+            )}
 
           {invoiceDetails[0].cancellation_request === "1" && (
             <div className="bookingNote">{dict?.hotelInvoice?.bookingNote}</div>
@@ -847,11 +910,26 @@ View Invoice: ${invoiceUrl}`;
 
           <div className="bookingGrid">
             {[
-              { label: dict?.hotelInvoice?.bookingInfo?.bookingId, value: bookingData.bookingId },
-              { label: dict?.hotelInvoice?.bookingInfo?.reference, value: bookingData.bookingReference },
-              { label: dict?.hotelInvoice?.bookingInfo?.bookingpnr, value: invoiceDetails[0]?.pnr || "N/A" },
-              { label: dict?.hotelInvoice?.bookingInfo?.date, value: bookingData.bookingDate },
-              { label: dict?.hotelInvoice?.bookingInfo?.location, value: bookingData.hotel.location },
+              {
+                label: dict?.hotelInvoice?.bookingInfo?.bookingId,
+                value: bookingData.bookingId,
+              },
+              {
+                label: dict?.hotelInvoice?.bookingInfo?.reference,
+                value: bookingData.bookingReference,
+              },
+              {
+                label: dict?.hotelInvoice?.bookingInfo?.bookingpnr,
+                value: invoiceDetails[0]?.pnr || "N/A",
+              },
+              {
+                label: dict?.hotelInvoice?.bookingInfo?.date,
+                value: bookingData.bookingDate,
+              },
+              {
+                label: dict?.hotelInvoice?.bookingInfo?.location,
+                value: bookingData.hotel.location,
+              },
             ].map((item, i) => (
               <div key={i} className="bookingItem">
                 <div className="bookingLabel">{item.label}</div>
@@ -861,14 +939,22 @@ View Invoice: ${invoiceUrl}`;
           </div>
 
           <div className="travellersSection">
-            <h3 className="travellersTitle">{dict?.hotelInvoice?.travellers?.title}</h3>
+            <h3 className="travellersTitle">
+              {dict?.hotelInvoice?.travellers?.title}
+            </h3>
             <div className="tableContainer">
               <table className="table">
                 <thead className="tableHeader">
                   <tr>
-                    <th className="tableCell">{dict?.hotelInvoice?.travellers?.table?.no}</th>
-                    <th className="tableCell">{dict?.hotelInvoice?.travellers?.table?.sr}</th>
-                    <th className="tableCell">{dict?.hotelInvoice?.travellers?.table?.name}</th>
+                    <th className="tableCell">
+                      {dict?.hotelInvoice?.travellers?.table?.no}
+                    </th>
+                    <th className="tableCell">
+                      {dict?.hotelInvoice?.travellers?.table?.sr}
+                    </th>
+                    <th className="tableCell">
+                      {dict?.hotelInvoice?.travellers?.table?.name}
+                    </th>
                     <th className="tableCell">Traveler Type</th>
                   </tr>
                 </thead>
@@ -877,7 +963,9 @@ View Invoice: ${invoiceUrl}`;
                     <tr key={index} className="tableRow">
                       <td className="tableCell">{index + 1}</td>
                       <td className="tableCell">{t.title}</td>
-                      <td className="tableCell">{t.first_name} {t.last_name}</td>
+                      <td className="tableCell">
+                        {t.first_name} {t.last_name}
+                      </td>
                       <td className="tableCell">
                         {t.traveller_type === "child"
                           ? `${t.traveller_type} (${(t as any)?.age} year old)`
@@ -896,47 +984,75 @@ View Invoice: ${invoiceUrl}`;
                 src={bookingData.hotel.image || "/images/default-hotel.jpg"}
                 alt={bookingData.hotel.name}
                 className="hotelImage"
-
               />
             </div>
             <div className="hotelInfo">
               <h2 className="hotelName">{bookingData.hotel.name}</h2>
               <div className="starRating">
                 {[...Array(bookingData.hotel.rating)].map((_, i) => (
-                  <span key={i} className="star">★</span>
+                  <span key={i} className="star">
+                    ★
+                  </span>
                 ))}
               </div>
               <p className="hotelAddress">{bookingData.hotel.address}</p>
               <div className="hotelContact">
-                <div><span className="contactLabel">{dict?.hotelInvoice?.hotelInfo?.phone}</span> {bookingData.hotel.phone || "N/A"}</div>
-                <div><span className="contactLabel">{dict?.hotelInvoice?.hotelInfo?.email}</span> {bookingData.hotel.email || "N/A"}</div>
-                <div><span className="contactLabel">{dict?.hotelInvoice?.hotelInfo?.website}</span> {bookingData.hotel.website || "N/A"}</div>
+                <div>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.hotelInfo?.phone}
+                  </span>{" "}
+                  {bookingData.hotel.phone || "N/A"}
+                </div>
+                <div>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.hotelInfo?.email}
+                  </span>{" "}
+                  {bookingData.hotel.email || "N/A"}
+                </div>
+                <div>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.hotelInfo?.website}
+                  </span>{" "}
+                  {bookingData.hotel.website || "N/A"}
+                </div>
               </div>
             </div>
           </div>
 
           <div className="roomSection">
-            <h3 className="roomTitle">{dict?.hotelInvoice?.roomDetails?.title}</h3>
+            <h3 className="roomTitle">
+              {dict?.hotelInvoice?.roomDetails?.title}
+            </h3>
             <table className="roomTable">
               <tbody>
                 <tr className="roomRow">
-                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.checkin}</td>
+                  <td className="roomCell">
+                    {dict?.hotelInvoice?.roomDetails?.checkin}
+                  </td>
                   <td className="roomCell">{bookingData.room.checkin}</td>
                 </tr>
                 <tr className="roomRow">
-                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.checkout}</td>
+                  <td className="roomCell">
+                    {dict?.hotelInvoice?.roomDetails?.checkout}
+                  </td>
                   <td className="roomCell">{bookingData.room.checkout}</td>
                 </tr>
                 <tr className="roomRow">
-                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.type}</td>
+                  <td className="roomCell">
+                    {dict?.hotelInvoice?.roomDetails?.type}
+                  </td>
                   <td className="roomCell">{bookingData.room.type}</td>
                 </tr>
-                  <tr className="roomRow">
-                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.quantity}</td>
+                <tr className="roomRow">
+                  <td className="roomCell">
+                    {dict?.hotelInvoice?.roomDetails?.quantity}
+                  </td>
                   <td className="roomCell">{bookingData.room.quantity}</td>
                 </tr>
                 <tr>
-                  <td className="roomCell">{dict?.hotelInvoice?.roomDetails?.total}</td>
+                  <td className="roomCell">
+                    {dict?.hotelInvoice?.roomDetails?.total}
+                  </td>
                   <td className="roomCell">{bookingData.total}</td>
                 </tr>
               </tbody>
@@ -944,47 +1060,84 @@ View Invoice: ${invoiceUrl}`;
           </div>
 
           <div className="fareSection">
-        {invoiceDetailsBooking?.rateComment !== undefined &&
- invoiceDetailsBooking?.rateComment !== null && (
-  <div className="rateComment">
-    <h3 className="rateCommentTitle">Rate Comment</h3>
-    <ul className="rateCommentList">
-      <li className="rateCommentItem">
-        <p>
-        {invoiceDetailsBooking?.rateComment}
-        </p>
-      </li>
-    </ul>
-  </div>
-)}
-
+            {invoiceDetailsBooking?.rateComment !== undefined &&
+              invoiceDetailsBooking?.rateComment !== null && (
+                <div className="rateComment">
+                  <h3 className="rateCommentTitle">Rate Comment</h3>
+                  <ul className="rateCommentList">
+                    <li className="rateCommentItem">
+                      <p>{invoiceDetailsBooking?.rateComment}</p>
+                    </li>
+                  </ul>
+                </div>
+              )}
 
             <div className="taxRow">
-              <span className="taxLabel">{dict?.hotelInvoice?.fareAndTax?.taxLabel}</span>
-              <span className="taxLabel">{"%"} {invoiceDetails[0].tax}</span>
+              <span className="taxLabel">
+                {dict?.hotelInvoice?.fareAndTax?.taxLabel}
+              </span>
+              <span className="taxLabel">
+                {"%"} {invoiceDetails[0].tax}
+              </span>
             </div>
             <div className="totalRow">
-              <span className="totalLabel">{dict?.hotelInvoice?.fareAndTax?.totalLabel}</span>
+              <span className="totalLabel">
+                {dict?.hotelInvoice?.fareAndTax?.totalLabel}
+              </span>
               <span className="totalLabel">{bookingData.total}</span>
             </div>
           </div>
 
           <div className="customerGrid">
             <div className="customerCard">
-              <h4 className="customerTitle">{dict?.hotelInvoice?.customer?.title}</h4>
+              <h4 className="customerTitle">
+                {dict?.hotelInvoice?.customer?.title}
+              </h4>
               <div className="customerInfo">
-                <p><span className="contactLabel">{dict?.hotelInvoice?.customer?.email}</span> {bookingData.customer.email}</p>
-                <p><span className="contactLabel">{dict?.hotelInvoice?.customer?.contact}</span> {bookingData.customer.contact}</p>
-                <p><span className="contactLabel">{dict?.hotelInvoice?.customer?.address}</span> {bookingData.customer.address}</p>
+                <p>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.customer?.email}
+                  </span>{" "}
+                  {bookingData.customer.email}
+                </p>
+                <p>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.customer?.contact}
+                  </span>{" "}
+                  {bookingData.customer.contact}
+                </p>
+                <p>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.customer?.address}
+                  </span>{" "}
+                  {bookingData.customer.address}
+                </p>
               </div>
             </div>
 
             <div className="customerCard">
-              <h4 className="customerTitle">{dict?.hotelInvoice?.customerCare?.title}</h4>
+              <h4 className="customerTitle">
+                {dict?.hotelInvoice?.customerCare?.title}
+              </h4>
               <div className="customerInfo">
-                <p><span className="contactLabel">{dict?.hotelInvoice?.customerCare?.email}</span> {appData.contact_email}</p>
-                <p><span className="contactLabel">{dict?.hotelInvoice?.customerCare?.contact}</span> {appData.contact_phone}</p>
-                <p><span className="contactLabel">{dict?.hotelInvoice?.customerCare?.website}</span> {appData.site_url}</p>
+                <p>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.customerCare?.email}
+                  </span>{" "}
+                  {appData.contact_email}
+                </p>
+                <p>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.customerCare?.contact}
+                  </span>{" "}
+                  {appData.contact_phone}
+                </p>
+                <p>
+                  <span className="contactLabel">
+                    {dict?.hotelInvoice?.customerCare?.website}
+                  </span>{" "}
+                  {appData.site_url}
+                </p>
               </div>
             </div>
           </div>
@@ -993,35 +1146,59 @@ View Invoice: ${invoiceUrl}`;
 
       {/* Action Buttons — Outside printable area */}
       <div className="actionBarOutside">
-        <button onClick={handleDownloadPDF} disabled={isDownloading} className="actionButton">
+        <button
+          onClick={handleDownloadPDF}
+          disabled={isDownloading}
+          className="actionButton"
+        >
           {isDownloading ? (
             <>
-              <Icon icon="eos-icons:loading" className="loadingIcon" width="20" height="20" />
+              <Icon
+                icon="eos-icons:loading"
+                className="loadingIcon"
+                width="20"
+                height="20"
+              />
               <span>Loading...</span>
             </>
           ) : (
             <>
               <Icon icon="mdi:tray-arrow-down" width="20" height="20" />
-              <span>{dict?.hotelInvoice?.buttons?.downloadPdf || "Download as PDF"}</span>
+              <span>
+                {dict?.hotelInvoice?.buttons?.downloadPdf || "Download as PDF"}
+              </span>
             </>
           )}
         </button>
 
         <button onClick={handleShareWhatsApp} className="actionButton">
           <Icon icon="mdi:whatsapp" width="20" height="20" />
-          <span>{dict?.hotelInvoice?.buttons?.sendToWhatsApp || "Send to WhatsApp"}</span>
+          <span>
+            {dict?.hotelInvoice?.buttons?.sendToWhatsApp || "Send to WhatsApp"}
+          </span>
         </button>
 
-        <button onClick={handleCancellation} className="actionButton cancellationButton">
+        <button
+          onClick={handleCancellation}
+          className="actionButton cancellationButton"
+        >
           {isCancelling ? (
             <>
-              <Icon icon="eos-icons:loading" className="loadingIcon" width="20" height="20" />
+              <Icon
+                icon="eos-icons:loading"
+                className="loadingIcon"
+                width="20"
+                height="20"
+              />
               <span>Cancelling...</span>
             </>
           ) : (
             <>
               <Icon icon="mdi:close" width="20" height="20" />
-              <span>{dict?.hotelInvoice?.buttons?.requestCancellation || "Request for Cancellation"}</span>
+              <span>
+                {dict?.hotelInvoice?.buttons?.requestCancellation ||
+                  "Request for Cancellation"}
+              </span>
             </>
           )}
         </button>

@@ -5,6 +5,7 @@ import { Icon } from "@iconify/react";
 import { setCurrency } from "@lib/redux/base";
 import useCurrency from "@hooks/useCurrency"; // 👈 Import your custom hook
 import { useRouter } from "next/navigation"; //  import router
+import { setAppData } from "@lib/redux/appData/actions";
 
 //  Map of symbols/logos by currency name
 const currencyMap: Record<string, React.ReactNode> = {
@@ -70,11 +71,12 @@ export default function CurrencyDropdown() {
           {currencies?.map((c: any) => (
             <button
               key={c.iso}
-             onClick={() => {
+              onClick={async () => {
   setSelected(c.name);
   setOpen(false);
   dispatch(setCurrency(c.name));
   localStorage.setItem("currency", c.name);
+  await dispatch(setAppData());
   router.replace("/"); // navigate to home
   router.refresh(); // force a refresh / re-render
 }}

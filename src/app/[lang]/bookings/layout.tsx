@@ -6,7 +6,7 @@ import { fetchAppData } from '@src/actions'
 import { Metadata } from 'next/types'
 
 export const generateMetadata = async (): Promise<Metadata> => {
-  const data = await fetchAppData()
+  const data = await fetchAppData({ language: 'en', currency: 'usd' });
   const appData=data.app
   // console.log('appp DAta',data.data.app)
   const meta_data = data.data.app

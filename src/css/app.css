@@ -837,6 +837,12 @@ body:is(.dark *) {
   gap: 0.25rem;
 }
 
+.actionBarOutside{
+  display: flex;
+  gap: 4;
+  margin-top: 5px;
+}
+
 .actionBar {
   border-top: 1px solid #e5e7eb;
   background-color: white;

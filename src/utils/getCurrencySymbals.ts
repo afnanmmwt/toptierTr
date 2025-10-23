@@ -3,29 +3,29 @@ export default function getCurrencySymbol(code: string): string {
   if (!code) return "";
 
   const map: Record<string, string> = {
-    usd: "$",    // US Dollar
-    eur: "€",    // Euro
-    gbp: "£",    // British Pound
-    jpy: "¥",    // Japanese Yen
-    aud: "a$",   // Australian Dollar
-    cad: "c$",   // Canadian Dollar
-    chf: "chf",  // Swiss Franc
-    cny: "¥",    // Chinese Yuan
-    hkd: "hk$",  // Hong Kong Dollar
-    nzd: "nz$",  // New Zealand Dollar
-    sek: "kr",   // Swedish Krona
-    krw: "₩",    // South Korean Won
-    sgd: "s$",   // Singapore Dollar
-    nok: "kr",   // Norwegian Krone
-    mxn: "mex$", // Mexican Peso
-    inr: "₹",    // Indian Rupee
-    rub: "₽",    // Russian Ruble
-    zar: "r",    // South African Rand
-    try: "₺",    // Turkish Lira
-    brl: "r$",   // Brazilian Real
+    usd: "USD",    // US Dollar
+    eur: "EUR",    // Euro
+    gbp: "GBP",    // British Pound
+    jpy: "JPY",    // Japanese Yen
+    aud: "AUD",   // Australian Dollar
+    cad: "CAD",   // Canadian Dollar
+    chf: "CHF",  // Swiss Franc
+    cny: "CNY",    // Chinese Yuan
+    hkd: "HKD",  // Hong Kong Dollar
+    nzd: "NZD",  // New Zealand Dollar
+    sek: "SEK",   // Swedish Krona
+    krw: "KRW",    // South Korean Won
+    sgd: "SGD",   // Singapore Dollar
+    nok: "NOK",   // Norwegian Krone
+    mxn: "MXN", // Mexican Peso
+    inr: "INR",    // Indian Rupee
+    rub: "RUB",    // Russian Ruble
+    zar: "ZAR",    // South African Rand
+    try: "TRY",    // Turkish Lira
+    brl: "BRL",   // Brazilian Real
 
     // 🔹 Riyal / Rial
-    sar: "﷼",    // Saudi Riyal
+    sar: "SAR",    // Saudi Riyal
     qar: "﷼",    // Qatari Riyal
     omr: "﷼",    // Omani Rial
 
