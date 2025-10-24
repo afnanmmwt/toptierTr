@@ -106,6 +106,21 @@
     "letter_email_placeholder": "Email",
     "letter_continue": "Continue"
   },
+  "header": {
+      "paymentStatus": "Payment Status:",
+      "bookingStatus": "Booking Status:",
+      "phone": "Phone:",
+      "email": "Email:",
+      "Agent": "Agent",
+      "Customer":"Customer",
+      "login":"Login",
+      "signup":"Signup",
+      "hotels":"Hotels",
+      "contact":"Contact",
+      "support":"Support",
+      "agents":"Agents",
+      "customers":"Customers"
+    },
   "footer": {
     "subheading": "Unlock extraordinary stays with our expert-curated hotels and exclusive access to the world's finest destinations.",
     "connect": "Stay Connected",
@@ -254,16 +269,6 @@
   "hotelInvoice": {
     "errors": {
       "noInvoiceFound": "No invoice details found."
-    },
-    "header": {
-      "paymentStatus": "Payment Status:",
-      "bookingStatus": "Booking Status:",
-      "phone": "Phone:",
-      "email": "Email:",
-      "Agent": "Agent",
-      "Customer":"Customer",
-      "login":"Login",
-      "signup":"Signup"
     },
     "bookingNote": "Cancellation request sent. we will update as soon as we change the status",
     "bookingInfo": {

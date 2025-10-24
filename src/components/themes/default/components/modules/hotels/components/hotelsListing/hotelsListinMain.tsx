@@ -22,6 +22,9 @@ const HotelsListingMain = ({ slug }: Props) => {
   const isSlugValid = slugArr.length === 7 && slugArr.every(Boolean);
   const {country, currency, locale}=useAppSelector((state)=>state.root)
   const enabled = isSlugValid && !!hotelModuleNames?.length;
+ const savedForm = localStorage.getItem("hotelSearchForm");
+  if (!savedForm) return;
+  const parsedForm: any = JSON.parse(savedForm);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["hotels", ...slugArr],
@@ -41,7 +44,8 @@ const HotelsListingMain = ({ slug }: Props) => {
           price_to: "5000",
           rating: "",
           language:locale,
-          currency:currency
+          currency:currency,
+           child_age: parsedForm.children_ages || [],
         },
         hotelModuleNames
       );

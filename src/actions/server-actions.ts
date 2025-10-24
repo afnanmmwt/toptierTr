@@ -404,6 +404,7 @@ interface HotelSearchPayload {
   rating: string;
   language:string;
   currency:string;
+  child_age?: string[];
   // Remove `modules` from this interface if you're handling it externally
 }
 // This function handles ONE module
@@ -418,13 +419,20 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
   formData.append("nationality", payload.nationality);
   formData.append("language", payload.language);
   formData.append("currency", payload.currency);
-  formData.append("child_age", "0");
   formData.append("module_name", payload.modules); //  single module
   formData.append("pagination", String(payload.page));
   formData.append("price_from", payload.price_from || "");
   formData.append("price_to", payload.price_to || "");
   formData.append("price_low_to_high", "");
   formData.append("rating", payload.rating || "");
+  console.log("hotel search payload", payload);
+  if (payload.child_age && payload.child_age.length > 0) {
+    const formattedAges = payload.child_age.map((age) => ({ ages: age }));
+    formData.append("child_age", JSON.stringify(formattedAges));
+  } else {
+    formData.append("child_age", "[]"); // send empty array if no children
+  }
+
 
   try {
     const response = await fetch(`${baseUrl}/hotel_search`, {
@@ -476,7 +484,6 @@ export const hotel_search_multi = async (
     })
     .filter(Boolean) // remove nulls
     .flat(); // flatten into single array
-  console.log("range filter data ", successful);
   return {
     success: successful,
     total: successful.length,
@@ -490,7 +497,7 @@ interface HotelDetailsPayload {
   rooms: number;
   adults: number;
   childs: number;
-  child_age: string;
+  child_age: string[];
   nationality: string;
   language: string;
   currency: string;
@@ -503,18 +510,22 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
     //  match exactly with API keys
 
     formData.append("hotel_id", String(payload.hotel_id));
-    formData.append("checkin", payload.checkin);
+      formData.append("checkin", payload.checkin);
     formData.append("checkout", payload.checkout);
     formData.append("rooms", String(payload.rooms));
     formData.append("adults", String(payload.adults));
     formData.append("childs", String(payload.childs));
-    formData.append("child_age", payload.child_age || "0");
     formData.append("nationality", payload.nationality || "PK");
     formData.append("language", payload.language || "en");
     formData.append("currency", payload.currency || "usd");
     formData.append("supplier_name", payload.supplier_name || "");
-console.log('detailss paylaod', formData)
-
+    formData.append("child_age","0" );
+     if (payload.child_age && payload.child_age.length > 0) {
+    const formattedAges = payload.child_age.map((age: string) => ({ ages: age }));
+    formData.append("child_age", JSON.stringify(formattedAges));
+  } else {
+    formData.append("child_age", "[]"); // send empty array if no children
+  }
     const response = await fetch(`${baseUrl}/hotel_details`, {
       method: "POST",
       body: formData,
@@ -524,7 +535,7 @@ console.log('detailss paylaod', formData)
     });
 
     const data = await response.json().catch(() => null);
-    console.log('===============details',JSON.stringify(data))
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -930,7 +941,6 @@ export const profile_update = async (payload: ProfileUpdatePayload) => {
       formData.append(key, String(value));
     }
   }
-console.log('profile update payload', formData);
   try {
     const response = await fetch(`${baseUrl}/profile_update`, {
       method: "POST",

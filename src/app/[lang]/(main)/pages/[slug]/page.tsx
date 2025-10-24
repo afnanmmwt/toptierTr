@@ -10,7 +10,7 @@ interface Props {
   params: Promise<{ slug: string; lang: 'en' | 'ar' }>;
 }
 
-// ✅ Metadata: Uses dynamic data → mark as dynamic
+//  Metadata: Uses dynamic data → mark as dynamic
 export const generateMetadata = async ({
   params,
 }: Props): Promise<Metadata> => {
@@ -61,7 +61,7 @@ const Page = async ({ params }: Props): Promise<React.JSX.Element> => {
 
   return (
     <TransitionLayout>
-      <div className="w-full bg-slate-50 dark:bg-gray-900 min-h-screen h-full transition-colors duration-200">
+      <div className="w-full bg-slate-50 dark:bg-gray-900 min-h-screen h-full transition-colors duration-200">         
         {/* Page Header */}
         <div className="py-7 bg-white dark:bg-gray-800 border-t border-b border-gray-200 dark:border-gray-700 px-6 ">
           <div className="max-w-[1200px] mx-auto px-0 sm:px-3 md:px-7">

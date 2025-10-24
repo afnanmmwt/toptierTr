@@ -36,6 +36,7 @@ phoneNumber: z
           title: z.string().min(1, dict?.bookingForm?.errors?.titleRequired),
           firstName: z.string().min(1, dict?.bookingForm?.errors?.firstNameRequired),
           lastName: z.string().min(1, dict?.bookingForm?.errors?.lastNameRequired),
+          age: z.string().optional(),
         })
       )
       .min(1, dict?.bookingForm?.errors?.atLeastOneTraveller),
@@ -117,7 +118,7 @@ export default function BookingForm() {
     currentCountry: '',
     phoneCountryCode: '',
     phoneNumber: '',
-    travellers: [{ title: dict?.bookingForm?.titles?.mr, firstName: '', lastName: '' }],
+    travellers: [{ title: dict?.bookingForm?.titles?.mr, firstName: '', lastName: '', age: '' }],
     cardName: '',
     cardNumber: '',
     cardExpiry: '',
@@ -145,9 +146,8 @@ export default function BookingForm() {
   const { countries: rawCountries } = useCountries();
   const { payment_gateways } = useAppSelector((state) => state.appData?.data);
   const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
+  const {option}=selectedRoom||{};
     const rootState = useAppSelector((state) => state.root);
-
-  console.log('rootState', rootState);
   const stripe = useStripe();
 const elements = useElements();
 const [bookingReference, setBookingReference] = useState<string>(
@@ -238,6 +238,7 @@ const [bookingReference, setBookingReference] = useState<string>(
         title: dict?.bookingForm?.titles?.mr,
         firstName: '',
         lastName: '',
+
       }));
       setValue('travellers', initialTravellers);
     }
@@ -310,108 +311,6 @@ onSuccess: async (data) => {
     console.error("Booking failed:", error);
   },
 });
-
-  // const onSubmit = async (data: BookingFormValues) => {
-  //   if (!data) return;
-  //   const {
-  //     firstName,
-  //     lastName,
-  //     address,
-  //     nationality,
-  //     currentCountry,
-  //     email,
-  //     phoneCountryCode,
-  //     phoneNumber,
-  //     travellers,
-  //     cardName,
-  //     cardNumber,
-  //     cardExpiry,
-  //     cardCvv,
-  //     cardZip,
-  //   } = data;
-
-  //   const guestPayload = (travellers || []).map((traveller: any, index: number) => ({
-  //     traveller_type: index < adults ? 'adults' : 'childs',
-  //     title: traveller.title || '',
-  //     first_name: traveller.firstName || '',
-  //     last_name: traveller.lastName || '',
-  //     nationality: nationality || '',
-  //     age: "",
-  //   }));
-
-  //   const bookingPayload = {
-  //     price_original: price || 0,
-  //     price_markup: markup_price || 0,
-  //     vat: 0,
-  //     tax: 0,
-  //     gst: 0,
-  //     first_name: firstName || '',
-  //     last_name: lastName || '',
-  //     email: email || '',
-  //     address: address || '',
-  //     phone_country_code: phoneCountryCode || '+92',
-  //     phone: phoneNumber || '000-000-000',
-  //     country: hotel_country || 'UNITED ARAB EMIRATES',
-  //     stars: stars || 0,
-  //     hotel_id: hotel_id || '',
-  //     hotel_name: hotel_name || '',
-  //     hotel_phone: hotel_phone || '',
-  //     hotel_email: hotel_email || '',
-  //     hotel_website: hotel_website || '',
-  //     hotel_address: hotel_address || '',
-  //     room_data: [
-  //       {
-  //         room_id: option_id,
-  //         room_name: selectedRoom?.room?.name,
-  //         room_price: price,
-  //         room_qaunitity: quantity,
-  //         room_extrabed_price: extrabed_price,
-  //         room_extrabed: extrabeds_quantity,
-  //         room_actual_price: price,
-  //       },
-  //     ],
-  //     location: hotel_location || '',
-  //     location_cords: hotel_address || '',
-  //     hotel_img: hotel_image?.[0] || '',
-  //     checkin: checkin || '10-10-2025',
-  //     checkout: checkout || '14-10-2025',
-  //     adults: adults || 0,
-  //     childs: children || 0,
-  //     child_ages: '',
-  //     currency_original: booking_currency || 'USD',
-  //     currency_markup: booking_currency || 'USD',
-  //     booking_data: selectedRoom?.option,
-  //     supplier: supplier_name || '',
-  //     user_id: '',
-  //     guest: guestPayload,
-  //     nationality: nationality || '',
-  //     user_data: {
-  //       first_name: firstName || '',
-  //       last_name: lastName || '',
-  //       address: address || '',
-  //       email: email || '',
-  //       phone: phoneNumber || '',
-  //       nationality: nationality || 'pk',
-  //       country_code: nationality || 'pk',
-  //     },
-  //     // Add card details if applicable
-
-  //       card: {
-  //         name: cardName,
-  //         number: cardNumber,
-  //         expiry: cardExpiry,
-  //         cvv: cardCvv,
-  //         zip: cardZip,
-  //       },
-
-  //   };
-
-  //  const response = await hotel_booking(bookingPayload as any);
-  //  console.log("Booking Response:", response);
-
-  //   // setIsProcessingPayment(true);
-  //   // bookHotel(bookingPayload);
-  // };
 
 
 const onSubmit = async (data: BookingFormValues) => {
@@ -886,53 +785,77 @@ const onSubmit = async (data: BookingFormValues) => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_1.5fr_1.5fr] gap-4">
               <div className="w-full">
-                <label htmlFor={`travellers.${index}.title`} className="block text-base font-medium text-[#5B697E] mb-2">
-                  {dict?.bookingForm?.travelersInformation?.titleLabel}
-                </label>
-                <Controller
-                  name={`travellers.${index}.title`}
-                  control={control}
-                  render={({ field }) => (
-                    <div
-                      className="relative"
-                      ref={(el) => {
-                        titleRefs.current[index] = el;
-                      }}
-                    >
-                      <button
-                        type="button"
-                        onClick={() => setIsTitleOpen(isTitleOpen === index ? null : index)}
-                        className="flex cursor-pointer items-center justify-between w-full px-3 py-4 border border-gray-300 rounded-xl text-base focus:outline-none focus:border-[#163C8C]"
-                      >
-                        {field.value || `Select ${dict?.bookingForm?.travelersInformation?.titleLabel}`}
-                        <Icon
-                          icon="material-symbols:keyboard-arrow-up"
-                          width="24"
-                          height="24"
-                          className={`h-5 w-5 text-gray-500 transition-transform ${
-                            isTitleOpen === index ? 'rotate-0' : 'rotate-180'
-                          }`}
-                        />
-                      </button>
-                      {isTitleOpen === index && (
-                        <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow">
-                          {titles.map((title) => (
-                            <div
-                              key={title}
-                              onClick={() => {
-                                field.onChange(title);
-                                setIsTitleOpen(null);
-                              }}
-                              className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                            >
-                              {title}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                />
+             {index < adults ? (
+  // 🔹 Adults — show title dropdown as usual
+  <>
+    <label
+      htmlFor={`travellers.${index}.title`}
+      className="block text-base font-medium text-[#5B697E] mb-2"
+    >
+      {dict?.bookingForm?.travelersInformation?.titleLabel}
+    </label>
+    <Controller
+      name={`travellers.${index}.title`}
+      control={control}
+      render={({ field }) => (
+        <div
+          className="relative"
+          ref={(el) => {
+            titleRefs.current[index] = el;
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setIsTitleOpen(isTitleOpen === index ? null : index)}
+            className="flex cursor-pointer items-center justify-between w-full px-3 py-4 border border-gray-300 rounded-xl text-base focus:outline-none focus:border-[#163C8C]"
+          >
+            {field.value || `Select ${dict?.bookingForm?.travelersInformation?.titleLabel}`}
+            <Icon
+              icon="material-symbols:keyboard-arrow-up"
+              width="24"
+              height="24"
+              className={`h-5 w-5 text-gray-500 transition-transform ${
+                isTitleOpen === index ? 'rotate-0' : 'rotate-180'
+              }`}
+            />
+          </button>
+          {isTitleOpen === index && (
+            <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow">
+              {titles.map((title) => (
+                <div
+                  key={title}
+                  onClick={() => {
+                    field.onChange(title);
+                    setIsTitleOpen(null);
+                  }}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  {title}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    />
+  </>
+) : (
+  // 🔹 Children — show disabled input with age
+  <>
+    <label
+      className="block text-base font-medium text-[#5B697E] mb-2"
+    >
+      {dict?.bookingForm?.travelersInformation?.ageLabel || "Child Age"}
+    </label>
+    <input
+      type="text"
+      value={`${option?.children_ages?.split(',')[index - adults]?.trim() || ''} years`}
+      disabled
+      className="block border border-gray-300 rounded-xl px-3 py-4 text-base w-full bg-gray-100 text-gray-700 cursor-not-allowed"
+    />
+  </>
+)}
+
                 {errors.travellers?.[index]?.title && (
                   <p className="text-red-500 text-sm mt-1">{errors.travellers[index].title?.message}</p>
                 )}

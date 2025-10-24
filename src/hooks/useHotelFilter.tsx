@@ -201,7 +201,8 @@ const updatePriceRange = useCallback(
             price_to: String(newRange[1]),
             rating: "", // keep current rating
             currency:currency,
-            language:locale
+            language:locale,
+             child_age: parsedForm.children_ages || [],
           },
           hotelModuleNames
         );
@@ -258,7 +259,9 @@ const updateRatingFilter = useCallback(
           price_to: String(filters.priceRange[1]),
           rating: String(rating),
           currency:currency,
-          language:locale
+          language:locale,
+          child_age: parsedForm.children_ages || [],
+
         },
         hotelModuleNames
       );

@@ -93,7 +93,7 @@ const Dropdown: React.FC<DropdownProps> = ({
    dark:text-gray-400
    hover:bg-gray-50 dark:hover:bg-gray-600
    transition-all duration-200 ease-out
-   ${open ? "bg-gray-50 dark:bg-gray-600" : ""}`
+   ${open ? "bg-gray-100 dark:bg-gray-600" : ""}`
 }
                 onClick={toggleDropdown}
             >

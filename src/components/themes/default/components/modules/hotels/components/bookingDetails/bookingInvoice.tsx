@@ -75,10 +75,7 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
   const travellers: Traveller[] = JSON.parse(data.guest || "[]");
   const rooms: RoomData[] = JSON.parse(data.room_data || "[]");
   const invoiceDetailsBooking = JSON.parse(data.booking_data || "{}");
-  console.log("quantity:", data, invoiceDetailsBooking);
-
   const invoiceUrl = `${window.location.origin}/hotel/invoice/${data.booking_ref_no}`;
-
   const bookingData = {
     paymentStatus: data.payment_status,
     bookingStatus: data.booking_status,

@@ -8,7 +8,7 @@ import TransitionLayout from '@src/utils/pageTransition'
 import { Metadata } from 'next';
 import { HeroSection, FeaturedHotels, HotelsListingMain } from '@components/themes/default'
 
-export const metadata = { title: `Toptier | HotelListing` } satisfies Metadata;
+export const metadata = { title: `Toptier |  Hotels` } satisfies Metadata;
 export default async function Page({ params }: {
   params: Promise<{ lang: 'en' | 'ar' ,slug: string[]}>
 }) {

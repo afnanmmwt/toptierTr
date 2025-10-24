@@ -106,6 +106,19 @@
     "letter_email_placeholder": "البريد الإلكتروني",
     "letter_continue": "متابعة"
   },
+  "header": {
+      "paymentStatus": "حالة الدفع:",
+      "bookingStatus": "حالة الحجز:",
+      "phone": "الهاتف:",
+      "email": "البريد الإلكتروني:",
+      "hotels":"فنادق",
+      "contact":"اتصل بنا",
+      "support":"الدعم",
+      "login":"تسجيل الدخول",
+      "signup":"إنشاء حساب",
+      "agents": "وكلاء",
+      "customers": "عملاء"
+    },
   "footer": {
     "subheading": "افتح أبواب الإقامات الاستثنائية مع فنادقنا المختارة بعناية ووصول حصري إلى أفضل الوجهات في العالم.",
     "connect": "ابقَ على تواصل",
@@ -253,12 +266,6 @@
   "hotelInvoice": {
     "errors": {
       "noInvoiceFound": "لم يتم العثور على تفاصيل الفاتورة."
-    },
-    "header": {
-      "paymentStatus": "حالة الدفع:",
-      "bookingStatus": "حالة الحجز:",
-      "phone": "الهاتف:",
-      "email": "البريد الإلكتروني:"
     },
     "bookingNote": "تم إرسال طلب الإلغاء. سنقوم بالتحديث فور تغيير الحالة",
     "bookingInfo": {

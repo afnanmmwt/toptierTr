@@ -58,7 +58,9 @@ const TestimonialSection = () => {
     </svg>
   );
 
-  const { testimonials } = useAppSelector((state) => state.appData.data);
+  const testimonials = useAppSelector((state) => state.appData?.data?.testimonials || []);
+  console.log("✅ Testimonials data:", testimonials);
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -146,15 +148,23 @@ const TestimonialSection = () => {
       setIsTransitioning(false);
 
       // Reset to middle copy if we've scrolled past it
-      if (currentIndex + 1 >= 2 * totalItems) {
-        setCurrentIndex(middleStartIndex);
-        if (carouselRef.current) {
-          carouselRef.current.style.transition = 'none';
-          carouselRef.current.style.transform = `translateX(-${middleStartIndex * (isMobile ? 100 : 60)}%)`;
-          void carouselRef.current.offsetHeight; // Force reflow
-          carouselRef.current.style.transition = '';
-        }
-      }
+if (currentIndex + 1 >= 2 * totalItems) {
+  setCurrentIndex(middleStartIndex);
+
+  // Make sure ref exists before using it
+  if (carouselRef?.current) {
+    const el = carouselRef.current;
+    el.style.transition = 'none';
+    el.style.transform = `translateX(-${middleStartIndex * (isMobile ? 100 : 60)}%)`;
+
+    // 👇 Force reflow safely
+    void el.offsetHeight;
+
+    // Restore transition
+    el.style.transition = '';
+  }
+}
+
     }, 500);
   };
 

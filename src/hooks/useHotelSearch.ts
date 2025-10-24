@@ -409,7 +409,8 @@ const useHotelSearch = () => {
             price_to: to_price,
             rating: selectedRating > 1 ? selectedRating : "",
             currency:currency,
-            language:locale
+            language:locale,
+            child_age: parsedForm.children_ages || [],
           },
           hotelModuleNames
         );
@@ -462,16 +463,15 @@ const useHotelSearch = () => {
     const selectedNationality = localStorage.getItem("hotelSearchForm");
     //  generate slug
     const slugName = hotel.name.toLowerCase().replace(/\s+/g, "-");
-    let nationality;
+    let parsedFormData:any;
     let suplier_name;
     if (selectedNationality) {
-      const parsedData = JSON.parse(selectedNationality); // now it's an object
-      nationality = parsedData.nationality; // safely access nationality
+       parsedFormData = JSON.parse(selectedNationality); // now it's an object
 
       // console.log("Nationality:", nationality);
     }
     //  construct URL
-    const url = `/hotelDetails/${hotel.hotel_id}/${slugName}/${form.checkin}/${form.checkout}/${form.rooms}/${form.adults}/${form.children}/${nationality}`;
+    const url = `/hotelDetails/${hotel.hotel_id}/${slugName}/${form.checkin}/${form.checkout}/${form.rooms}/${form.adults}/${parsedFormData.children}/${parsedFormData.nationality}`;
     dispatch(setSeletecHotel(hotel));
     //  navigate
     router.push(url);

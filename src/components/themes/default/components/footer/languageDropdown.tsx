@@ -64,12 +64,12 @@ export default function LanguageDropdown() {
         onClick={() => setOpen(!open)}
         className="relative flex items-center cursor-pointer w-32 justify-start px-4 py-2 bg-white dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200"
       >
-        <span className="flex items-center gap-2">
+        <span className="flex items-center cursor-pointer  gap-2">
           {/* {flagMap[selectedLang?.language_code ?? "en"]} */}
           {selectedLang?.name ?? "English"}
         </span>
         <svg
-          className={`w-3.5 h-3.5 ml-2 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`w-3.5 h-3.5 ml-2  transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -80,7 +80,7 @@ export default function LanguageDropdown() {
 
       {/* Dropdown List */}
       {open && (
-        <div className="absolute bottom-10 z-10 w-44 p-2 space-y-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="absolute bottom-10 z-10 w-44  p-2 space-y-1 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
           {languages?.map((lang: any) => (
             <button
               key={lang.id}
@@ -88,7 +88,7 @@ export default function LanguageDropdown() {
                 changeLocale(lang.language_code); // 👈 update URL + locale
                 setOpen(false);
               }}
-              className={`flex items-center gap-3 px-4 py-3 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
+              className={`flex items-center gap-3 px-4 cursor-pointer  py-3 text-sm text-gray-700 dark:text-gray-300 w-full text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
                 locale === lang.language_code ? "bg-gray-100 dark:bg-gray-700" : ""
               }`}
             >

@@ -46,7 +46,9 @@ const HotelsDetails = () => {
     children: initialChildren,
     nationality: initialNationality,
   });
-
+ const savedForm = localStorage.getItem("hotelSearchForm");
+        if (!savedForm) return;
+        const parsedForm: any = JSON.parse(savedForm);
   // Helper to update URL
   const updateUrl = useCallback((params: typeof searchParams, hotelName: string) => {
     const slugName = hotelName.toLowerCase().replace(/\s+/g, "-");
@@ -98,7 +100,7 @@ const HotelsDetails = () => {
         rooms: searchParams.rooms,
         adults: searchParams.adults,
         childs: searchParams.children,
-        child_age: "",
+        child_age: parsedForm.children_ages || [],
         nationality: searchParams.nationality,
         language: language,
         currency: currency,
@@ -113,7 +115,7 @@ const HotelsDetails = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isClamped, setIsClamped] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
-
+console.log('hotel details',hotelDetails)
   useEffect(() => {
     if (textRef.current && hotelDetails?.desc) {
       const { scrollHeight, clientHeight } = textRef.current;
@@ -127,8 +129,8 @@ const HotelsDetails = () => {
   const savedhotel = localStorage.getItem("currentHotel");
   if (!savedhotel) return null;
 
-  const parsedForm: any = JSON.parse(savedhotel);
-  const { supplier_name } = parsedForm;
+  const parsedHotel: any = JSON.parse(savedhotel);
+  const { supplier_name } = parsedHotel;
   // Get initial values from URL or fallback
 
 
