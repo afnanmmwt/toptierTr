@@ -5,6 +5,8 @@ import { Navigation } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import { AnyARecord } from "node:dns";
+import useLocale from "@hooks/useLocale";
+import useDictionary from "@hooks/useDict";
 
 interface HotelSuggestionSliderProps {
   hotels: any[];
@@ -15,6 +17,8 @@ interface HotelSuggestionSliderProps {
 const HotelSuggestionSlider = ({ hotels, onHotelClick }: HotelSuggestionSliderProps) => {
       const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const { locale } = useLocale();
+    const { data: dict } = useDictionary(locale as any);
 
   if (!hotels || hotels.length === 0) {
   return null;

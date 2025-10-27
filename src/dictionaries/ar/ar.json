@@ -12,7 +12,7 @@
       "child_age": "عمر الطفل",
       "years": "سنوات",
       "nationality": "الجنسية",
-      "search_homes": "البحث عن منازل",
+      "search_hotels": "البحث عن فنادق",
       "searching": "جارٍ البحث...",
       "signup": "إنشاء حساب",
       "login": "تسجيل الدخول"
@@ -104,21 +104,25 @@
     "letter_name_placeholder": "الاسم",
     "letter_email": "البريد الإلكتروني",
     "letter_email_placeholder": "البريد الإلكتروني",
-    "letter_continue": "متابعة"
+    "letter_continue": "متابعة",
+    "errors": {
+      "name_too_short": "يجب أن يتكون الاسم من حرفين على الأقل",
+      "email_invalid": "عنوان البريد الإلكتروني غير صالح"
+    }
   },
   "header": {
-      "paymentStatus": "حالة الدفع:",
-      "bookingStatus": "حالة الحجز:",
-      "phone": "الهاتف:",
-      "email": "البريد الإلكتروني:",
-      "hotels":"فنادق",
-      "contact":"اتصل بنا",
-      "support":"الدعم",
-      "login":"تسجيل الدخول",
-      "signup":"إنشاء حساب",
-      "agents": "وكلاء",
-      "customers": "عملاء"
-    },
+    "paymentStatus": "حالة الدفع:",
+    "bookingStatus": "حالة الحجز:",
+    "phone": "الهاتف:",
+    "email": "البريد الإلكتروني:",
+    "hotels": "فنادق",
+    "contact": "اتصل بنا",
+    "support": "الدعم",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب",
+    "agents": "وكلاء",
+    "customers": "عملاء"
+  },
   "footer": {
     "subheading": "افتح أبواب الإقامات الاستثنائية مع فنادقنا المختارة بعناية ووصول حصري إلى أفضل الوجهات في العالم.",
     "connect": "ابقَ على تواصل",
@@ -427,5 +431,34 @@
     "children_label": "الأطفال",
     "child_age_label": "عمر الطفل",
     "years_label": "سنوات"
+  },
+  "roomCard": {
+    "loginToFavorite": "يجب على المستخدم تسجيل الدخول لوضع علامة مفضلة",
+    "favoriteUpdateFailed": "حدث خطأ ما :x:",
+    "favoriteUpdated": "تم تحديث المفضلة",
+    "favoriteUpdateError": "فشل تحديث المفضلة :x:",
+    "noAmenities": "لا توجد وسائل راحة مدرجة",
+    "freeBreakfast": "إفطار مجاني",
+    "freeCancellation": "إلغاء مجاني",
+    "reserve": "احجز",
+    "moreOptions": "مزيد من الخيارات",
+    "close": "إغلاق"
+  },
+  "roomOption": {
+    "roomNamePlaceholder": "شقة بغرفة نوم واحدة",
+    "roomImage": "صورة الغرفة",
+    "features": "الميزات",
+    "travellers": "المسافرون",
+    "price": "السعر",
+    "freeBreakfast": "إفطار مجاني",
+    "freeDinner": "عشاء مجاني",
+    "freeCancellation": "إلغاء مجاني",
+    "notBookable": "غير قابل للحجز",
+    "showMore": "عرض المزيد",
+    "showLess": "عرض أقل",
+    "noFeatures": "غير متوفر",
+    "adults": "البالغون",
+    "children": "الأطفال",
+    "bookNow": "احجز الآن"
   }
 }

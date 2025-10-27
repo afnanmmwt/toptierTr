@@ -10,6 +10,7 @@ import useDictionary from '@hooks/useDict';
 import useLocale from '@hooks/useLocale';
 import StripeProvider from '@lib/stripeProvider';
 import getCurrencySymbol from '@src/utils/getCurrencySymbals';
+import { useState, useEffect } from 'react';
 
 export default function BookingDetails() {
   const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
@@ -20,25 +21,37 @@ export default function BookingDetails() {
   const { hotelDetails, room, option } = selectedRoom || {};
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
-
   const { checkin, checkout, adults = 0, children = 0, rooms = 1 } = saveBookingData;
   const { price = 0, markup_price = 0, currency = 'USD' } = option || {};
-
   // Calculate stay duration (in nights)
   const checkinDate = new Date(checkin);
   const checkoutDate = new Date(checkout);
   const nights = Math.max(1, (checkoutDate.getTime() - checkinDate.getTime()) / (1000 * 60 * 60 * 24));
   const persons = Number(adults) + Number(children);
 
-  // Base total for all rooms and nights
-  const baseTotal = Number(price) * nights * Number(rooms);
+  // Add these states for editable fields
+  const [quantity, setQuantity] = useState<string>(String(rooms || 1));
+  const [roomPrice, setRoomPrice] = useState<string>(String(markup_price || 0));
+  const [topTierFee, setTopTierFee] = useState<string>(String(Math.max(0, Number(price) - Number(markup_price)) || 0));
 
-  // Calculate toptier fee (can’t be negative)
-  const toptierFee = Math.max(0, Number(price) - Number(markup_price));
+  // Recalculate total whenever inputs change
+const cleanRoomPrice = (roomPrice || '0').replace(/,/g, '');
+const cleanQuantity = (quantity || '1').replace(/,/g, '');
+const cleanTopTierFee = (topTierFee || '0').replace(/,/g, '');
+const finalTotal = parseFloat(cleanRoomPrice) * parseFloat(String(nights)) * parseFloat(cleanQuantity);
+// const finalTotal = baseTotal + parseFloat(cleanTopTierFee);
 
-  // Add markup only if toptierFee is greater than 0
-  const finalTotal = baseTotal + (toptierFee > 0 ? toptierFee : 0);
- console.log('=================selectedRoom',option)
+
+
+
+  // Input change handlers that allow only numeric input (including decimals)
+  const handleNumericChange = (value: string, setState: (val: string) => void) => {
+    // Allow empty string, numbers, and single decimal point
+    if (value === '' || /^\d*\.?\d*$/.test(value)) {
+      setState(value);
+    }
+  };
+
   return (
     <section className="bg-[#F9FAFB] w-full">
       <div className="min-h-screen w-full max-w-[1200px] mx-auto justify-between flex flex-col md:flex-row lg:flex-row p-4 md:p-6 lg:p-12 mb-6 gap-8 appHorizantalSpacing">
@@ -79,7 +92,6 @@ export default function BookingDetails() {
           <StripeProvider>
             <BookingForm />
           </StripeProvider>
-
         </div>
 
         {/* Right Side Summary */}
@@ -126,9 +138,15 @@ export default function BookingDetails() {
                 <span className="text-gray-600">{dict?.bookingDetails?.checkoutDate}</span>
                 <span className="font-semibold text-[#0F172B]">{checkout}</span>
               </div>
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <span className="text-gray-600">{dict?.bookingDetails?.roomQuantity}</span>
-                <span className="font-semibold text-[#0F172B]">{rooms}</span>
+                <input
+                  type="text"
+                  value={quantity}
+                  onChange={(e) => handleNumericChange(e.target.value, setQuantity)}
+                  className="w-16 border border-gray-300 rounded px-2 py-1 text-right text-sm bg-white outline-none"
+                  inputMode="decimal"
+                />
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">{dict?.bookingDetails?.nights}</span>
@@ -141,28 +159,47 @@ export default function BookingDetails() {
                   {children > 0 ? `, ${children} ${dict?.bookingDetails?.children}` : ""}
                 </span>
               </div>
-              <div className="flex justify-between border-t border-gray-200 pt-3">
+              <div className="flex justify-between items-center">
                 <span className="text-gray-600">{dict?.bookingDetails?.roomPrice}</span>
-                <span className="font-semibold text-[#0F172B]">
-                   {getCurrencySymbol(currency)}{" "}{markup_price}
-
-                </span>
+                <div className="flex items-center gap-2">
+                  <span>{getCurrencySymbol(currency)}</span>
+                  <input
+                    type="text"
+                    value={roomPrice}
+                    onChange={(e) => handleNumericChange(e.target.value, setRoomPrice)}
+                    className="w-24 border border-gray-300 rounded px-2 py-1 text-right text-sm bg-white outline-none"
+                    inputMode="decimal"
+                  />
+                </div>
               </div>
-              <div className="flex justify-between">
+              {/* <div className="flex justify-between items-center">
+                <span className="text-gray-600">{"Base Total"}</span>
+                <div className="flex items-center gap-1">
+                  <span>{getCurrencySymbol(currency)}</span>
+                     <span className="font-semibold text-[#0F172B]">
+                    {baseTotal.toFixed(2)}
+                </span>
+                </div>
+              </div> */}
+              {/* <div className="flex justify-between items-center">
                 <span className="text-gray-600">{dict?.bookingDetails?.toptierFee}</span>
-                <span className="font-semibold text-[#0F172B]">
-{toptierFee === 0
-                    ? `${getCurrencySymbol(currency as any)} 0`
-                    : `${getCurrencySymbol(currency)} ${markup_price}`}
-                </span>
-              </div>
+                <div className="flex items-center gap-1">
+                  <span>{getCurrencySymbol(currency)}</span>
+                  <input
+                    type="text"
+                    value={topTierFee}
+                    onChange={(e) => handleNumericChange(e.target.value, setTopTierFee)}
+                    className="w-20 border border-gray-300 rounded px-2 py-1 text-right text-sm bg-white outline-none"
+                    inputMode="decimal"
+                  />
+                </div>
+              </div> */}
               <div className="flex justify-between items-center border-t border-gray-300 pt-3 mt-2">
                 <span className="text-lg font-semibold text-[#0F172B]">
                   {dict?.bookingDetails?.total}
                 </span>
                 <span className="text-lg font-bold text-[#163C8C]">
-                  {getCurrencySymbol(currency)} {finalTotal}
-
+                  {getCurrencySymbol(currency)} {finalTotal.toFixed(2)}
                 </span>
               </div>
             </div>

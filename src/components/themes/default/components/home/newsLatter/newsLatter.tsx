@@ -11,10 +11,7 @@ import React, { useState, ChangeEvent } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
-const newsLatterSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Invalid email address"),
-});
+
 interface FormData {
   name: string;
   email: string;
@@ -27,7 +24,7 @@ const NewsLatter: React.FC = () => {
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
-  
+
 
   const app = useAppSelector((state) => state?.appData?.data);
   const { newsletter_description, newsletter_image, newsletter_title } = app.app
@@ -37,11 +34,16 @@ const NewsLatter: React.FC = () => {
       ...prev,
       [name]: value,
     }));
-    setErrors((prev) => ({ ...prev, [name]: "" })); // clear error on change
+    setErrors((prev) => ({ ...prev, [name]: "" })); 
   };
 
   const handleSubmit = async () => {
     setMessage(null);
+
+    const newsLatterSchema = z.object({
+      name: z.string().min(2, dict?.news_letter_sec?.errors?.name_too_short || "Name must be at least 2 characters"),
+      email: z.string().email(dict?.news_letter_sec?.errors?.email_invalid || "Invalid email address"),
+    });
 
     try {
       newsLatterSchema.parse(formData);
@@ -53,7 +55,7 @@ const NewsLatter: React.FC = () => {
         toast.error(res.error);
         // setMessage({ type: "danger", text: res.error });
       } else {
-        toast.success("Subscribed successfully!");
+        toast.success(dict?.footer?.success || "Subscribed successfully!");
         setFormData({ name: "", email: "" });
       }
     } catch (err) {
@@ -73,7 +75,7 @@ const NewsLatter: React.FC = () => {
     }
   };
 
-  // No testimonial CHECK
+  // No NewsLetter CHECK
   if (!app?.app?.newsletter_title) {
     return null;
   }

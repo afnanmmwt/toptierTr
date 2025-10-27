@@ -355,7 +355,7 @@ export default function HotelMap({ hotels, currentLocation, detailHandler }: Hot
               >
                 <Tooltip
                   direction="top"
-                  offset={L.point(0, -10)}
+                  offset={L.point(0, -20)}
                   opacity={1}
                   interactive
                 >

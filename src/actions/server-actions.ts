@@ -6,21 +6,7 @@ import { headers } from "next/headers";
 
 // console.log("base",baseUrl);
 
-// ============== GET DYNAMIC DOMAIN ===============
-export async function getDomain(): Promise<string> {
-  const h = await headers();
-  const host = h.get("domain") || "booknow.co";
 
-  if (host.includes("localhost")) {
-    return "booknow.co"; // default for local dev
-  }
-
-  const parts = host.split(".");
-  if (parts.length > 2) {
-    return parts.slice(-2).join(".");
-  }
-  return host;
-}
 // ============== COMMON HEADER ================
 export async function getHeaders(contentType: string = "application/x-www-form-urlencoded") {
   // const domain = await getDomain();
@@ -57,7 +43,6 @@ interface appDataPayload {
   currency: string;
 }
 export const fetchAppData = async (payload: appDataPayload) => {
-  console.log("fetchAppData payload", payload);
   try {
     // explicitly type userinfo
     const userinfo = (await getSession()) as SessionUser | null;
@@ -425,7 +410,6 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
   formData.append("price_to", payload.price_to || "");
   formData.append("price_low_to_high", "");
   formData.append("rating", payload.rating || "");
-  console.log("hotel search payload", payload);
   if (payload.child_age && payload.child_age.length > 0) {
     const formattedAges = payload.child_age.map((age) => ({ ages: age }));
     formData.append("child_age", JSON.stringify(formattedAges));
@@ -683,6 +667,7 @@ export const hotel_booking = async (payload: BookingPayload) => {
     formData.append("payment_gateway", payload.payment_gateway ?? "");
     formData.append("user_id", user_id ?? "");
 
+
     // Append JSON fields (must stringify)
     formData.append("room_data", JSON.stringify(payload.room_data));
     formData.append("booking_data", JSON.stringify(payload.booking_data));
@@ -692,10 +677,7 @@ export const hotel_booking = async (payload: BookingPayload) => {
       method: "POST",
       body: formData,
     });
-
     const data = await response.json().catch(() => null);
-    // console.log("hotel_booking_result", data);
-
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -720,7 +702,6 @@ export const hotel_invoice = async (payload: string) => {
     });
 
     const data = await response.json().catch(() => null);
-    // console.log("hotel_details_result", data);
 
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
@@ -740,7 +721,6 @@ interface payment1_payload {
 export const prapare_payment = async (payload: payment1_payload) => {
   try {
     const formData = new FormData();
-
     //  match exactly with API keys
     formData.append("booking_ref_no", payload.booking_ref_no);
     formData.append('invoice_url', payload.invoice_url)
@@ -893,9 +873,10 @@ export const fetch_dashboard_data = async (payload: dashboardPayload) => {
     formData.append("api_key", api_key ?? "");
     formData.append("user_id",user_id );
     formData.append("page", payload.page);
-    formData.append("limit", payload.limit);
-    formData.append("search", payload.search);
-    formData.append("payment_status", payload.payment_status);
+    formData.append("limit",payload.limit);
+    formData.append("search", payload.search ?? "");
+    formData.append("payment_status", payload.payment_status ?? "");
+    formData.append("type", "customer");
     const response = await fetch(`${baseUrl}/user_bookings`, {
       method: "POST",
       body: formData,
@@ -903,13 +884,10 @@ export const fetch_dashboard_data = async (payload: dashboardPayload) => {
         Accept: "application/json, text/plain, */*",
       },
     });
-
     const data = await response.json().catch(() => null);
-
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
-
     return data;
   } catch (error) {
     return { error: (error as Error).message || "An error occurred" };

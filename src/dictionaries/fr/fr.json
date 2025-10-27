@@ -104,7 +104,11 @@
     "letter_name_placeholder": "Nom",
     "letter_email": "e-mail",
     "letter_email_placeholder": "E-mail",
-    "letter_continue": "Continuer"
+    "letter_continue": "Continuer",
+    "errors": {
+      "name_too_short": "Le nom doit comporter au moins 2 caractères",
+      "email_invalid": "Adresse e-mail invalide"
+    }
   },
   "footer": {
     "subheading": "Accédez à des séjours extraordinaires grâce à nos hôtels soigneusement sélectionnés et à un accès exclusif aux plus belles destinations du monde.",

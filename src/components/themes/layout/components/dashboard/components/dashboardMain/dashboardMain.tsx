@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { fetch_dashboard_data, get_profile } from "@src/actions";
 import useLocale from "@hooks/useLocale";
 import useDictionary from "@hooks/useDict";
+import DashboardCard from "./dashboardCard";
 
 const ITEMS_PER_PAGE_OPTIONS = [5, 10, 15, 20] as const;
 
@@ -205,7 +206,7 @@ export default function Dashboard() {
         {!isLoading && !isError && (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-gray-700 min-w-full">
+              {/* <table className="w-full text-sm text-gray-700 min-w-full">
                 <thead className="bg-[#F9FAFB] text-gray-500 uppercase text-xs whitespace-nowrap">
                   <tr>
                     <th className="py-5 px-6 text-left">{dict?.dashboard?.client_name}</th>
@@ -251,7 +252,10 @@ export default function Dashboard() {
                     </tr>
                   )}
                 </tbody>
-              </table>
+              </table> */}
+                              { bookings.map((hotel: any, index: number) => (
+              <DashboardCard hotel={hotel}/> 
+              ) )}
             </div>
 
             {/* Pagination */}
@@ -327,7 +331,7 @@ export default function Dashboard() {
   );
 }
 
-// ✅ Reusable Stat Card (unchanged)
+//  Reusable Stat Card (unchanged)
 function StatCard({
   label,
   value,

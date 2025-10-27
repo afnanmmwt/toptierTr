@@ -45,6 +45,8 @@ body:is(.dark *) {
 }
 
 .leaflet-tooltip {
+  position: relative;
+  left: 0px;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -87,6 +89,7 @@ body:is(.dark *) {
 [dir="rtl"] .iconify {
     transform: scaleX(-1)
 }
+
 
 .range-thumb {
     -webkit-appearance: none;

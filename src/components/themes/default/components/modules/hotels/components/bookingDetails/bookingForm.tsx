@@ -15,6 +15,7 @@ import { AccordionInfoCard } from '@components/core/accordians/accordian';
 import useDictionary from '@hooks/useDict'; //  Add this
 import useLocale from '@hooks/useLocale';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
+import { useUser } from '@hooks/use-user';
 // Get dict for error messages
 const useBookingFormSchema = (dict: any) => {
   return z.object({
@@ -102,30 +103,47 @@ phoneNumber: z
 };
 
 export type BookingFormValues = z.infer<ReturnType<typeof useBookingFormSchema>>;
-
 export default function BookingForm() {
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const bookingSchema = useBookingFormSchema(dict);
+  interface User {
+  id: string;
+  user_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  address1: string;
+  country_code: string;
+  phone_country_code: string;
+  phone: string;
+  // Add other fields if needed
+}
+const { user } = useUser();
 
-  const defaultValues: BookingFormValues = {
-    firstName: '',
-    lastName: '',
-    address: '',
-    email: '',
-    nationality: '',
-    currentCountry: '',
-    phoneCountryCode: '',
-    phoneNumber: '',
-    travellers: [{ title: dict?.bookingForm?.titles?.mr, firstName: '', lastName: '', age: '' }],
-    cardName: '',
-    cardNumber: '',
-    cardExpiry: '',
-    cardCvv: '',
-    cardZip: '',
-    acceptPolicy: false,
-  };
+// Cast to known type (safe because you've verified the structure)
+const typedUser = user as User | null | undefined;
+
+const defaultValues: BookingFormValues = {
+  firstName: typedUser?.first_name || '',
+  lastName: typedUser?.last_name || '',
+  address: typedUser?.address1 || '',
+  email: typedUser?.email || '',
+  nationality: typedUser?.country_code || '',
+  currentCountry: typedUser?.country_code || '',
+  phoneCountryCode: typedUser?.phone_country_code
+    ? `+${typedUser.phone_country_code}`
+    : '',
+  phoneNumber: typedUser?.phone || '',
+  travellers: [{ title: dict?.bookingForm?.titles?.mr, firstName: '', lastName: '', age: '' }],
+  cardName: '',
+  cardNumber: '',
+  cardExpiry: '',
+  cardCvv: '',
+  cardZip: '',
+  acceptPolicy: false,
+};
 
   const {
     control,
@@ -153,6 +171,7 @@ const elements = useElements();
 const [bookingReference, setBookingReference] = useState<string>(
   new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14)
 );
+const [isPending, setIsPending] = useState(false);
   const router = useRouter();
   const { hotelDetails } = selectedRoom || {};
   const [isTitleOpen, setIsTitleOpen] = useState<number | null>(null);
@@ -171,6 +190,9 @@ const [bookingReference, setBookingReference] = useState<string>(
   const { adults = 0, children = 0, nationality, checkin, checkout } = saveBookingData;
   const travelers = adults + children;
   const { price, markup_price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, quantity, markup_price_per_night, per_day, service_fee, child, currency } = selectedRoom?.option || {};
+  console.log("SelectedRoom option data in booking form:", selectedRoom?.option);
+  const net_profit= (parseFloat(markup_price) || 0) - (parseFloat(price) || 0);
+  console.log("Net Profit in booking form:", net_profit);
   const {
     id: hotel_id,
     address: hotel_address,
@@ -211,7 +233,6 @@ const [bookingReference, setBookingReference] = useState<string>(
     iso: c.iso,
     phonecode: c.phonecode,
   }));
-
   const phoneCodeOptions = countryList.map((c) => ({
     value: `+${c.phonecode}`,
     label: `+${c.phonecode}`,
@@ -244,79 +265,144 @@ const [bookingReference, setBookingReference] = useState<string>(
     }
   }, [setValue, nationality, travelers, dict]);
 
-const { mutate: bookHotel, isPending } = useMutation({
-  mutationFn: async (bookingPayload: any) => {
-    const response = await hotel_booking(bookingPayload);
-    return response;
-  },
 
-onSuccess: async (data) => {
-  if (!stripe || !elements) {
-    setIsProcessingPayment(false);
-    return;
-  }
+// Auto save booking
+// Add this useEffect right after defaultValues and before useForm
+useEffect(() => {
+  if (!user) return; // Only run if user data exists
 
-  const cardElement = elements.getElement(CardElement);
-  if (!cardElement) {
-    alert("Card element not found");
-    setIsProcessingPayment(false);
-    return;
-  }
+  // const preFilledData: BookingFormValues = {
+  //   firstName: typedUser.first_name || '',
+  //   lastName: typedUser.last_name || '',
+  //   address: typedUser.address1 || '',
+  //   email: typedUser.email || '',
+  //   nationality: typedUser.country_code || '',
+  //   currentCountry: typedUser.country_code || '',
+  //   phoneCountryCode: typedUser.phone_country_code ? `+${typedUser.phone_country_code}` : '',
+  //   phoneNumber: typedUser.phone || '',
+  //   travellers: [{ title: dict?.bookingForm?.titles?.mr, firstName: '', lastName: '', age: '' }],
+  //   cardName: '',
+  //   cardNumber: '',
+  //   cardExpiry: '',
+  //   cardCvv: '',
+  //   cardZip: '',
+  //   acceptPolicy: false,
+  // };
 
-  try {
-    const res = await fetch("/api/paymentIntent", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        amount: price,
-        currency,
-        booking_ref_no: data.booking_ref_no,
-        module_type: supplier_name,
-        email: data?.user_email,
-      }),
-    });
+  // Reuse the exact same payload logic as in onSubmit
+  const {
+    firstName,
+    lastName,
+    address,
+    nationality,
+    currentCountry,
+    email,
+    phoneCountryCode,
+    phoneNumber,
+  } = defaultValues;
 
-    const { clientSecret, success_url } = await res.json();
+  // Get travelers count from localStorage (same as in original code)
+  const curruntBooking = localStorage.getItem('hotelSearchForm');
+  const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
+  const { adults = 0, children = 0 } = saveBookingData;
+  const travelers = adults + children;
 
-    const result = await stripe.confirmCardPayment(clientSecret, {
-      payment_method: {
-        card: cardElement,
-        billing_details: {
-          name: data.cardName,
-          email: data.email,
-        },
+  // Build guest payload (same logic as onSubmit)
+  const guestPayload = Array.from({ length: travelers }, (_, index) => ({
+    traveller_type: index < adults ? 'adults' : 'child',
+    title: dict?.bookingForm?.titles?.mr || 'Mr',
+    first_name: '',
+    last_name: '',
+    nationality: nationality || '',
+    age: '',
+    dob_day: '',
+    dob_month: '',
+    dob_year: '',
+  }));
+
+  // Build booking payload (same structure as onSubmit)
+  const bookingPayload = {
+    booking_ref_no: bookingReference,
+    price_original: price || 0,
+    price_markup: markup_price || 0,
+    vat: 0,
+    tax: 0,
+    gst: 0,
+    first_name: firstName || '',
+    last_name: lastName || '',
+    email: email || '',
+    address: address || '',
+    phone_country_code: phoneCountryCode || '+92',
+    phone: phoneNumber || '000-000-000',
+    country: hotel_country || 'UNITED ARAB EMIRATES',
+    stars: stars || 0,
+    hotel_id: hotel_id || '',
+    hotel_name: hotel_name || '',
+    hotel_phone: hotel_phone || '',
+    hotel_email: hotel_email || '',
+    hotel_website: hotel_website || '',
+    hotel_address: hotel_address || '',
+    room_data: [
+      {
+        room_id: option_id,
+        room_name: selectedRoom?.room?.name,
+        room_price: price,
+        room_qaunitity: quantity,
+        room_extrabed_price: extrabed_price,
+        room_extrabed: extrabeds_quantity,
+        room_actual_price: price,
       },
+    ],
+    location: hotel_location || '',
+    location_cords: hotel_address || '',
+    hotel_img: hotel_image?.[0] || '',
+    checkin: checkin || '10-10-2025',
+    checkout: checkout || '14-10-2025',
+    adults: adults || 0,
+    childs: children || 0,
+    child_ages: '',
+    currency_original: booking_currency || 'USD',
+    currency_markup: booking_currency || 'USD',
+    booking_data: selectedRoom?.option,
+    supplier: supplier_name || '',
+    user_id: '',
+    guest: guestPayload,
+    nationality: nationality || '',
+    user_data: {
+      first_name: firstName || '',
+      last_name: lastName || '',
+      address: address || '',
+      email: email || '',
+      phone: phoneNumber || '',
+      nationality: nationality || 'pk',
+      country_code: nationality || 'pk',
+    },
+    card: {
+      name: '',
+      number: '',
+      expiry: '',
+      cvv: '',
+      zip: '',
+    },
+  };
+
+  // Hit the API
+  hotel_booking(bookingPayload as any)
+    .then(response => {
+      console.log('Pre-booking API hit successful:', response);
+      setBookingReference(response.booking_ref_no);
+      // You can store response if needed
+    })
+    .catch(error => {
+      console.error('Pre-booking API failed:', error);
     });
-
-    if (result.error) {
-      console.error("Payment failed:", result.error.message);
-      alert("Payment failed: " + result.error.message);
-      setIsProcessingPayment(false); //  Stop loading on error
-    } else if (result.paymentIntent?.status === 'succeeded') {
-      // Redirect happens here → no need to reset state manually
-      router.replace(success_url);
-      // Optional: you can leave state as-is since user leaves the page
-    } else {
-      alert("Payment did not succeed. Please try again.");
-      setIsProcessingPayment(false); //  Stop loading
-    }
-  } catch (error) {
-    console.error("Payment process error:", error);
-    alert("An error occurred. Please try again.");
-    setIsProcessingPayment(false); //  Stop loading
-  }
-},
-
-  onError: (error) => {
-    console.error("Booking failed:", error);
-  },
-});
-
+}, [user, dict, bookingReference]); // Dependencies: user data, dict, and booking ref
 
 const onSubmit = async (data: BookingFormValues) => {
   if (!data) return;
 
   setIsProcessingPayment(true);
+  setIsPending(true);
 
   try {
     const {
@@ -336,7 +422,7 @@ const onSubmit = async (data: BookingFormValues) => {
       cardZip,
     } = data;
 
-    // ✅ Fix guest type to 'child' not 'childs'
+    //  Fix guest type to 'child' not 'childs'
     const guestPayload = (travellers || []).map((traveller: any, index: number) => ({
       traveller_type: index < adults ? 'adults' : 'child',
       title: traveller.title || '',
@@ -350,6 +436,7 @@ const onSubmit = async (data: BookingFormValues) => {
     }));
     const bookingPayload = {
       booking_ref_no: bookingReference,
+      net_profit: net_profit || 0,
       price_original: price || 0,
       price_markup: markup_price || 0,
       vat: 0,
@@ -373,7 +460,7 @@ const onSubmit = async (data: BookingFormValues) => {
         {
           room_id: option_id,
           room_name: selectedRoom?.room?.name,
-          room_price: price,
+          room_price: markup_price || 0,
           room_qaunitity: quantity,
           room_extrabed_price: extrabed_price,
           room_extrabed: extrabeds_quantity,
@@ -421,7 +508,7 @@ const onSubmit = async (data: BookingFormValues) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: price,
+          amount: markup_price || 0,
           currency: booking_currency,
           booking_ref_no: bookingReference,
           module_type: supplier_name,
@@ -437,6 +524,7 @@ const onSubmit = async (data: BookingFormValues) => {
     if (!stripe || !elements) {
       alert("Stripe not initialized");
       setIsProcessingPayment(false);
+      setIsPending(false);
       return;
     }
 
@@ -444,6 +532,7 @@ const onSubmit = async (data: BookingFormValues) => {
       console.error("Missing clientSecret from payment API:");
       alert("Payment setup failed. Please try again.");
       setIsProcessingPayment(false);
+      setIsPending(false);
       return;
     }
 
@@ -451,6 +540,7 @@ const onSubmit = async (data: BookingFormValues) => {
     if (!cardElement) {
       alert("Card element not found");
       setIsProcessingPayment(false);
+      setIsPending(false);
       return;
     }
 
@@ -469,6 +559,7 @@ const onSubmit = async (data: BookingFormValues) => {
       console.error("Payment failed:", result.error.message);
       alert(`Payment failed: ${result.error.message}`);
       setIsProcessingPayment(false);
+      setIsPending(false);
     } else if (result.paymentIntent?.status === 'succeeded') {
       router.replace(success_url);
     } else {
@@ -479,6 +570,7 @@ const onSubmit = async (data: BookingFormValues) => {
     console.error("Payment process error:", error);
     alert("An error occurred. Please try again.");
     setIsProcessingPayment(false);
+    setIsPending(false);
   }
 };
 

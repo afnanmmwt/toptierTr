@@ -29,7 +29,6 @@ const HeaderMenus = () => {
   (item:any, index:number, self:any) =>
     index === self.findIndex((m:any) => m.type === item.type)
 );
-console.log("app data in header,filteredModules",filteredModules);
 
   return (
     <header className="w-full  max-w-[1200px] mx-auto overflow-visible">
@@ -101,14 +100,14 @@ console.log("app data in header,filteredModules",filteredModules);
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/login"
             target=""
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
           >
             {dict?.header?.login || "Login"}
           </Link>
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/signup"
             target=""
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
           >
             {dict?.header?.signup || "Signup"}
           </Link>
@@ -143,15 +142,15 @@ console.log("app data in header,filteredModules",filteredModules);
         <div className="flex flex-col">
           <Link
             href="/auth/login"
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2  py-2 text-gray-700 hover:bg-blue-50"
           >
-            Login
+            {dict?.header?.login || "Login"}
           </Link>
           <Link
             href="/auth/signup"
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2  py-2 text-gray-700 hover:bg-blue-50"
           >
-            Signup
+            {dict?.header?.signup || "Signup"}
           </Link>
         </div>
       </Dropdown>
@@ -218,7 +217,7 @@ console.log("app data in header,filteredModules",filteredModules);
     ))}
 
           {/* Mobile Auth Buttons */}
-          {!(user) ? <div className="flex flex-col ">
+          {!(user) ? <div className="flex flex-col w-55 mx-2">
                <Dropdown
         label={
           <div className="flex items-center gap-1.5 ps-0.5">
@@ -248,14 +247,14 @@ console.log("app data in header,filteredModules",filteredModules);
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/login"
             target=""
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/signup"
             target=""
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
           >
             Signup
           </Link>
@@ -288,13 +287,13 @@ console.log("app data in header,filteredModules",filteredModules);
         <div className="flex flex-col">
           <Link
             href="/auth/login"
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
             href="/auth/signup"
-            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
           >
             Signup
           </Link>
