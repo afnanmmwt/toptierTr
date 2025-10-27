@@ -3,7 +3,7 @@
 
 import { useRouter } from 'next/navigation';
 import BookingForm from './bookingForm';
-import { useAppSelector } from '@lib/redux/store';
+import { useAppDispatch, useAppSelector } from '@lib/redux/store';
 import Image from 'next/image';
 import useCurrency from '@hooks/useCurrency';
 import useDictionary from '@hooks/useDict';
@@ -11,6 +11,8 @@ import useLocale from '@hooks/useLocale';
 import StripeProvider from '@lib/stripeProvider';
 import getCurrencySymbol from '@src/utils/getCurrencySymbals';
 import { useState, useEffect } from 'react';
+import { set } from 'lodash';
+import { setSeletecRoom } from '@lib/redux/base';
 
 export default function BookingDetails() {
   const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
@@ -21,36 +23,41 @@ export default function BookingDetails() {
   const { hotelDetails, room, option } = selectedRoom || {};
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
+   const dispatch = useAppDispatch();
   const { checkin, checkout, adults = 0, children = 0, rooms = 1 } = saveBookingData;
-  const { price = 0, markup_price = 0, currency = 'USD' } = option || {};
+  const { price = 0, markup_price_per_night = 0, currency = 'USD' } = option || {};
+
   // Calculate stay duration (in nights)
   const checkinDate = new Date(checkin);
   const checkoutDate = new Date(checkout);
   const nights = Math.max(1, (checkoutDate.getTime() - checkinDate.getTime()) / (1000 * 60 * 60 * 24));
   const persons = Number(adults) + Number(children);
 
-  // Add these states for editable fields
+  // Editable fields state
   const [quantity, setQuantity] = useState<string>(String(rooms || 1));
-  const [roomPrice, setRoomPrice] = useState<string>(String(markup_price || 0));
-  const [topTierFee, setTopTierFee] = useState<string>(String(Math.max(0, Number(price) - Number(markup_price)) || 0));
+  const [roomPrice, setRoomPrice] = useState<string>(String(markup_price_per_night || 0));
+  // Optional: topTierFee can be removed if not used
+  // const [topTierFee, setTopTierFee] = useState<string>(String(Math.max(0, Number(price) - Number(markup_price)) || 0));
 
-  // Recalculate total whenever inputs change
-const cleanRoomPrice = (roomPrice || '0').replace(/,/g, '');
-const cleanQuantity = (quantity || '1').replace(/,/g, '');
-const cleanTopTierFee = (topTierFee || '0').replace(/,/g, '');
-const finalTotal = parseFloat(cleanRoomPrice) * parseFloat(String(nights)) * parseFloat(cleanQuantity);
-// const finalTotal = baseTotal + parseFloat(cleanTopTierFee);
+  // Clean and compute total
+const cleanRoomPriceNum = parseFloat(roomPrice.replace(/,/g, '') || '0');
+const cleanQuantityNum = parseInt(quantity.replace(/,/g, ''), 10) || 1; // quantity can't be 0
+const finalTotal = cleanRoomPriceNum * nights * cleanQuantityNum;
 
+  // Input handler for numeric fields
+const handleQuantityChange = (value: string) => {
+  // Allow empty or valid integer (no decimals for quantity)
+  if (value === '' || /^\d*$/.test(value)) {
+    setQuantity(value);
+  }
+};
 
-
-
-  // Input change handlers that allow only numeric input (including decimals)
-  const handleNumericChange = (value: string, setState: (val: string) => void) => {
-    // Allow empty string, numbers, and single decimal point
-    if (value === '' || /^\d*\.?\d*$/.test(value)) {
-      setState(value);
-    }
-  };
+const handleRoomPriceChange = (value: string) => {
+  // Allow empty or valid decimal number
+  if (value === '' || /^\d*\.?\d*$/.test(value)) {
+    setRoomPrice(value);
+  }
+};
 
   return (
     <section className="bg-[#F9FAFB] w-full">
@@ -88,9 +95,14 @@ const finalTotal = parseFloat(cleanRoomPrice) * parseFloat(String(nights)) * par
 
           <div className="border-b border-[#CACACA] mb-8"></div>
 
-          {/* Render the form */}
+          {/* Pass live values to BookingForm */}
           <StripeProvider>
-            <BookingForm />
+            <BookingForm
+              quantity={quantity}
+              markup_price={roomPrice}
+              total={finalTotal}
+
+            />
           </StripeProvider>
         </div>
 
@@ -143,7 +155,7 @@ const finalTotal = parseFloat(cleanRoomPrice) * parseFloat(String(nights)) * par
                 <input
                   type="text"
                   value={quantity}
-                  onChange={(e) => handleNumericChange(e.target.value, setQuantity)}
+                  onChange={(e) => handleQuantityChange(e.target.value)}
                   className="w-16 border border-gray-300 rounded px-2 py-1 text-right text-sm bg-white outline-none"
                   inputMode="decimal"
                 />
@@ -166,34 +178,12 @@ const finalTotal = parseFloat(cleanRoomPrice) * parseFloat(String(nights)) * par
                   <input
                     type="text"
                     value={roomPrice}
-                    onChange={(e) => handleNumericChange(e.target.value, setRoomPrice)}
+                    onChange={(e) => handleRoomPriceChange(e.target.value)}
                     className="w-24 border border-gray-300 rounded px-2 py-1 text-right text-sm bg-white outline-none"
                     inputMode="decimal"
                   />
                 </div>
               </div>
-              {/* <div className="flex justify-between items-center">
-                <span className="text-gray-600">{"Base Total"}</span>
-                <div className="flex items-center gap-1">
-                  <span>{getCurrencySymbol(currency)}</span>
-                     <span className="font-semibold text-[#0F172B]">
-                    {baseTotal.toFixed(2)}
-                </span>
-                </div>
-              </div> */}
-              {/* <div className="flex justify-between items-center">
-                <span className="text-gray-600">{dict?.bookingDetails?.toptierFee}</span>
-                <div className="flex items-center gap-1">
-                  <span>{getCurrencySymbol(currency)}</span>
-                  <input
-                    type="text"
-                    value={topTierFee}
-                    onChange={(e) => handleNumericChange(e.target.value, setTopTierFee)}
-                    className="w-20 border border-gray-300 rounded px-2 py-1 text-right text-sm bg-white outline-none"
-                    inputMode="decimal"
-                  />
-                </div>
-              </div> */}
               <div className="flex justify-between items-center border-t border-gray-300 pt-3 mt-2">
                 <span className="text-lg font-semibold text-[#0F172B]">
                   {dict?.bookingDetails?.total}

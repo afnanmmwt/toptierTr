@@ -103,7 +103,17 @@ phoneNumber: z
 };
 
 export type BookingFormValues = z.infer<ReturnType<typeof useBookingFormSchema>>;
-export default function BookingForm() {
+interface BookingFormProps {
+  quantity?: string;
+  markup_price?: string;
+  total?: number;
+
+}
+export default function BookingForm({
+  quantity,
+  markup_price,
+  total,
+}: BookingFormProps) {
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -189,10 +199,10 @@ const [isPending, setIsPending] = useState(false);
   const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
   const { adults = 0, children = 0, nationality, checkin, checkout } = saveBookingData;
   const travelers = adults + children;
-  const { price, markup_price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, quantity, markup_price_per_night, per_day, service_fee, child, currency } = selectedRoom?.option || {};
-  console.log("SelectedRoom option data in booking form:", selectedRoom?.option);
-  const net_profit= (parseFloat(markup_price) || 0) - (parseFloat(price) || 0);
-  console.log("Net Profit in booking form:", net_profit);
+  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night, per_day, service_fee, child, currency } = selectedRoom?.option || {};
+  const net_profit= (parseFloat(String(markup_price)) || 0) - (parseFloat(price) || 0);
+  const booking_data= selectedRoom?.option || {};
+  const modified_booking_data= { ...booking_data,  quantity: quantity,  markup_price: total, markup_price_per_night:markup_price};
   const {
     id: hotel_id,
     address: hotel_address,
@@ -271,25 +281,6 @@ const [isPending, setIsPending] = useState(false);
 useEffect(() => {
   if (!user) return; // Only run if user data exists
 
-  // const preFilledData: BookingFormValues = {
-  //   firstName: typedUser.first_name || '',
-  //   lastName: typedUser.last_name || '',
-  //   address: typedUser.address1 || '',
-  //   email: typedUser.email || '',
-  //   nationality: typedUser.country_code || '',
-  //   currentCountry: typedUser.country_code || '',
-  //   phoneCountryCode: typedUser.phone_country_code ? `+${typedUser.phone_country_code}` : '',
-  //   phoneNumber: typedUser.phone || '',
-  //   travellers: [{ title: dict?.bookingForm?.titles?.mr, firstName: '', lastName: '', age: '' }],
-  //   cardName: '',
-  //   cardNumber: '',
-  //   cardExpiry: '',
-  //   cardCvv: '',
-  //   cardZip: '',
-  //   acceptPolicy: false,
-  // };
-
-  // Reuse the exact same payload logic as in onSubmit
   const {
     firstName,
     lastName,
@@ -324,7 +315,7 @@ useEffect(() => {
   const bookingPayload = {
     booking_ref_no: bookingReference,
     price_original: price || 0,
-    price_markup: markup_price || 0,
+    price_markup: total || 0,
     vat: 0,
     tax: 0,
     gst: 0,
@@ -346,8 +337,8 @@ useEffect(() => {
       {
         room_id: option_id,
         room_name: selectedRoom?.room?.name,
-        room_price: price,
-        room_qaunitity: quantity,
+        room_price: markup_price_per_night,
+        room_quantity: quantity,
         room_extrabed_price: extrabed_price,
         room_extrabed: extrabeds_quantity,
         room_actual_price: price,
@@ -363,7 +354,7 @@ useEffect(() => {
     child_ages: '',
     currency_original: booking_currency || 'USD',
     currency_markup: booking_currency || 'USD',
-    booking_data: selectedRoom?.option,
+    booking_data: modified_booking_data,
     supplier: supplier_name || '',
     user_id: '',
     guest: guestPayload,
@@ -389,7 +380,6 @@ useEffect(() => {
   // Hit the API
   hotel_booking(bookingPayload as any)
     .then(response => {
-      console.log('Pre-booking API hit successful:', response);
       setBookingReference(response.booking_ref_no);
       // You can store response if needed
     })
@@ -438,7 +428,7 @@ const onSubmit = async (data: BookingFormValues) => {
       booking_ref_no: bookingReference,
       net_profit: net_profit || 0,
       price_original: price || 0,
-      price_markup: markup_price || 0,
+      price_markup: total || 0,
       vat: 0,
       tax: 0,
       gst: 0,
@@ -477,7 +467,7 @@ const onSubmit = async (data: BookingFormValues) => {
       child_ages: '',
       currency_original: booking_currency || 'USD',
       currency_markup: booking_currency || 'USD',
-      booking_data: selectedRoom?.option,
+      booking_data: modified_booking_data,
       supplier: supplier_name || '',
       user_id: '',
       guest: guestPayload,
@@ -508,7 +498,7 @@ const onSubmit = async (data: BookingFormValues) => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          amount: markup_price || 0,
+          amount: total || 0,
           currency: booking_currency,
           booking_ref_no: bookingReference,
           module_type: supplier_name,
@@ -544,7 +534,7 @@ const onSubmit = async (data: BookingFormValues) => {
       return;
     }
 
-    // ✅ Confirm payment
+    // Confirm payment
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
         card: cardElement,

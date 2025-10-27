@@ -100,14 +100,14 @@ const HeaderMenus = () => {
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/login"
             target=""
-            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             {dict?.header?.login || "Login"}
           </Link>
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/signup"
             target=""
-            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             {dict?.header?.signup || "Signup"}
           </Link>
@@ -142,13 +142,13 @@ const HeaderMenus = () => {
         <div className="flex flex-col">
           <Link
             href="/auth/login"
-            className="block text-sm font-medium rounded-lg px-2 mx-2  py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             {dict?.header?.login || "Login"}
           </Link>
           <Link
             href="/auth/signup"
-            className="block text-sm font-medium rounded-lg px-2 mx-2  py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             {dict?.header?.signup || "Signup"}
           </Link>
@@ -217,7 +217,7 @@ const HeaderMenus = () => {
     ))}
 
           {/* Mobile Auth Buttons */}
-          {!(user) ? <div className="flex flex-col w-55 mx-2">
+          {!(user) ? <div className="flex flex-col ">
                <Dropdown
         label={
           <div className="flex items-center gap-1.5 ps-0.5">
@@ -247,14 +247,14 @@ const HeaderMenus = () => {
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/login"
             target=""
-            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
             href="https://toptier-agent-d-kwk7.vercel.app/signup"
             target=""
-            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Signup
           </Link>
@@ -287,13 +287,13 @@ const HeaderMenus = () => {
         <div className="flex flex-col">
           <Link
             href="/auth/login"
-            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Login
           </Link>
           <Link
             href="/auth/signup"
-            className="block text-sm font-medium rounded-lg px-2 mx-2 py-2 text-gray-700 hover:bg-blue-50"
+            className="block text-sm font-medium rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
           >
             Signup
           </Link>

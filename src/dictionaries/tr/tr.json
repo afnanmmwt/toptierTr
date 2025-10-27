@@ -430,34 +430,5 @@
     "children_label": "Çocuklar",
     "child_age_label": "Çocuk Yaşı",
     "years_label": "yaş"
-  },
-  "roomCard": {
-    "loginToFavorite": "Favorilere eklemek için kullanıcı giriş yapmış olmalıdır",
-    "favoriteUpdateFailed": "Bir şeyler ters gitti :x:",
-    "favoriteUpdated": "Favoriler güncellendi",
-    "favoriteUpdateError": "Favoriler güncellenemedi :x:",
-    "noAmenities": "Listelenmiş herhangi bir kolaylık yok",
-    "freeBreakfast": "Ücretsiz kahvaltı",
-    "freeCancellation": "Ücretsiz iptal",
-    "reserve": "Rezerve Et",
-    "moreOptions": "Daha Fazla Seçenek",
-    "close": "Kapat"
-  },
-  "roomOption": {
-    "roomNamePlaceholder": "Tek Yatak Odalı Daire",
-    "roomImage": "Oda Görseli",
-    "features": "Özellikler",
-    "travellers": "Seyahat Edenler",
-    "price": "Fiyat",
-    "freeBreakfast": "Ücretsiz kahvaltı",
-    "freeDinner": "Ücretsiz akşam yemeği",
-    "freeCancellation": "Ücretsiz iptal",
-    "notBookable": "Rezerve Edilemez",
-    "showMore": "Daha Fazla Göster",
-    "showLess": "Daha Az Göster",
-    "noFeatures": "Yok",
-    "adults": "Yetişkinler",
-    "children": "Çocuklar",
-    "bookNow": "Şimdi Rezerve Et"
   }
 }

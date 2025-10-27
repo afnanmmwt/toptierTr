@@ -430,34 +430,5 @@
     "children_label": "Дети",
     "child_age_label": "Возраст ребёнка",
     "years_label": "лет"
-  },
-  "roomCard": {
-    "loginToFavorite": "Пользователь должен войти в систему, чтобы добавить в избранное",
-    "favoriteUpdateFailed": "Что-то пошло не так :x:",
-    "favoriteUpdated": "Избранное обновлено",
-    "favoriteUpdateError": "Не удалось обновить избранное :x:",
-    "noAmenities": "Удобства не указаны",
-    "freeBreakfast": "Бесплатный завтрак",
-    "freeCancellation": "Бесплатная отмена",
-    "reserve": "Забронировать",
-    "moreOptions": "Дополнительные варианты",
-    "close": "Закрыть"
-  },
-  "roomOption": {
-    "roomNamePlaceholder": "Апартаменты с одной спальней",
-    "roomImage": "Изображение номера",
-    "features": "Особенности",
-    "travellers": "Путешественники",
-    "price": "Цена",
-    "freeBreakfast": "Бесплатный завтрак",
-    "freeDinner": "Бесплатный ужин",
-    "freeCancellation": "Бесплатная отмена",
-    "notBookable": "Недоступно для бронирования",
-    "showMore": "Показать больше",
-    "showLess": "Показать меньше",
-    "noFeatures": "Н/Д",
-    "adults": "Взрослые",
-    "children": "Дети",
-    "bookNow": "Забронировать сейчас"
   }
 }

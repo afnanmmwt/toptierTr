@@ -145,7 +145,7 @@ const schema = zod.object({
                       placeholder={dict?.login_form?.password_placeholder || "Enter your password"}
                       size="lg"
                       invalid={!!errors.password}
-                      className={` ${direction === "rtl" ? "pr-3" : "pl-0"} `}
+                      className={`ps-3 `}
 
                       suffix={<button
                         type="button"

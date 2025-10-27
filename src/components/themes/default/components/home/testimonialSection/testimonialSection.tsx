@@ -274,11 +274,11 @@ if (currentIndex + 1 >= 2 * totalItems) {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
-              {/* <div className="absolute bottom-3 right-7">
-                <button className="bg-black/80 text-white  px-3 py-2 rounded-md text-sm font-medium  transition">
+              <div className="absolute bottom-3 right-7">
+                <button className="bg-black/70 text-white cursor-pointer px-3 py-2 rounded-md text-sm font-medium hover:bg-black transition">
                   {dict?.testi_sec?.testi_see_room || "See Room"}
                 </button>
-              </div> */}
+              </div>
             </div>
           )}
         </div>
@@ -369,11 +369,11 @@ if (currentIndex + 1 >= 2 * totalItems) {
                           (e.target as HTMLImageElement).style.display = 'none';
                         }}
                       />
-                      {/* <div className="absolute bottom-3 right-7">
-                        <button className="bg-black/80 text-white  px-3 py-2 rounded-md text-sm font-medium  transition">
+                      <div className="absolute bottom-3 right-7">
+                        <button className="bg-black/70 text-white cursor-pointer px-3 py-2 rounded-md text-sm font-medium hover:bg-black transition">
                           {dict?.testi_sec?.testi_see_room || "See Room"}
                         </button>
-                      </div> */}
+                      </div>
                     </div>
                   )}
                 </div>
