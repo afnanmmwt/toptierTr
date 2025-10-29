@@ -1,95 +1,185 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { fetch_dashboard_data, get_profile } from "@src/actions";
+import React, { useState, useEffect, useMemo, useRef } from "react";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  fetch_dashboard_data,
+  get_profile,
+  getAccessToken,
+  verify_token,
+} from "@src/actions";
 import useLocale from "@hooks/useLocale";
 import useDictionary from "@hooks/useDict";
 import DashboardCard, { toCardData } from "./dashboardCard";
+import { useUser } from "@hooks/use-user";
+import { useRouter } from "next/navigation";
 
-const ITEMS_PER_PAGE_OPTIONS = [6, 9, 12, 15] as const;
+const PAGE_SIZE = 6;
+
+type Booking = {
+  booking_id?: string | number;
+  reference?: string;
+  pnr?: string;
+  payment_status?: string;
+  booking_status?: string;
+  name?: string;
+  customer_name?: string;
+  lead_pax_name?: string;
+  first_name?: string;
+  last_name?: string;
+  [k: string]: any;
+};
+
+type ApiCounts = {
+  total?: number;
+  paid?: number;
+  unpaid?: number;
+  refunded?: number;
+  canceled?: number;
+  cancelled?: number;
+};
+
+type PageResult = {
+  status?: string;
+  message?: string;
+  data: Booking[];
+  page?: number;
+  limit?: number;
+  total?: number;
+  total_records?: number;
+  counts?: ApiCounts;
+  [k: string]: any;
+};
 
 export default function Dashboard() {
+  // ✅ ALL HOOKS MUST BE AT THE TOP — NO EXCEPTIONS
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const ioBusyRef = useRef(false);
+  const lingerTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const [filters, setFilters] = useState({
     search: "",
     payment_status: "",
   });
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
+  const router = useRouter();
+  const { user, isLoading: userLoading } = useUser();
+  const [isVerifying, setIsVerifying] = useState(true);
 
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 6,
-  });
-
-  // Debounce search input
-  const [searchTerm, setSearchTerm] = useState("");
-  useMemo(() => {
-    const timeout = setTimeout(() => {
-      setFilters((prev) => ({ ...prev, search: searchTerm }));
-      setPagination((prev) => ({ ...prev, page: 1 }));
-    }, 500);
-    return () => clearTimeout(timeout);
+  // --- Debounce search
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setFilters((p) => ({ ...p, search: searchTerm }));
+    }, 400);
+    return () => clearTimeout(t);
   }, [searchTerm]);
-  // const [searchTerm, setSearchTerm] = useState("");
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setFilters((prev) => ({ ...prev, search: searchTerm }));
-  //     setPagination((prev) => ({ ...prev, page: 1 }));
-  //   }, 500);
-  //   return () => clearTimeout(timeout);
-  // }, [searchTerm]);
+  // --- Auth redirect logic
+  useEffect(() => {
+    if (userLoading) return;
 
-  // =============== Fetch dashboard data
-  const { data, isLoading, isError, error } = useQuery({
-    queryKey: [
-      "dashboard",
-      pagination.page,
-      pagination.limit,
-      filters.search,
-      filters.payment_status || null, // avoid ""
-    ],
-    queryFn: async () => {
-      const payload: any = {
-        page: pagination.page, // number
-        limit: pagination.limit, // number
-      };
+    if (!user) {
+      router.push("/auth/login");
+      return;
+    }
+
+    const handleRedirect = async () => {
+      try {
+        const verify_response = await verify_token();
+        if (!verify_response?.status) {
+          router.push("/auth/login");
+          return;
+        }
+
+        if (user.user_type === "Agent") {
+          const token = await getAccessToken();
+          const url = `http://localhost:3001/?token=${encodeURIComponent(token)}&user_id=${user.user_id}`;
+          window.location.href = url;
+          return;
+        }
+
+        setIsVerifying(false);
+      } catch (error) {
+        console.error("Verification failed:", error);
+        router.push("/auth/login");
+      }
+    };
+
+    handleRedirect();
+  }, [user, userLoading, router]);
+
+  // ✅ Now call data-fetching hooks — unconditionally
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<PageResult>({
+    queryKey: ["dashboard", filters.search, filters.payment_status, PAGE_SIZE],
+    initialPageParam: 1,
+    queryFn: async ({ pageParam }) => {
+      const payload: any = { page: pageParam, limit: PAGE_SIZE };
       if (filters.search?.trim()) payload.search = filters.search.trim();
-      if (filters.payment_status)
-        payload.payment_status = filters.payment_status; // only when set
-      return await fetch_dashboard_data(payload);
+      const res = await fetch_dashboard_data(payload);
+
+      return { ...res, page: Number(pageParam), limit: PAGE_SIZE };
+
+    },
+    getNextPageParam: (last) => {
+      const total = Number(last.total ?? 0);
+      const page = Number(last.page ?? 1);
+      const size = Number(last.limit ?? PAGE_SIZE);
+      if (total > 0) return page * size < total ? page + 1 : undefined;
+      const len = Array.isArray(last.data) ? last.data.length : 0;
+      return len === size ? page + 1 : undefined;
     },
     staleTime: Infinity,
     gcTime: Infinity,
   });
 
-  const bookings = data?.data || [];
-  console.log(bookings);
+  const pages = data?.pages || [];
+  const bookings: Booking[] = pages.flatMap((p) => p?.data || []);
 
-  const total = data?.total || 0;
-  const totalPages = Math.ceil(total / pagination.limit);
+  const norm = (v?: any) => (v == null ? "" : String(v).toLowerCase());
 
-  // Count payment statuses
-  const paidCount = bookings.filter(
-    (b: any) => b.payment_status === "paid"
-  ).length;
-  const unpaidCount = bookings.filter(
-    (b: any) => b.payment_status === "unpaid"
-  ).length;
-  const refundedCount = bookings.filter(
-    (b: any) => b.payment_status === "refunded"
-  ).length;
-  const cancelledCount = bookings.filter(
-    (b: any) => b.booking_status === "cancelled"
-  ).length;
-  console.log(paidCount);
-  console.log(unpaidCount);
-  console.log(cancelledCount);
-  console.log(refundedCount);
+  // ✅ Define makeCardName BEFORE useMemo
+  const makeCardName = (b: Booking) => {
+    const name =
+      b.name ??
+      b.customer_name ??
+      b.lead_pax_name ??
+      [b.first_name, b.last_name].filter(Boolean).join(" ");
+    return norm(name);
+  };
 
-  //  ========================== fetch profile data ==========
+  const searchNeedle = norm(filters.search);
+
+  const visibleBookings = useMemo(() => {
+    if (!searchNeedle) return bookings;
+    return bookings.filter((b) => {
+      const byName = makeCardName(b).includes(searchNeedle);
+      const byRef = norm(b.reference).includes(searchNeedle);
+      const byId = norm(b.booking_id).includes(searchNeedle);
+      return byName || byRef || byId;
+    });
+  }, [bookings, searchNeedle, makeCardName]); // ✅ include makeCardName
+
+  const firstPage = pages[0] as PageResult | undefined;
+  const countsFromApi = (firstPage?.counts ?? {}) as ApiCounts;
+  const cancelledCount = countsFromApi.canceled ?? countsFromApi.cancelled ?? 0;
+  const totalAll =
+    countsFromApi.total ??
+    (countsFromApi.paid ?? 0) +
+      (countsFromApi.unpaid ?? 0) +
+      (countsFromApi.refunded ?? 0) +
+      (cancelledCount ?? 0);
+
   const { data: cartResults } = useQuery({
     queryKey: ["profile"],
     queryFn: get_profile,
@@ -103,46 +193,62 @@ export default function Dashboard() {
     balance = "0",
     first_name = "",
     last_name = "",
-  } = cartResults?.data[0] || {};
+  } = cartResults?.data?.[0] || {};
 
-  const handleLimitChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setPagination({ page: 1, limit: Number(e.target.value) });
-  };
+  // IO sentinel
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const node = sentinelRef.current;
 
-  const handlePageChange = (newPage: number) => {
-    setPagination((prev) => ({ ...prev, page: newPage }));
-  };
+    const onEnter = () => {
+      if (ioBusyRef.current || !hasNextPage || isFetchingNextPage) return;
+      lingerTimerRef.current = setTimeout(async () => {
+        if (ioBusyRef.current || !hasNextPage || isFetchingNextPage) return;
+        ioBusyRef.current = true;
+        try {
+          await fetchNextPage();
+        } finally {
+          setTimeout(() => (ioBusyRef.current = false), 100);
+        }
+      }, 700);
+    };
 
-  // Numeric Pagination Logic with Ellipsis
-  const getPageNumbers = () => {
-    const totalVisible = 5;
-    const pages: (number | string)[] = [];
-
-    if (totalPages <= totalVisible) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      const start = Math.max(1, pagination.page - 2);
-      const end = Math.min(totalPages, pagination.page + 2);
-      if (start > 1) {
-        pages.push(1);
-        if (start > 2) pages.push("...");
+    const onLeave = () => {
+      if (lingerTimerRef.current) {
+        clearTimeout(lingerTimerRef.current);
+        lingerTimerRef.current = null;
       }
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (end < totalPages) {
-        if (end < totalPages - 1) pages.push("...");
-        pages.push(totalPages);
-      }
-    }
-    return pages;
-  };
+    };
 
-  const formatDate = (isoDate: string) => {
-    return new Date(isoDate).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
+    const io = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        if (e.isIntersecting) onEnter();
+        else onLeave();
+      },
+      { root: null, rootMargin: "250px 250px", threshold: 0 }
+    );
+
+    io.observe(node);
+    return () => {
+      io.disconnect();
+      onLeave();
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  // ✅ NOW it's safe to have early return
+  if (userLoading || isVerifying) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="flex flex-col gap-2">
+          <div className="animate-spin rounded-full h-7 w-7 border-b-2 border-blue-900"></div>
+          <h2 className="text-xl">Redirecting...</h2>
+        </div>
+      </div>
+    );
+  }
+
+
 
   return (
     <div className="w-full max-w-[1200px] mx-auto bg-gray-50 py-4 md:py-10 appHorizantalSpacing">
@@ -176,53 +282,49 @@ export default function Dashboard() {
       </div>
 
       <div className="border border-gray-200 rounded-2xl bg-white shadow-md">
-        {/* Filters */}
-        <div className="flex flex-wrap items-center justify-between gap-4 p-4 border-b border-gray-100">
-          <div className="flex gap-2">
+        {/* Filters header */}
+        <div className="flex flex-wrap md:flex-row items-center justify-between gap-4 p-4 border-b border-gray-100">
+          <div className="flex flex-wrap md:flex-row gap-2">
             {[
               {
                 label: dict?.dashboard?.all || "All",
                 value: "",
-                count: bookings?.length,
+                count: totalAll || 0,
               },
               {
                 label: dict?.dashboard?.paid || "Paid",
                 value: "paid",
-                count: paidCount,
+                count: countsFromApi.paid ?? 0,
               },
               {
                 label: dict?.dashboard?.unpaid || "Unpaid",
                 value: "unpaid",
-                count: unpaidCount,
+                count: countsFromApi.unpaid ?? 0,
               },
               {
                 label: dict?.dashboard?.refunded || "Refunded",
                 value: "refunded",
-                count: refundedCount,
+                count: countsFromApi.refunded ?? 0,
               },
               {
-                label: dict?.dashboard?.cancelled,
+                label: dict?.dashboard?.cancelled || "Cancelled",
                 value: "cancelled",
-                count: cancelledCount,
+                count: cancelledCount ?? 0,
               },
-            ].map((option) => (
+            ].map((o) => (
               <button
-                key={option.value}
-                onClick={() => {
-                  setFilters((prev) => ({
-                    ...prev,
-                    payment_status: option.value,
-                  }));
-                  setPagination((prev) => ({ ...prev, page: 1 }));
-                }}
+                key={o.value || "all"}
+                onClick={() =>
+                  setFilters((prev) => ({ ...prev, payment_status: o.value }))
+                }
                 className={`px-4 py-1.5 text-xs rounded-xl border transition-colors cursor-pointer ${
-                  filters.payment_status === option.value
+                  filters.payment_status === o.value
                     ? "bg-blue-900 text-white border-blue-900"
                     : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-100"
                 }`}
               >
                 <span className="text-sm">
-                  {option.label} ({option.count})
+                  {o.label} ({o.count})
                 </span>
               </button>
             ))}
@@ -230,7 +332,10 @@ export default function Dashboard() {
 
           <input
             type="text"
-            placeholder={dict?.dashboard?.search_placeholder}
+            placeholder={
+              dict?.dashboard?.search_placeholder ||
+              "Search by name, reference, ID"
+            }
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-gray-200 hover:bg-gray-100 text-sm rounded-xl w-64 px-3 py-2 focus:outline-none focus:ring-0 focus:border-gray-200"
@@ -239,7 +344,7 @@ export default function Dashboard() {
 
         {/* Loading */}
         {isLoading && (
-          <div className="flex justify-center h-110 py-10 items-center w-full ">
+          <div className="flex justify-center py-10 items-center w-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-900"></div>
           </div>
         )}
@@ -247,99 +352,63 @@ export default function Dashboard() {
         {/* Error */}
         {isError && (
           <div className="text-center py-6 text-red-500">
-            {(error as Error).message || "Something went wrong"}
+            {(error as Error)?.message || "Something went wrong"}
           </div>
         )}
 
-        {/* booking cards */}
+        {/* Cards + Infinite scroll */}
         {!isLoading && !isError && (
-          <>
-            <div className="overflow-x-auto">
-              <div className="p-4">
-                {bookings.length > 0 ? (
+          <div className="overflow-x-auto">
+            <div className="p-4">
+              {visibleBookings.length > 0 ? (
+                <>
                   <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                    {bookings.map((b: any) => (
+                    {visibleBookings.map((b: Booking) => (
                       <DashboardCard
-                        key={b.booking_id ?? b.reference ?? b.pnr}
+                        key={(b.booking_id as any) ?? b.reference ?? b.pnr}
                         data={toCardData(b)}
                       />
                     ))}
                   </div>
-                ) : (
-                  <div className="text-center py-6 text-gray-500">
-                    {dict?.dashboard?.no_bookings_found}
-                  </div>
-                )}
-              </div>
+
+                  {isFetchingNextPage && (
+                    <div className="flex gap-4 justify-center py-6">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-3 border-blue-900"></div>
+                      <div className="text-blue-900 text-xl font-bold">
+                        {dict?.featured_hotels?.loading || "Loading..."}
+                      </div>
+                    </div>
+                  )}
+
+                  <div
+                    ref={sentinelRef}
+                    className="h-5 w-full"
+                    aria-hidden
+                    data-sentinel
+                  />
+
+                  {hasNextPage && !isFetchingNextPage && (
+                    <div className="flex justify-center py-4">
+                      <button onClick={() => fetchNextPage()}>
+                        {dict?.dashboard?.load_more || ""}
+                      </button>
+                    </div>
+                  )}
+
+                  {!hasNextPage && bookings.length > 0 && (
+                    <div className="text-center py-6 text-blue-950 text-lg font-medium">
+                      {dict?.dashboard?.no_more_results ||
+                        "You’re all caught up."}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-6 text-gray-500">
+                  {dict?.dashboard?.no_bookings_found}
+                </div>
+              )}
             </div>
-
-            {/* Pagination */}
-            <div className="flex justify-between border-t px-8 py-6 items-center text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <span>{dict?.dashboard?.showing}</span>
-                <select
-                  value={pagination.limit}
-                  onChange={handleLimitChange}
-                  className="border border-gray-300 rounded px-2 py-1 cursor-pointer"
-                >
-                  {ITEMS_PER_PAGE_OPTIONS.map((num) => (
-                    <option key={num} value={num}>
-                      {num}
-                    </option>
-                  ))}
-                </select>
-                <span>
-                  {dict?.dashboard?.of} {total} {dict?.dashboard?.entries}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1}
-                  className={`px-3 py-1 rounded border ${
-                    pagination.page === 1
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "hover:bg-gray-100 cursor-pointer"
-                  }`}
-                >
-                  {dict?.dashboard?.prev}
-                </button>
-
-                {getPageNumbers().map((page, idx) =>
-                  page === "..." ? (
-                    <span key={idx} className="px-2">
-                      ...
-                    </span>
-                  ) : (
-                    <button
-                      key={page}
-                      onClick={() => handlePageChange(page as number)}
-                      className={`w-8 h-8 flex items-center justify-center rounded ${
-                        pagination.page === page
-                          ? "bg-blue-900 text-white"
-                          : "hover:bg-gray-100 cursor-pointer"
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  )
-                )}
-
-                <button
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === totalPages}
-                  className={`px-3 py-1 rounded border ${
-                    pagination.page === totalPages
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "hover:bg-gray-100 cursor-pointer"
-                  }`}
-                >
-                  {dict?.dashboard?.next}
-                </button>
-              </div>
-            </div>
-          </>
+          </div>
         )}
       </div>
     </div>
@@ -419,7 +488,6 @@ function StatCard({
             </svg>
           ) : (
             // invoice icon
-
             <svg
               width="20"
               height="22"
