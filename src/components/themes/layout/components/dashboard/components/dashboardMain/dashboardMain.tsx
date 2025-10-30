@@ -51,7 +51,7 @@ type PageResult = {
   [k: string]: any;
 };
 
-export default async function Dashboard() {
+export default  function Dashboard() {
   // ✅ ALL HOOKS MUST BE AT THE TOP — NO EXCEPTIONS
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const ioBusyRef = useRef(false);
@@ -68,7 +68,7 @@ export default async function Dashboard() {
   const router = useRouter();
   const { user, isLoading: userLoading } = useUser();
   const [isVerifying, setIsVerifying] = useState(true);
- const token = await getAccessToken();
+ const token =  getAccessToken();
   // --- Debounce search
   useEffect(() => {
     const t = setTimeout(() => {
