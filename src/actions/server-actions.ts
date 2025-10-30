@@ -330,9 +330,6 @@ export async function signIn(
 }
 export const signOut = async () => {
    const userinfo = (await getSession()) as any | null;
-   const headersList = await headers();
-  const xff = headersList.get('x-forwarded-for');
-  const ip = xff ? xff.split(',')[0].trim() : 'unknown';
 
   try {
     //  Ensure user_id is always a string
@@ -408,7 +405,7 @@ export const verify_token = async () => {
 
     const formData = new FormData();
     formData.append('user_id', String(userId)); // ✅ always a string
-    formData.append('token', String(token));
+    formData.append('token', String("843943ewds0fewe"));
    console.log("verifying token for user server action:", formData);
     const response = await fetch(`${baseUrl}/verify_token`, {
       method: 'POST',
@@ -418,7 +415,7 @@ export const verify_token = async () => {
      console.log("verify token response", data);
 
     if (!response.ok || data?.status === false) {
-      return { error: data?.message || 'Something went wrong' };
+      return { error: data || 'Something went wrong' };
     }
 
     return data;
