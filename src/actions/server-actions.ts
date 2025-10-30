@@ -405,7 +405,7 @@ export const verify_token = async () => {
 
     const formData = new FormData();
     formData.append('user_id', String(userId)); // ✅ always a string
-    formData.append('token', String("843943ewds0fewe"));
+    formData.append('token', String(token));
    console.log("verifying token for user server action:", formData);
     const response = await fetch(`${baseUrl}/verify_token`, {
       method: 'POST',
