@@ -398,6 +398,7 @@ export const verify_token = async () => {
    const userinfo = (await getSession()) as any | null;
   const cookie = await cookies();
   const token = cookie.get('access-token')?.value || '';
+
   try {
     //  Ensure user_id is always a string
     const userId =
@@ -408,7 +409,7 @@ export const verify_token = async () => {
     const formData = new FormData();
     formData.append('user_id', String(userId)); // ✅ always a string
     formData.append('token', String(token));
-
+   console.log("verifying token for user server action:", formData);
     const response = await fetch(`${baseUrl}/verify_token`, {
       method: 'POST',
       body: formData,
