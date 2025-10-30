@@ -89,6 +89,7 @@ export default function Dashboard() {
     const handleRedirect = async () => {
       try {
         const verify_response = await verify_token();
+        console.log("verify_response", verify_response);
         if (!verify_response?.status) {
           router.push("/auth/login");
           return;
@@ -100,6 +101,10 @@ export default function Dashboard() {
           window.location.href = url;
           return;
         }
+        // if (user.user_type === "Customer") {
+        //   router.push("/customer");
+        //   return;
+        // }
 
         setIsVerifying(false);
       } catch (error) {
