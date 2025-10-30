@@ -16,7 +16,6 @@ export async function getHeaders(contentType: string = "application/x-www-form-u
   const headers: Record<string, string> = {
     Accept: "application/json",
     // Authorization: `Bearer ${token}`,
-
   };
   if (contentType) {
     headers["Content-Type"] = contentType;
@@ -412,12 +411,10 @@ export const verify_token = async () => {
       body: formData,
     });
     const data = await response.json().catch(() => null);
-     console.log("verify token response", data);
 
     if (!response.ok || data?.status === false) {
       return { error: data || 'Something went wrong' };
     }
-
     return data;
   } catch (error) {
     return { error: error || 'An error occurred' };
@@ -554,7 +551,6 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
   } else {
     formData.append("child_age", "[]"); // send empty array if no children
   }
-console.log('hotel search payload', formData);
 
   try {
     const response = await fetch(`${baseUrl}/hotel_search`, {
