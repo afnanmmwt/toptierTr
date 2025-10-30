@@ -414,15 +414,16 @@ export const verify_token = async () => {
       method: 'POST',
       body: formData,
     });
-
     const data = await response.json().catch(() => null);
+     console.log("verify token response", data);
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || 'Something went wrong' };
     }
 
     return data;
   } catch (error) {
-    return { error: (error as Error).message || 'An error occurred' };
+    return { error: error || 'An error occurred' };
   }
 };
 export const getAccessToken = async () => {
