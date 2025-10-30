@@ -85,11 +85,14 @@ export default  function Dashboard() {
       router.push("/auth/login");
       return;
     }
-
+ const verify_response =  verify_token();
+ console.log("verify_response =============>befor try ", verify_response);
     const handleRedirect = async () => {
       try {
         const verify_response = await verify_token();
-        console.log("verify_response", verify_response);
+        console.log("verify_response =============>lkdf ", verify_response);
+                // console.log("verify_response =============>lkdf ", verify_response);
+
         if (!verify_response?.status) {
           router.push("/auth/login");
           return;
