@@ -76,7 +76,11 @@ export default  function Dashboard() {
     }, 400);
     return () => clearTimeout(t);
   }, [searchTerm]);
-
+const checkverify=async()=>{
+  const verify_response = await verify_token();
+  console.log("verify_response =============>checkverify ", verify_response);
+  return verify_response;
+};
   // --- Auth redirect logic
   useEffect(() => {
     if (userLoading) return;
@@ -85,12 +89,10 @@ export default  function Dashboard() {
       router.push("/auth/login");
       return;
     }
- const verify_response =  verify_token();
- console.log("verify_response =============>befor try ", verify_response);
+checkverify();
     const handleRedirect = async () => {
       try {
         const verify_response = await verify_token();
-        console.log("verify_response =============>lkdf ", verify_response);
                 // console.log("verify_response =============>lkdf ", verify_response);
 
         if (!verify_response?.status) {
