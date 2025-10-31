@@ -42,17 +42,27 @@ const Login = ({ dict }: { dict?: any }) => {
   const initialState: SignInState = { success: false, error: '' };
   const [state, formAction] = useFormState(signIn, initialState);
   // Handle result of Server Action
-  useEffect(() => {
+useEffect(() => {
     if (state.success) {
       toast.success(dict?.login_form?.success_message || "Login successful!");
-      checkSession?.(); // Refresh user context
-      router.refresh();
-      router.push(`/${lang}`); // or dashboard
-    } else if (state.error) {
-      setError("root", { type: "server", message: state.error });
-      setLoading(false);
+      checkSession?.().then(() => {
+        const { userType, userId } = state;
+
+        if (userType === "Agent" && userId) {
+          const token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('access-token='))?.split('=')[1];
+
+          if (token) {
+            window.location.href = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
+            return;
+          }
+        }
+
+        router.push(`/${lang}`);
+      });
     }
-  }, [state, router, setError, dict, lang, checkSession]);
+  }, [state, router, lang, dict, checkSession]);
   // Client validation only — then submit hidden form
   const onSubmit = useCallback(
     async (values: Values) => {
