@@ -1108,8 +1108,7 @@ formData.append('address2', String(payload.address2));
     const data = await response.json().catch(() => null);
     console.log('data',data)
     const userData=data.user[0]
-       console.log('formData', JSON.stringify(formData))
- console.log('profile', data)
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Failed to update profile" };
     }

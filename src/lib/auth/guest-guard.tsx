@@ -27,7 +27,8 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
       }
       if (user && lastRoute==="/bookings" ) {
         router.push('/bookings')
-      }else if(user){
+      }
+      else if(user){
         router.push('/')
       }
       // else if( user && pathname ==="/auth/login" ){

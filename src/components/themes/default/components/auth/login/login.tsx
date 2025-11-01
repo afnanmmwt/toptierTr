@@ -62,6 +62,7 @@ useEffect(() => {
             // toptier-agent-d-ua92.vercel.app
             window.location.href = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
             return;
+
           }
         }
 
