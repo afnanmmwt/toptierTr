@@ -131,7 +131,8 @@ export default function CustomerProfile() {
       };
 
       const result = await profile_update(payload);
-
+      console.log('formData', FormData)
+ console.log('profile', result)
       if (result?.error) {
         throw new Error(result.error);
       }

@@ -120,7 +120,7 @@ const HeaderMenus = () => {
                   <span>{dict?.header?.customers || "Agent Login"}</span>
                 </Link>
                 <Link
-                  href="http://localhost:3001/signup"
+                  href="https://toptier-agent-d-ua92.vercel.app/signup"
                   target=""
                   className=" text-sm font-medium flex items-center gap-1 rounded-xl px-4 py-2 text-gray-700 hover:bg-blue-50"
                 >

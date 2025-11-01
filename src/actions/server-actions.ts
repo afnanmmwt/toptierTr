@@ -426,7 +426,7 @@ export const verify_token = async () => {
       body: formData,
     });
     const data = await response.json().catch(() => null);
-
+   console.log('form data==============', userId)
     if (!response.ok || data?.status === false) {
       return { error: data || 'Something went wrong' };
     }
@@ -1077,23 +1077,39 @@ interface ProfileUpdatePayload {
 }
 
 export const profile_update = async (payload: ProfileUpdatePayload) => {
-  const formData = new URLSearchParams();
+  // console.log('=========== profile paylaod',payload )
+  const formData = new FormData();
 
-  for (const [key, value] of Object.entries(payload)) {
-    if (value !== undefined && value !== null) {
-      formData.append(key, String(value));
-    }
-  }
+  // for (const [key, value] of Object.entries(payload)) {
+  //   if (value !== undefined && value !== null) {
+  //     formData.append(key, String(value));
+  //   }
+  // }
+formData.append('user_id', String(payload.user_id));
+formData.append('first_name', String(payload.first_name));
+formData.append('last_name', String(payload.last_name));
+formData.append('email', String(payload.email));
+formData.append('phone', String(payload.phone));
+formData.append('phone_country_code', String(payload.phone_country_code));
+formData.append('country_code', String(payload.country_code));
+formData.append('state', String(payload.state));
+formData.append('city', String(payload.city));
+formData.append('address1', String(payload.address1));
+formData.append('address2', String(payload.address2));
+
   try {
+    console.log('form data', formData.toString())
     const response = await fetch(`${baseUrl}/profile_update`, {
       method: "POST",
-      body: formData.toString(),
-      headers: await getHeaders("application/x-www-form-urlencoded"),
+      body: formData,
+
     });
 
     const data = await response.json().catch(() => null);
+    console.log('data',data)
     const userData=data.user[0]
-    console.log('-=================data', data)
+       console.log('formData', JSON.stringify(formData))
+ console.log('profile', data)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Failed to update profile" };
     }

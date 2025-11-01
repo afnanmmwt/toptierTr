@@ -45,7 +45,7 @@ const Login = ({ dict }: { dict?: any }) => {
     if(user){
  signOut()
     }
-  },[user])
+  },[])
   // Handle result of Server Action
 useEffect(() => {
     if (state.success) {
@@ -59,7 +59,8 @@ useEffect(() => {
             .find(row => row.startsWith('access-token='))?.split('=')[1];
 
           if (token) {
-            window.location.href = `toptier-agent-d-ua92-i53tpv52n-afnanmmwts-projects.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
+            // toptier-agent-d-ua92.vercel.app
+            window.location.href = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
             return;
           }
         }

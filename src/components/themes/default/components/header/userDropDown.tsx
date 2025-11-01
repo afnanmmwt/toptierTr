@@ -19,15 +19,15 @@ export default function ProfileDropdown() {
   const [isRTL, setIsRTL] = useState(false);
   const { locale } = useLocale();
     const { data: dict } = useDictionary(locale as any);
-// useEffect(()=>{
-//   const clearAccessToken = () => {
-//   document.cookie =
-//     "access-token=; path=/; domain=.toptiertravel.vip; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-// };
-//   if(user){
-// clearAccessToken()
-//   }
-// },[user])
+useEffect(()=>{
+  const clearAccessToken = () => {
+  document.cookie =
+    "access-token=; path=/; domain=.toptiertravel.vip; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+};
+  if(user){
+clearAccessToken()
+  }
+},[user])
 
   useEffect(() => {
     try {
@@ -89,23 +89,29 @@ const handleDashboardClick =async() =>{
       (async () => {
         try {
           const verify_response = await verify_token();
+          console.log('verify response ==============>', verify_response)
           if (!verify_response?.status) {
             router.push("/auth/login");
             return;
           }
           if (user.user_type === "Customer") {
+                      console.log('customer dashbaord hits ==============>')
+
             router.push("/dashboard");
           } else if (user.user_type === "Agent") {
+                                  console.log('agent dashbaord hits ==============>')
+
             const token = await getAccessToken();
             const url = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(
               token
             )}&user_id=${user.user_id}`;
             window.location.href = url;
-          } else {
+          }
+           else {
             router.push("/auth/login");
           }
         } catch {
-          router.push("/auth/login");
+          console.log('some thing went wrong ')
         }
       })();
 }
@@ -130,7 +136,7 @@ const handleProfiledClick =async() =>{
             router.push("/auth/login");
           }
         } catch {
-          router.push("/auth/login");
+        console.log('something went wrong')
         }
       })();
 }
