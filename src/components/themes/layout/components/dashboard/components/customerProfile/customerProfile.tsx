@@ -10,7 +10,7 @@ import Button from "@components/core/button";
 import useCountries from "@hooks/useCountries";
 import { useUser } from "@hooks/use-user";
 import { toast } from "react-toastify";
-import { profile_update } from "@src/actions";
+import { get_profile, profile_update } from "@src/actions";
 import { useRouter } from "next/navigation";
 import useDictionary from "@hooks/useDict";
 import useLocale from "@hooks/useLocale";
@@ -72,23 +72,37 @@ export default function CustomerProfile() {
   });
 
   // Populate form when user data loads
+
   useEffect(() => {
-    if (user) {
-      const u = user;
-      reset({
-        first_name: u.first_name ?? "",
-        last_name: u.last_name ?? "",
-        email: u.email ?? "",
-        phone: u.phone ?? "",
-        phone_country_code: u.phone_country_code?.toString() ?? "",
-        country_code: u.country_code?.toString() ?? "",
-        state: u.state ?? "",
-        city: u.city ?? "",
-        address1: u.address1 ?? "",
-        address2: u.address2 ?? "",
-      });
+  const fetchProfile = async () => {
+    try {
+      const profile_response = await get_profile();
+      console.log('==========profile response', profile_response);
+
+      // Example of how you might use the response:
+      if (profile_response) {
+        const u = profile_response.data[0];
+        reset({
+          first_name: u.first_name ?? "",
+          last_name: u.last_name ?? "",
+          email: u.email ?? "",
+          phone: u.phone ?? "",
+          phone_country_code: u.phone_country_code?.toString() ?? "",
+          country_code: u.country_code?.toString() ?? "",
+          state: u.state ?? "",
+          city: u.city ?? "",
+          address1: u.address1 ?? "",
+          address2: u.address2 ?? "",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching profile:", error);
     }
-  }, [user, reset]);
+  };
+
+  fetchProfile();
+}, [user, reset]);
+
 
   // Prepare country and phone code options with ISO and flag support
   const countryOptions = (countries || []).map((c: any) => ({
@@ -99,12 +113,12 @@ export default function CustomerProfile() {
   }));
 
   const phoneCodeOptions = (countries || []).map((c: any) => ({
-    value: c.iso || c.code,
+    value: c.phonecode || c.code,
     label: `+${c.phonecode}`,
     iso: c.iso,
     phonecode: c.phonecode?.toString() || "0",
   }));
-
+console.log('==================phone code ', phoneCodeOptions)
   const onSubmit = async (data: any) => {
     if (!user) {
       toast.error(dict?.profiletoasts?.unauthorized || "User not authenticated");
@@ -112,7 +126,6 @@ export default function CustomerProfile() {
     }
 
     const currentUser = user;
-
     setIsSubmitting(true);
     try {
       const payload: any = {
@@ -131,8 +144,7 @@ export default function CustomerProfile() {
       };
 
       const result = await profile_update(payload);
-      console.log('formData', FormData)
- console.log('profile', result)
+
       if (result?.error) {
         throw new Error(result.error);
       }
@@ -305,8 +317,8 @@ export default function CustomerProfile() {
                 <Select
                   {...field}
                   options={phoneCodeOptions}
-                  value={phoneCodeOptions.find((opt:any) => opt.value === field.value) || null}
-                  onChange={(option) => field.onChange(option?.value || "")}
+                  value={phoneCodeOptions.find((opt:any) => opt.phonecode === field.value) || null}
+                  onChange={(option) => field.onChange(option?.phonecode || "")}
                   placeholder={dict?.profileplaceholders?.selectCountryCode || "Select Country Code"}
                   isSearchable
                   onMenuOpen={() => setIsPhoneCodeOpen(true)}

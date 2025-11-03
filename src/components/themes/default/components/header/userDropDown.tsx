@@ -19,15 +19,15 @@ export default function ProfileDropdown() {
   const [isRTL, setIsRTL] = useState(false);
   const { locale } = useLocale();
     const { data: dict } = useDictionary(locale as any);
-useEffect(()=>{
-  const clearAccessToken = () => {
-  document.cookie =
-    "access-token=; path=/; domain=.toptiertravel.vip; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-};
-  if(user){
-clearAccessToken()
-  }
-},[user])
+// useEffect(()=>{
+//   const clearAccessToken = () => {
+//   document.cookie =
+//     "access-token=; path=/; domain=.toptiertravel.vip; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+// };
+//   if(user){
+// clearAccessToken()
+//   }
+// },[user])
 
   useEffect(() => {
     try {
@@ -96,7 +96,6 @@ const handleDashboardClick =async() =>{
           }
           if (user.user_type === "Customer") {
                       console.log('customer dashbaord hits ==============>')
-
             router.push("/dashboard");
           } else if (user.user_type === "Agent") {
                                   console.log('agent dashbaord hits ==============>')

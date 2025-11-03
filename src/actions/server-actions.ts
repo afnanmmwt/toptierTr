@@ -605,7 +605,9 @@ export const hotel_search_multi = async (
   // Use allSettled to avoid one failure breaking all
   const results = await Promise.allSettled(promises);
 // console.log('successful hotels', JSON.parse(results));
-  // console.log('multi search result ', results)
+  console.log('multi search result ', basePayload)
+
+  console.log('multi search result ', results)
   const successful = results
     .map((result) => {
       if (result.status === "fulfilled") {
@@ -638,6 +640,7 @@ interface HotelDetailsPayload {
   language: string;
   currency: string;
   supplier_name: string;
+
 }
 
 export const hotel_details = async (payload: HotelDetailsPayload) => {
@@ -653,8 +656,8 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
     formData.append("nationality", payload.nationality || "PK");
     formData.append("language", payload.language || "en");
     formData.append("currency", payload.currency || "usd");
-    formData.append("supplier_name", payload.supplier_name || "");
-    formData.append("child_age","0" );
+    formData.append("supplier_name", payload.supplier_name || "hotels");
+
      if(payload.child_age && payload.child_age.length > 0) {
     const formattedAges = payload.child_age.map((age: string) => ({ ages: age }));
     formData.append("child_age", JSON.stringify(formattedAges));
@@ -668,7 +671,7 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
         Accept: "application/json, text/plain, */*",
       },
     });
-
+console.log("form data hotel details", formData)
     const data = await response.json().catch(() => null);
 
     if (!response.ok || data?.status === false) {
@@ -1077,7 +1080,7 @@ interface ProfileUpdatePayload {
 }
 
 export const profile_update = async (payload: ProfileUpdatePayload) => {
-  // console.log('=========== profile paylaod',payload )
+  console.log('=========== profile paylaod',payload )
   const formData = new FormData();
 
   // for (const [key, value] of Object.entries(payload)) {
@@ -1107,12 +1110,12 @@ formData.append('address2', String(payload.address2));
 
     const data = await response.json().catch(() => null);
     console.log('data',data)
-    const userData=data.user[0]
+    const userData=data.data[0]
 
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Failed to update profile" };
     }
-    await createSession(userData as any);
+    // await createSession(userData as any);
     return { success: true, data };
   } catch (error) {
     return { error: (error as Error).message || "An error occurred while updating profile" };
