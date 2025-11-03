@@ -720,8 +720,8 @@ interface UserData {
 
 export interface BookingPayload {
   agent_id: string,
-  agent_fee: Number,
-  supplier_cost:Number,
+  agent_fee: number,
+  supplier_cost:number,
   supplier_id: string,
   price_original: number;
   price_markup: number;
