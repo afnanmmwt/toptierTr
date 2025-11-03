@@ -177,7 +177,7 @@ export default function BookingForm({
     const hasAutoSaved = useRef(false);
   const { option } = selectedRoom || {};
   console.log(option);
-  
+
   const rootState = useAppSelector((state) => state.root);
   const stripe = useStripe();
   const elements = useElements();
@@ -202,7 +202,10 @@ export default function BookingForm({
   const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
   const { adults = 0, children = 0, nationality, checkin, checkout } = saveBookingData;
   const travelers = adults + children;
-  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night, per_day, service_fee, child, currency } = selectedRoom?.option || {};
+  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,actual_price, per_day, service_fee, child, currency } = selectedRoom?.option || {};
+
+
+
   const net_profit = (parseFloat(String(markup_price)) || 0) - (parseFloat(price) || 0);
   const booking_data = selectedRoom?.option || {};
   const modified_booking_data = { ...booking_data, quantity: quantity, markup_price: total, markup_price_per_night: markup_price };
@@ -211,6 +214,7 @@ export default function BookingForm({
     address: hotel_address,
     name: hotel_name,
     supplier_name,
+    supplier_id,
     stars,
     img: hotel_image,
     city: hotel_location,
@@ -218,6 +222,7 @@ export default function BookingForm({
     hotel_email,
     hotel_phone,
     hotel_website,
+
   } = selectedRoom?.hotelDetails || {};
 
   const activePayments = payment_gateways
@@ -279,118 +284,7 @@ export default function BookingForm({
   }, [setValue, nationality, travelers, dict]);
 
 
-  // Auto save booking
-  // Add this useEffect right after defaultValues and before useForm
-  // useEffect(() => {
-  //   if (!user) return; // Only run if user data exists
 
-  //   const {
-  //     firstName,
-  //     lastName,
-  //     address,
-  //     nationality,
-  //     currentCountry,
-  //     email,
-  //     phoneCountryCode,
-  //     phoneNumber,
-  //   } = defaultValues;
-
-  //   // Get travelers count from localStorage (same as in original code)
-  //   const curruntBooking = localStorage.getItem('hotelSearchForm');
-  //   const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
-  //   const { adults = 0, children = 0 } = saveBookingData;
-  //   const travelers = adults + children;
-
-  //   // Build guest payload (same logic as onSubmit)
-  //   const guestPayload = Array.from({ length: travelers }, (_, index) => ({
-  //     traveller_type: index < adults ? 'adults' : 'child',
-  //     title: dict?.bookingForm?.titles?.mr || 'Mr',
-  //     first_name: '',
-  //     last_name: '',
-  //     nationality: nationality || '',
-  //     age: '',
-  //     dob_day: '',
-  //     dob_month: '',
-  //     dob_year: '',
-  //   }));
-
-  //   // Build booking payload (same structure as onSubmit)
-  //   const bookingPayload = {
-  //     booking_ref_no: bookingReference,
-  //     price_original: price || 0,
-  //     price_markup: total || 0,
-  //     vat: 0,
-  //     tax: 0,
-  //     gst: 0,
-  //     first_name: firstName || '',
-  //     last_name: lastName || '',
-  //     email: email || '',
-  //     address: address || '',
-  //     phone_country_code: phoneCountryCode || '+92',
-  //     phone: phoneNumber || '000-000-000',
-  //     country: hotel_country || 'UNITED ARAB EMIRATES',
-  //     stars: stars || 0,
-  //     hotel_id: hotel_id || '',
-  //     hotel_name: hotel_name || '',
-  //     hotel_phone: hotel_phone || '',
-  //     hotel_email: hotel_email || '',
-  //     hotel_website: hotel_website || '',
-  //     hotel_address: hotel_address || '',
-  //     room_data: [
-  //       {
-  //         room_id: option_id,
-  //         room_name: selectedRoom?.room?.name,
-  //         room_price: markup_price_per_night,
-  //         room_quantity: quantity,
-  //         room_extrabed_price: extrabed_price,
-  //         room_extrabed: extrabeds_quantity,
-  //         room_actual_price: price,
-  //       },
-  //     ],
-  //     location: hotel_location || '',
-  //     location_cords: hotel_address || '',
-  //     hotel_img: hotel_image?.[0] || '',
-  //     checkin: checkin || '10-10-2025',
-  //     checkout: checkout || '14-10-2025',
-  //     adults: adults || 0,
-  //     childs: children || 0,
-  //     child_ages: '',
-  //     currency_original: booking_currency || 'USD',
-  //     currency_markup: booking_currency || 'USD',
-  //     booking_data: modified_booking_data,
-  //     supplier: supplier_name || '',
-  //     user_id: '',
-  //     guest: guestPayload,
-  //     nationality: nationality || '',
-  //     user_data: {
-  //       first_name: firstName || '',
-  //       last_name: lastName || '',
-  //       address: address || '',
-  //       email: email || '',
-  //       phone: phoneNumber || '',
-  //       nationality: nationality || 'pk',
-  //       country_code: nationality || 'pk',
-  //     },
-  //     card: {
-  //       name: '',
-  //       number: '',
-  //       expiry: '',
-  //       cvv: '',
-  //       zip: '',
-  //     },
-  //   };
-
-  //   // Hit the API
-  //   hotel_booking(bookingPayload as any)
-  //     .then(response => {
-  //       setBookingReference(response.booking_ref_no);
-  //       // You can store response if needed
-  //     })
-  //     .catch(error => {
-  //       console.error('Pre-booking API failed:', error);
-  //     });
-  // }, []); // Dependencies: user data, dict, and booking ref
-// clout code
  useEffect(() => {
     // Guard: Only run once, only if user exists, and only if not already saved
     if (!user || hasAutoSaved.current) return;
@@ -421,6 +315,8 @@ export default function BookingForm({
 
     // Build booking payload
     const bookingPayload = {
+      supplier_cost:actual_price || "",
+      supplier_id:supplier_id || "",
       booking_ref_no: bookingReference,
       price_original: price || 0,
       price_markup: total || 0,
@@ -491,7 +387,6 @@ export default function BookingForm({
     // Hit the API
     hotel_booking(bookingPayload as any)
       .then(response => {
-        console.log('✅ Auto-save successful:', response.booking_ref_no);
         setBookingReference(response.booking_ref_no);
       })
       .catch(error => {
@@ -537,6 +432,8 @@ export default function BookingForm({
         dob_year: '',
       }));
       const bookingPayload = {
+          supplier_cost:actual_price,
+      supplier_id:supplier_id,
         booking_ref_no: bookingReference,
         net_profit: net_profit || 0,
         price_original: price || 0,

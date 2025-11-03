@@ -89,16 +89,14 @@ const handleDashboardClick =async() =>{
       (async () => {
         try {
           const verify_response = await verify_token();
-          console.log('verify response ==============>', verify_response)
           if (!verify_response?.status) {
+            toast.error('token not verifying something went wrong')
             router.push("/auth/login");
             return;
           }
           if (user.user_type === "Customer") {
-                      console.log('customer dashbaord hits ==============>')
             router.push("/dashboard");
           } else if (user.user_type === "Agent") {
-                                  console.log('agent dashbaord hits ==============>')
 
             const token = await getAccessToken();
             const url = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(

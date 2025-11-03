@@ -313,7 +313,6 @@ export async function signIn(
     });
 
     const data = await response.json();
-    console.log('Login response:', data);
 
     // Check if login actually succeeded
     if (!response.ok || data?.status === false) {
@@ -420,13 +419,11 @@ export const verify_token = async () => {
     const formData = new FormData();
     formData.append('user_id', String(userId)); // ✅ always a string
     formData.append('token', String(token));
-   console.log("verifying token for user server action:", formData);
     const response = await fetch(`${baseUrl}/verify_token`, {
       method: 'POST',
       body: formData,
     });
     const data = await response.json().catch(() => null);
-   console.log('form data==============', userId)
     if (!response.ok || data?.status === false) {
       return { error: data || 'Something went wrong' };
     }
@@ -576,8 +573,7 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
       },
     });
     const data = await response.json().catch(() => null);
-    console.log(`${module} name `, data)
-    console.log('paylaod for single module',payload)
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong", module: payload.modules };
     }
@@ -605,9 +601,7 @@ export const hotel_search_multi = async (
   // Use allSettled to avoid one failure breaking all
   const results = await Promise.allSettled(promises);
 // console.log('successful hotels', JSON.parse(results));
-  console.log('multi search result ', basePayload)
 
-  console.log('multi search result ', results)
   const successful = results
     .map((result) => {
       if (result.status === "fulfilled") {
@@ -620,8 +614,7 @@ export const hotel_search_multi = async (
     })
     .filter(Boolean) // remove nulls
     .flat(); // flatten into single array
-// console.log('================== apply filer', successful)
-// console.log('======================',basePayload )
+
   return {
     success: successful,
     total: successful.length,
@@ -671,7 +664,6 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
         Accept: "application/json, text/plain, */*",
       },
     });
-console.log("form data hotel details", formData)
     const data = await response.json().catch(() => null);
 
     if (!response.ok || data?.status === false) {
@@ -727,8 +719,13 @@ interface UserData {
 }
 
 export interface BookingPayload {
+  agent_id: string,
+  agent_fee: Number,
+  supplier_cost:Number,
+  supplier_id: string,
   price_original: number;
   price_markup: number;
+  actual_price:number;
   vat: number;
   tax: number;
   gst: number;
@@ -767,23 +764,14 @@ export interface BookingPayload {
   booking_ref_no: string;
 }
 
-interface SessionUser {
-  user?: {
-    id?: string;
-    user_id?: string;
-    first_name?: string;
-    last_name?: string;
-    email?: string;
-    // ... add other fields you need
-  };
-  iat?: number;
-  exp?: number;
-}
+
 
 export const hotel_booking = async (payload: BookingPayload) => {
   try {
-    const userinfo = (await getSession()) as SessionUser | null;
-    const user_id = userinfo?.user?.user_id ?? "";
+const userInfo = (await getSession()) as any | null;
+const user_id = userInfo?.user?.user_id ?? "";
+const agent_id =
+  userInfo?.user?.user_type === "Agent" ? userInfo.user.user_id : "";
     const formData = new FormData();
     //  Append normal fields
     formData.append("booking_ref_no", payload.booking_ref_no || "");
@@ -821,14 +809,15 @@ export const hotel_booking = async (payload: BookingPayload) => {
     formData.append("nationality", payload.nationality);
     formData.append("payment_gateway", payload.payment_gateway ?? "");
     formData.append("user_id", user_id ?? "");
+    formData.append('agent_id', agent_id)
+    formData.append('supplier_cost',String(payload.actual_price))
 
     // hardcoded fields
     formData.append("supplier_id", "");
     formData.append("agent_fee", "0");
     // agent_fee= price_markup - price_original
     formData.append("net_profit", String(payload.price_markup - payload.price_original));
-    // if user is agent logged as agent
-    formData.append("agent_id", api_key ?? "");
+
 
 
     // Append JSON fields (must stringify)
@@ -1009,7 +998,6 @@ export const get_profile = async () => {
     });
 
     const data = await response.json().catch(() => null);
-    console.log('============== profile data', data)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -1050,9 +1038,7 @@ export const fetch_dashboard_data = async (payload: dashboardPayload) => {
         Accept: "application/json, text/plain, */*",
       },
     });
-    console.log('booking paylaod ', formData)
     const data = await response.json().catch(() => null);
-    console.log('booking data',data)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -1080,7 +1066,6 @@ interface ProfileUpdatePayload {
 }
 
 export const profile_update = async (payload: ProfileUpdatePayload) => {
-  console.log('=========== profile paylaod',payload )
   const formData = new FormData();
 
   // for (const [key, value] of Object.entries(payload)) {
@@ -1101,7 +1086,6 @@ formData.append('address1', String(payload.address1));
 formData.append('address2', String(payload.address2));
 
   try {
-    console.log('form data', formData.toString())
     const response = await fetch(`${baseUrl}/profile_update`, {
       method: "POST",
       body: formData,
@@ -1109,7 +1093,6 @@ formData.append('address2', String(payload.address2));
     });
 
     const data = await response.json().catch(() => null);
-    console.log('data',data)
     const userData=data.data[0]
 
     if (!response.ok || data?.status === false) {

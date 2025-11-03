@@ -42,7 +42,6 @@ export default function BookingDetails() {
     markup_price_per_night = 0,
     currency = "USD",
   } = option || {};
-
   // Calculate stay duration (in nights)
   const checkinDate = new Date(checkin);
   const checkoutDate = new Date(checkout);
@@ -54,9 +53,11 @@ export default function BookingDetails() {
 
   // Editable fields state
   const [quantity, setQuantity] = useState<string>(String(rooms || 1));
-  const [roomPrice, setRoomPrice] = useState<string>(
-    String(markup_price_per_night || 0)
-  );
+const [roomPrice, setRoomPrice] = useState<string>(() => {
+  // Remove commas and ensure valid number
+  const sanitized = String(markup_price_per_night || "0").replace(/,/g, "");
+  return sanitized;
+});
   // Optional: topTierFee can be removed if not used
   // const [topTierFee, setTopTierFee] = useState<string>(String(Math.max(0, Number(price) - Number(markup_price)) || 0));
 
@@ -249,7 +250,10 @@ export default function BookingDetails() {
                   {dict?.bookingDetails?.total}
                 </span>
                 <span className="text-lg font-bold text-[#163C8C]">
-                  {getCurrencySymbol(currency)} {finalTotal.toFixed(2)}
+                  {getCurrencySymbol(currency)}{" "}{finalTotal.toLocaleString('en-US', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+})}
                 </span>
               </div>
             </div>

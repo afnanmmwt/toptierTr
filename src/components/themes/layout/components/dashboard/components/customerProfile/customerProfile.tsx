@@ -77,7 +77,6 @@ export default function CustomerProfile() {
   const fetchProfile = async () => {
     try {
       const profile_response = await get_profile();
-      console.log('==========profile response', profile_response);
 
       // Example of how you might use the response:
       if (profile_response) {
@@ -118,7 +117,6 @@ export default function CustomerProfile() {
     iso: c.iso,
     phonecode: c.phonecode?.toString() || "0",
   }));
-console.log('==================phone code ', phoneCodeOptions)
   const onSubmit = async (data: any) => {
     if (!user) {
       toast.error(dict?.profiletoasts?.unauthorized || "User not authenticated");
