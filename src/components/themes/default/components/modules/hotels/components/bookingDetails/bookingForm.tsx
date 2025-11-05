@@ -6,7 +6,7 @@ import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { z } from 'zod';
 import { Icon } from '@iconify/react';
 import useCountries from '@hooks/useCountries';
-import { useAppSelector } from '@lib/redux/store';
+import { useAppDispatch, useAppSelector } from '@lib/redux/store';
 import { hotel_booking } from '@src/actions';
 import { useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,8 @@ import useDictionary from '@hooks/useDict'; //  Add this
 import useLocale from '@hooks/useLocale';
 import { useStripe, useElements, CardElement } from '@stripe/react-stripe-js';
 import { useUser } from '@hooks/use-user';
+import { setBookingReference } from '@lib/redux/base';
+import { toast } from 'react-toastify';
 // Get dict for error messages
 const useBookingFormSchema = (dict: any) => {
   return z.object({
@@ -103,18 +105,8 @@ const useBookingFormSchema = (dict: any) => {
 };
 
 export type BookingFormValues = z.infer<ReturnType<typeof useBookingFormSchema>>;
-interface BookingFormProps {
-  quantity?: string;
-  markup_price?: string;
-  total?: number;
-
-}
-export default function BookingForm({
-  quantity,
-  markup_price,
-  total,
-}: BookingFormProps) {
-  const { locale } = useLocale();
+export default function BookingForm(){
+  const { locale } =useLocale();
   const { data: dict } = useDictionary(locale as any);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
   const bookingSchema = useBookingFormSchema(dict);
@@ -134,7 +126,7 @@ export default function BookingForm({
 
   // Cast to known type (safe because you've verified the structure)
   const typedUser = user as User | null | undefined;
-
+// =========== SET DEFAULT VALUSE FOR FORM =================
   const defaultValues: BookingFormValues = {
     firstName: typedUser?.first_name || '',
     lastName: typedUser?.last_name || '',
@@ -170,20 +162,24 @@ export default function BookingForm({
     control,
     name: 'travellers',
   });
-
+// ============== ALL HOOKS CALL ===================
   const { countries: rawCountries } = useCountries();
-  const { payment_gateways } = useAppSelector((state) => state.appData?.data);
-  const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
+  const { payment_gateways } = useAppSelector((state:any) => state.appData?.data);
+  const selectedRoom = useAppSelector((state:any) => state.root.selectedRoom);
     const hasAutoSaved = useRef(false);
   const { option } = selectedRoom || {};
-  console.log(option);
 
-  const rootState = useAppSelector((state) => state.root);
+  const {
+bookingReference
+} = useAppSelector((state:any) => state.root);
+  // const bookingReference_no=useAppSelector((state:any)=> state.root)
   const stripe = useStripe();
   const elements = useElements();
-  const [bookingReference, setBookingReference] = useState<string>(
-    new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14)
-  );
+  const dispatch=useAppDispatch()
+
+  // const [bookingReference, setBookingReference] = useState<string>(
+  //   new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14)
+  // );
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
   const { hotelDetails } = selectedRoom || {};
@@ -197,18 +193,41 @@ export default function BookingForm({
   ];
   const [isCountryListOpen, setIsCountryListOpen] = useState<boolean>(false);
   const [isPhoneCodeListOpen, setIsPhoneCodeListOpen] = useState<boolean>(false);
-
   const curruntBooking = localStorage.getItem('hotelSearchForm');
   const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
   const { adults = 0, children = 0, nationality, checkin, checkout } = saveBookingData;
   const travelers = adults + children;
-  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,actual_price, per_day, service_fee, child, currency } = selectedRoom?.option || {};
-
-
-
-  const net_profit = (parseFloat(String(markup_price)) || 0) - (parseFloat(price) || 0);
-  const booking_data = selectedRoom?.option || {};
-  const modified_booking_data = { ...booking_data, quantity: quantity, markup_price: total, markup_price_per_night: markup_price };
+//================ EXTRACTING VALUES FROM OPTIONS =================
+  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,subtotal,cc_fee,markup_type,markup_amout,net_profit,markup_price,quantity, per_day, service_fee, child, currency } = selectedRoom?.option || {};
+// ============= AGENT FEEE ==================
+const agent_fee=markup_type ==="user_markup" ? markup_amout : ""
+ const inDate = new Date(checkin);
+    const outDate = new Date(checkout);
+    const total_nights = Math.ceil(
+      (outDate.getTime() - inDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+  //=============== ROOM DATA =========================
+ const sanitizeNumber = (value:any) => {
+  if (value === null || value === undefined) return "0";
+  return String(value).replace(/,/g, "");
+};
+ const booking_data = selectedRoom?.option || {};
+  const modified_booking_data = {
+  ...booking_data,
+  quantity: quantity,
+  price: sanitizeNumber(booking_data.price),
+  per_day: sanitizeNumber(booking_data.per_day),
+  markup_price: sanitizeNumber(markup_price),
+  markup_price_per_night: sanitizeNumber(markup_price_per_night),
+  service_fee: sanitizeNumber(booking_data.service_fee),
+  extrabed_price: sanitizeNumber(booking_data.extrabed_price),
+  markup_amount: sanitizeNumber(booking_data.markup_amount),
+  subtotal: sanitizeNumber(booking_data.subtotal),
+  subtotal_per_night: sanitizeNumber(booking_data.subtotal_per_night),
+  cc_fee: sanitizeNumber(booking_data.cc_fee),
+  net_profit: sanitizeNumber(booking_data.net_profit),
+};
+  //==================== EXTRACTING HOTEL RELATED DATA ==================
   const {
     id: hotel_id,
     address: hotel_address,
@@ -222,17 +241,9 @@ export default function BookingForm({
     hotel_email,
     hotel_phone,
     hotel_website,
-
   } = selectedRoom?.hotelDetails || {};
 
-  const activePayments = payment_gateways
-    ?.filter((p: any) => p.status)
-    ?.map((p: any) => ({
-      id: p.id,
-      name: p.name,
-      label: p.label || p.name,
-      icon: p.icon || null,
-    })) || [];
+
 
   const excludedCodes = ['0', '381', '599'];
   const countryList = Array.isArray(rawCountries)
@@ -245,6 +256,8 @@ export default function BookingForm({
       .filter((c) => c.iso && c.name && !excludedCodes.includes(c.phonecode))
     : [];
 
+
+  // options for SELECT DROPDOWN
   const countryOptions = countryList.map((c) => ({
     value: c.iso,
     label: c.name,
@@ -257,7 +270,10 @@ export default function BookingForm({
     iso: c.iso,
     phonecode: `${c.phonecode}`,
   }));
-
+useEffect(()=>{
+const ref_no= new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14)
+dispatch(setBookingReference(ref_no))
+},[])
   const currentCountry = watch('currentCountry');
   useEffect(() => {
     if (currentCountry) {
@@ -284,7 +300,7 @@ export default function BookingForm({
   }, [setValue, nationality, travelers, dict]);
 
 
-
+  //================= AUTO SAVE BOOKING DATA ===================
  useEffect(() => {
     // Guard: Only run once, only if user exists, and only if not already saved
     if (!user || hasAutoSaved.current) return;
@@ -314,93 +330,149 @@ export default function BookingForm({
     }));
 
     // Build booking payload
-    const bookingPayload = {
-      supplier_cost:actual_price || "",
-      supplier_id:supplier_id || "",
-      booking_ref_no: bookingReference,
-      price_original: price || 0,
-      price_markup: total || 0,
-      vat: 0,
-      tax: 0,
-      gst: 0,
-      first_name: firstName || '',
-      last_name: lastName || '',
-      email: email || '',
-      address: address || '',
-      phone_country_code: phoneCountryCode || '+92',
-      phone: phoneNumber || '000-000-000',
-      country: hotel_country || 'UNITED ARAB EMIRATES',
-      stars: stars || 0,
-      hotel_id: hotel_id || '',
-      hotel_name: hotel_name || '',
-      hotel_phone: hotel_phone || '',
-      hotel_email: hotel_email || '',
-      hotel_website: hotel_website || '',
-      hotel_address: hotel_address || '',
-      room_data: [
-        {
-          room_id: option_id,
-          room_name: selectedRoom?.room?.name,
-          room_price: markup_price_per_night,
-          room_quantity: quantity,
-          room_extrabed_price: extrabed_price,
-          room_extrabed: extrabeds_quantity,
-          room_actual_price: price,
-        },
-      ],
-      location: hotel_location || '',
-      location_cords: hotel_address || '',
-      hotel_img: hotel_image?.[0] || '',
-      checkin: checkin || '10-10-2025',
-      checkout: checkout || '14-10-2025',
-      adults: adults || 0,
-      childs: children || 0,
-      child_ages: '',
-      currency_original: booking_currency || 'USD',
-      currency_markup: booking_currency || 'USD',
-      booking_data: modified_booking_data,
-      supplier: supplier_name || '',
-      user_id: '',
-      guest: guestPayload,
-      nationality: nationality || '',
-      user_data: {
-        first_name: firstName || '',
-        last_name: lastName || '',
-        address: address || '',
-        email: email || '',
-        phone: phoneNumber || '',
-        nationality: nationality || 'pk',
-        country_code: nationality || 'pk',
-      },
-      card: {
-        name: '',
-        number: '',
-        expiry: '',
-        cvv: '',
-        zip: '',
-      },
-    };
+
+
+const bookingPayload = {
+  booking_ref_no: bookingReference,
+  booking_date: new Date().toISOString().split("T")[0],
+  booking_status: "pending",
+
+  // 🔹 Price and financials
+  price_original: sanitizeNumber(price || 0),
+  price_markup: sanitizeNumber(markup_price || 0),
+  toptier_fee: sanitizeNumber("0"),
+  agent_fee: sanitizeNumber(agent_fee || 0),
+  vat: sanitizeNumber(0),
+  tax: sanitizeNumber(0),
+  gst: sanitizeNumber(0),
+  net_profit: sanitizeNumber(net_profit || 0),
+  subtotal: sanitizeNumber(subtotal || 0),
+  supplier_cost: sanitizeNumber(price || 0),
+
+  // 🔹 Customer info
+  first_name: firstName || "",
+  last_name: lastName || "",
+  email: email || "",
+  address: address || "",
+  phone_country_code: phoneCountryCode || "+92",
+  phone: phoneNumber || "000-000-000",
+  country: hotel_country || "UNITED ARAB EMIRATES",
+
+  // 🔹 Hotel info
+  stars: stars || 0,
+  hotel_id: hotel_id || "",
+  hotel_name: hotel_name || "",
+  hotel_phone: hotel_phone || "",
+  hotel_email: hotel_email || "",
+  hotel_website: hotel_website || "",
+  hotel_address: hotel_address || "",
+  hotel_img: hotel_image?.[0] || "",
+  location: hotel_location || "",
+  location_cords: hotel_address || "",
+
+  // 🔹 Room info
+
+   room_data :[
+  {
+    room_id: option_id,
+    room_name: selectedRoom?.room?.name || "",
+    room_price_per_night:  sanitizeNumber(markup_price_per_night),
+    room_quantity: quantity || 1,
+    room_extrabed_price: sanitizeNumber(extrabed_price || 0),
+    room_extrabed: extrabeds_quantity || 0,
+    room_actual_price_per_night: sanitizeNumber(per_day),
+    total_nights: total_nights,
+    total_markup_price: sanitizeNumber(markup_price),
+    total_actual_price: sanitizeNumber(price),
+    cc_fee: sanitizeNumber(cc_fee || 0),
+  }
+],
+
+  checkin: checkin || "10-10-2025",
+  checkout: checkout || "14-10-2025",
+  booking_nights: total_nights,
+
+  adults: adults || 0,
+  childs: children || 0,
+  child_ages: "",
+
+  currency_original: booking_currency || "USD",
+  currency_markup: booking_currency || "USD",
+
+  payment_date: "",
+  payment_gateway: "stripe",
+  cancellation_request: "0",
+  cancellation_status: "0",
+  cancellation_response: "",
+  cancellation_date: "",
+  cancellation_error: "",
+
+  booking_data: modified_booking_data,
+  payment_status: "unpaid",
+  supplier: supplier_name || "",
+  transaction_id: "",
+  user_id: "",
+  user_data: {
+    user_id: user?.user_id,
+    first_name: firstName || "",
+    last_name: lastName || "",
+    address: address || "",
+    email: email || "",
+    phone: phoneNumber || "",
+    nationality: nationality || "pk",
+    country_code: nationality || "pk",
+  },
+  guest: guestPayload,
+
+  nationality: nationality || "",
+  module_type: "hotels",
+  pnr: "",
+  booking_response: "",
+  error_response: "",
+
+  agent_id: "",
+  booking_note: "",
+  supplier_payment_status: "unpaid",
+  supplier_due_date: new Date().toISOString().split("T")[0],
+  cancellation_terms: "",
+  supplier_id: supplier_id || "",
+  supplier_payment_type: "",
+  customer_payment_type: "",
+  iata: "",
+  agent_commission_status: "pending",
+  agent_payment_type: "pending",
+  agent_payment_status: "pending",
+  agent_payment_date: "",
+
+  card: {
+    name: "",
+    number: "",
+    expiry: "",
+    cvv: "",
+    zip: "",
+  },
+};
+
+
 
     // ✅ FIX: Mark as saved BEFORE API call to prevent race conditions
     hasAutoSaved.current = true;
-
     // Hit the API
     hotel_booking(bookingPayload as any)
       .then(response => {
         setBookingReference(response.booking_ref_no);
       })
       .catch(error => {
-        console.error('❌ Pre-booking API failed:', error);
+        toast.error(' Pre-booking API failed:', error);
         // Reset flag on error so it can retry
         hasAutoSaved.current = false;
       });
-  }, [user]); // ✅ FIX:
+  }, []); //  FIX:
+  //================ SUBMIT BOOKING ======================
   const onSubmit = async (data: BookingFormValues) => {
     if (!data) return;
-
     setIsProcessingPayment(true);
     setIsPending(true);
-
     try {
       const {
         firstName,
@@ -431,73 +503,140 @@ export default function BookingForm({
         dob_month: '',
         dob_year: '',
       }));
-      const bookingPayload = {
-          supplier_cost:actual_price,
-      supplier_id:supplier_id,
-        booking_ref_no: bookingReference,
-        net_profit: net_profit || 0,
-        price_original: price || 0,
-        price_markup: total || 0,
-        vat: 0,
-        tax: 0,
-        gst: 0,
-        first_name: firstName || '',
-        last_name: lastName || '',
-        email: email || '',
-        address: address || '',
-        phone_country_code: phoneCountryCode || '+92',
-        phone: phoneNumber || '000-000-000',
-        country: hotel_country || 'UNITED ARAB EMIRATES',
-        stars: stars || 0,
-        hotel_id: hotel_id || '',
-        hotel_name: hotel_name || '',
-        hotel_phone: hotel_phone || '',
-        hotel_email: hotel_email || '',
-        hotel_website: hotel_website || '',
-        hotel_address: hotel_address || '',
-        room_data: [
-          {
-            room_id: option_id,
-            room_name: selectedRoom?.room?.name,
-            room_price: markup_price || 0,
-            room_qaunitity: quantity,
-            room_extrabed_price: extrabed_price,
-            room_extrabed: extrabeds_quantity,
-            room_actual_price: price,
-          },
-        ],
-        location: hotel_location || '',
-        location_cords: hotel_address || '',
-        hotel_img: hotel_image?.[0] || '',
-        checkin: checkin || '10-10-2025',
-        checkout: checkout || '14-10-2025',
-        adults: adults || 0,
-        childs: children || 0,
-        child_ages: '',
-        currency_original: booking_currency || 'USD',
-        currency_markup: booking_currency || 'USD',
-        booking_data: modified_booking_data,
-        supplier: supplier_name || '',
-        user_id: '',
-        guest: guestPayload,
-        nationality: nationality || '',
-        user_data: {
-          first_name: firstName || '',
-          last_name: lastName || '',
-          address: address || '',
-          email: email || '',
-          phone: phoneNumber || '',
-          nationality: nationality || 'pk',
-          country_code: nationality || 'pk',
-        },
-        card: {
-          name: cardName,
-          number: cardNumber,
-          expiry: cardExpiry,
-          cvv: cardCvv,
-          zip: cardZip,
-        },
-      };
+const bookingPayload = {
+  // 🔹 Core booking details
+  booking_ref_no: bookingReference,
+  booking_date: new Date().toISOString().split("T")[0],
+  booking_status: "pending",
+  booking_nights: total_nights,
+
+  // 🔹 Price and financials
+  price_original: parseFloat(price).toFixed(2) || "",
+  price_markup: parseFloat(markup_price).toFixed(2) || "",
+  actual_price:  parseFloat(price).toFixed(2) || "",
+  toptier_fee: "0",
+  agent_fee: agent_fee || "0",
+  vat: 0,
+  tax: 0,
+  gst: 0,
+  net_profit: net_profit || 0,
+  subtotal: subtotal || 0,
+  supplier_cost:  parseFloat(price).toFixed(2) || "",
+  supplier_id: supplier_id || "",
+  supplier_payment_type: "",
+  customer_payment_type: "",
+  supplier_payment_status: "unpaid",
+  supplier_due_date: new Date().toISOString().split("T")[0],
+  agent_commission_status: "pending",
+  agent_payment_type: "pending",
+  agent_payment_status: "pending",
+  agent_payment_date: "",
+  iata: "",
+  agent_id: "",
+
+  // 🔹 Customer info
+  first_name: firstName || "",
+  last_name: lastName || "",
+  email: email || "",
+  address: address || "",
+  phone_country_code: phoneCountryCode || "+92",
+  phone: phoneNumber || "000-000-000",
+  country: hotel_country || "UNITED ARAB EMIRATES",
+  nationality: nationality || "",
+
+  // 🔹 Hotel info
+  stars: stars || 0,
+  hotel_id: hotel_id || "",
+  hotel_name: hotel_name || "",
+  hotel_phone: hotel_phone || "",
+  hotel_email: hotel_email || "",
+  hotel_website: hotel_website || "",
+  hotel_address: hotel_address || "",
+  hotel_img: hotel_image?.[0] || "",
+  location: hotel_location || "",
+  location_cords: hotel_address || "",
+
+  // 🔹 Room info
+   room_data :[
+  {
+    room_id: option_id,
+    room_name: selectedRoom?.room?.name || "",
+    room_price_per_night:  sanitizeNumber(markup_price_per_night),
+    room_quantity: quantity || 1,
+    room_extrabed_price: sanitizeNumber(extrabed_price || 0),
+    room_extrabed: extrabeds_quantity || 0,
+    room_actual_price_per_night: sanitizeNumber(markup_price_per_night),
+    total_nights: total_nights,
+    total_markup_price: sanitizeNumber(markup_price),
+    total_actual_price: sanitizeNumber(price),
+    cc_fee: sanitizeNumber(cc_fee || 0),
+  }
+],
+  // 🔹 Dates and stay info
+  checkin: checkin || "10-10-2025",
+  checkout: checkout || "14-10-2025",
+  adults: adults || 0,
+  childs: children || 0,
+  child_ages: "",
+
+  // 🔹 Currency
+  currency_original: booking_currency || "USD",
+  currency_markup: booking_currency || "USD",
+
+  // 🔹 Payment and booking meta
+  payment_date: "",
+  payment_status: "unpaid",
+  payment_gateway: "",
+  module_type: "hotels",
+  pnr: "",
+  transaction_id: "",
+  user_id: "",
+
+  // 🔹 Cancellation info
+  cancellation_request: "0",
+  cancellation_status: "0",
+  cancellation_response: "",
+  cancellation_date: "",
+  cancellation_error: "",
+  cancellation_terms: "",
+
+  // 🔹 Booking data & API responses
+  booking_data: modified_booking_data,
+  booking_response: "",
+  error_response: "",
+
+  // 🔹 Notes & additional metadata
+  booking_note: "",
+
+  // 🔹 Supplier
+  supplier: supplier_name || "",
+
+  // 🔹 Nested user data
+  user_data: {
+user_id: user?.user_id,
+    first_name: firstName || "",
+    last_name: lastName || "",
+    address: address || "",
+    email: email || "",
+    phone: phoneNumber || "",
+    nationality: nationality || "pk",
+    country_code: nationality || "pk",
+  },
+
+  // 🔹 Guest info
+  guest: guestPayload || [],
+
+  // 🔹 Card info
+  card: {
+    name: cardName || "",
+    number: cardNumber || "",
+    expiry: cardExpiry || "",
+    cvv: cardCvv || "",
+    zip: cardZip || "",
+  },
+};
+
+
 
       //  Run hotel booking and paymentIntent API in parallel for performance
       const [bookingResponse, paymentRes] = await Promise.all([
@@ -507,9 +646,9 @@ export default function BookingForm({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            amount: total || 0,
+            amount: sanitizeNumber(markup_price) || 0,
             currency: booking_currency,
-            booking_ref_no: bookingReference,
+            booking_ref_no: bookingReference,   //bookingReference,
             module_type: supplier_name,
             email,
           }),
@@ -518,6 +657,7 @@ export default function BookingForm({
 
       const bookingData = await bookingResponse;
       const paymentData = await paymentRes.json();
+
       const { clientSecret, success_url } = paymentData;
 
       if (!stripe || !elements) {
@@ -528,8 +668,8 @@ export default function BookingForm({
       }
 
       if (!clientSecret) {
-        console.error("Missing clientSecret from payment API:");
-        alert("Payment setup failed. Please try again.");
+        toast.error("Missing clientSecret from payment API:");
+        toast.error("Payment setup failed. Please try again.");
         setIsProcessingPayment(false);
         setIsPending(false);
         return;
@@ -542,7 +682,6 @@ export default function BookingForm({
         setIsPending(false);
         return;
       }
-
       // Confirm payment
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
