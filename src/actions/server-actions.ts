@@ -677,6 +677,7 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
       },
     });
     const data = await response.json().catch(() => null);
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -922,6 +923,7 @@ formData.append(
     });
 
     const data = await response.json().catch(() => null);
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -938,6 +940,7 @@ export const hotel_invoice = async (payload: string) => {
   try {
     const formData = new FormData();
 
+
     //  match exactly with API keys
     formData.append("booking_ref_no", payload);
 
@@ -947,6 +950,7 @@ export const hotel_invoice = async (payload: string) => {
     });
 
     const data = await response.json().catch(() => null);
+
 
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
