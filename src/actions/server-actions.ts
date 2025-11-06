@@ -348,7 +348,7 @@ export const signOut = async () => {
         ? (userinfo.user_id || userinfo?.user?.user_id || '')
         : '';
  const cookie = await cookies();
-  const token = cookie.get('access-token')?.value || '';
+ const token = cookie.get('access-token')?.value || '';
     const formData = new FormData();
     formData.append('user_id', String(userId)); //always a string
     formData.append('token', String(token));
@@ -544,10 +544,28 @@ interface HotelSearchPayload {
 // This function handles ONE module
 export const hotel_search = async (payload: HotelSearchPayload & { modules: string }) => {
   const userinfo = (await getSession()) as any | null;
+  const cookie = await cookies();
+ const agent_ref = cookie.get('agent_ref')?.value || '';
      const userId =
       typeof userinfo === 'object' && userinfo !== null
         ? (userinfo.user_id || userinfo?.user?.user_id || '')
         : '';
+let agent_id = '';
+
+if (agent_ref) {
+  // Priority 1: Use referral if present
+  agent_id = agent_ref;
+} else if (
+  typeof userinfo === 'object' &&
+  userinfo !== null &&
+  (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
+) {
+  // Priority 2: If no referral, and user is an Agent → self-assign
+  agent_id = userId;
+} else {
+  // Priority 3: Not an agent and no referral → no agent_id
+  agent_id = '';
+}
 
   const formData = new FormData();
   formData.append("city", String(payload.destination));
@@ -564,7 +582,8 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
   formData.append("price_from", payload.price_from || "");
   formData.append("price_to", payload.price_to || "");
   formData.append("price_low_to_high", "");
-  formData.append('user_id', userId)
+  formData.append('user_id', userId);
+  formData.append('agent_id',agent_id);
   formData.append("rating", payload.rating || "");
   if (payload.child_age && payload.child_age.length > 0) {
     const formattedAges = payload.child_age.map((age) => ({ ages: age }));
@@ -606,11 +625,9 @@ export const hotel_search_multi = async (
       modules: module, // pass single module
     })
   );
-
   // Use allSettled to avoid one failure breaking all
   const results = await Promise.allSettled(promises);
 // console.log('successful hotels', JSON.parse(results));
-
   const successful = results
     .map((result) => {
       if (result.status === "fulfilled") {
@@ -646,8 +663,29 @@ interface HotelDetailsPayload {
 }
 
 export const hotel_details = async (payload: HotelDetailsPayload) => {
-      const userInfo = (await getSession()) as any | null;
-    const user_id = userInfo?.user?.user_id ?? "";
+       const userinfo = (await getSession()) as any | null;
+  const cookie = await cookies();
+ const agent_ref = cookie.get('agent_ref')?.value || '';
+     const userId =
+      typeof userinfo === 'object' && userinfo !== null
+        ? (userinfo.user_id || userinfo?.user?.user_id || '')
+        : '';
+let agent_id = '';
+
+if (agent_ref) {
+  // Priority 1: Use referral if present
+  agent_id = agent_ref;
+} else if (
+  typeof userinfo === 'object' &&
+  userinfo !== null &&
+  (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
+) {
+  // Priority 2: If no referral, and user is an Agent → self-assign
+  agent_id = userId;
+} else {
+  // Priority 3: Not an agent and no referral → no agent_id
+  agent_id = '';
+}
   try {
     const formData = new FormData();
     //  match exactly with API keys
@@ -661,8 +699,8 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
     formData.append("language", payload.language || "en");
     formData.append("currency", payload.currency || "usd");
     formData.append("supplier_name", payload.supplier_name || "hotels");
-    formData.append('user_id',user_id)
-
+    formData.append('user_id',userId || '')
+    formData.append('agent_id',agent_id || '');
      if(payload.child_age && payload.child_age.length > 0) {
     const formattedAges = payload.child_age.map((age: string) => ({ ages: age }));
     formData.append("child_age", JSON.stringify(formattedAges));
@@ -677,7 +715,6 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
       },
     });
     const data = await response.json().catch(() => null);
-
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -808,10 +845,29 @@ export interface BookingPayload {
 
 export const hotel_booking = async (payload: BookingPayload) => {
   try {
-    const userInfo = (await getSession()) as any | null;
-    const user_id = userInfo?.user?.user_id ?? "";
-    const agent_id =
-      userInfo?.user?.user_type === "Agent" ? userInfo.user.user_id : "";
+     const userinfo = (await getSession()) as any | null;
+  const cookie = await cookies();
+ const agent_ref = cookie.get('agent_ref')?.value || '';
+     const userId =
+      typeof userinfo === 'object' && userinfo !== null
+        ? (userinfo.user_id || userinfo?.user?.user_id || '')
+        : '';
+let agent_id = '';
+
+if (agent_ref) {
+  // Priority 1: Use referral if present
+  agent_id = agent_ref;
+} else if (
+  typeof userinfo === 'object' &&
+  userinfo !== null &&
+  (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
+) {
+  // Priority 2: If no referral, and user is an Agent → self-assign
+  agent_id = userId;
+} else {
+  // Priority 3: Not an agent and no referral → no agent_id
+  agent_id = '';
+}
 
     const formData = new FormData();
 
@@ -893,8 +949,8 @@ formData.append(
     formData.append("module_type", payload.module_type);
     formData.append("pnr", payload.pnr);
     formData.append("transaction_id", payload.transaction_id);
-    formData.append("user_id", user_id || payload.user_id);
-
+    formData.append("user_id", userId || payload.user_id);
+    formData.append('agent_id', agent_id || '')
     // 🔹 Cancellation info
     formData.append("cancellation_request", payload.cancellation_request);
     formData.append("cancellation_status", payload.cancellation_status);
@@ -950,8 +1006,6 @@ export const hotel_invoice = async (payload: string) => {
     });
 
     const data = await response.json().catch(() => null);
-
-
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
