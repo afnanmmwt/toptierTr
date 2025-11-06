@@ -61,6 +61,8 @@ useEffect(() => {
           .find(row => row.startsWith('access-token='))?.split('=')[1];
 
         // Only redirect externally if lastRoute is NOT "/bookings"
+        // https://toptier-agent-d-ua92.vercel.app
+        // http://localhost:3001
         if (token && lastRoute !== "/bookings") {
           window.location.href = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
           return;
