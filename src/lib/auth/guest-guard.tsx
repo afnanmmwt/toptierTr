@@ -18,7 +18,7 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
  const pathname = usePathname();
    const lastRoute=sessionStorage.getItem('lastRoute')
   React.useEffect(() => {
-     checkSession?.();
+checkSession?.();
     const verifyGuestAccess = async () => {
       if (isLoading) return;
 
@@ -30,7 +30,6 @@ export function GuestGuard({ children }: GuestGuardProps): React.JSX.Element | n
         router.push('/bookings')
       }
       else if(user){
-
         router.push('/')
       }
       // else if( user && pathname ==="/auth/login" ){

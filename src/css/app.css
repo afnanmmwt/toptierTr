@@ -903,3 +903,18 @@ body:is(.dark *) {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+/* // for signup successfull modal  */
+@keyframes fade-in {
+  to { opacity: 1; }
+}
+@keyframes scale-in {
+  to { transform: scale(1); opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out forwards;
+}
+.animate-scale-in {
+  animation: scale-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.05s forwards;
+}

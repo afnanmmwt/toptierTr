@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     });
 const origin = req.headers.get("origin")
     // 5. Generate invoice URL + token
-    const invoiceUrl = `${origin}/hotel/invoice/${booking_ref_no}`;
+    const invoiceUrl = `${origin}/hotels/invoice/${booking_ref_no}`;
 
     const tokenData = {
       booking_ref_no,

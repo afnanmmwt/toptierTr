@@ -213,6 +213,7 @@ export const sign_up = async (signUpData: {
   phone: string;
   phone_country_code: number | string;
   password: string;
+  country:string
   // terms?: boolean;
 }) => {
   try {
@@ -224,7 +225,9 @@ export const sign_up = async (signUpData: {
     formData.append("phone_country_code", String(signUpData.phone_country_code));
     formData.append("password", signUpData.password);
     formData.append("api_key", api_key ?? "");
-    formData.append("user_type", "agent");
+    formData.append("country",signUpData.country)
+    formData.append("user_type", "Customer");
+
 
     // if (signUpData.terms !== undefined) {
     //   formData.append("terms", signUpData.terms ? "1" : "0");
@@ -439,21 +442,18 @@ export const getAccessToken = async () => {
   return token;
 };
 //------------------------ FORGET PASSWORD -----------------------------//
-export const forget_password = async (payload: {
-  email: string;
-
-  // terms: boolean;
-}) => {
+export const forget_password = async (email:string) => {
   try {
-    const response = await fetch(`${baseUrl}/forget-password`, {
+    const formData=new FormData()
+    formData.append('email',email)
+    formData.append('api_key',api_key ?? "")
+    const response = await fetch(`${baseUrl}/forget_password`, {
       method: "POST",
-      body: new URLSearchParams({
-        email: payload.email,
-        // terms: signUpData.terms.toString(),
-      }).toString(),
-      headers: await getHeaders("application/x-www-form-urlencoded"),
+      body: formData,
+
     });
     const data = await response.json().catch(() => null);
+    console.log('forget password', data)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }

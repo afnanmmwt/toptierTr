@@ -77,7 +77,7 @@ export const toCardData = (b: any): BookingCardData => ({
   childs: String(b.childs ?? ""),
   room_data: b.room_data,
   guest: b.guest, // keep raw; we parse safely in the component
-}); 
+});
 // ======================== CARD COMPONENT ========================
 const DashboardCard = ({ data }: { data: BookingCardData }) => {
   const [open, setOpen] = useState(false);
@@ -505,7 +505,7 @@ const DashboardCard = ({ data }: { data: BookingCardData }) => {
                       return;
                     }
 
-                    const invoiceUrl = `https://toptier-tr-ef19.vercel.app/hotel/invoice/${ref}`;
+                    const invoiceUrl = `https://toptier-tr-ef19.vercel.app/hotels/invoice/${ref}`;
                     window.location.href = invoiceUrl;
                   }}
                 >
