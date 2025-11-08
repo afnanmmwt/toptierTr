@@ -8,7 +8,12 @@ import React, { useState } from "react";
 type RoomItem = {
   room_name?: string;
   room_price?: string;
-  room_qaunitity?: string;
+  room_quantity?: string;
+  room_actual_price_per_night?:string;
+  total_markup_price: string;
+  total_nights:string | number;
+
+
 
   [k: string]: unknown;
 };
@@ -104,7 +109,6 @@ const DashboardCard = ({ data }: { data: BookingCardData }) => {
   } catch {
     roomInfo = null;
   }
-
   return (
     <div className="">
       {/* CARD */}
@@ -463,18 +467,19 @@ const DashboardCard = ({ data }: { data: BookingCardData }) => {
                     <div>
                       <p className="text-xs text-gray-500">{dict?.dashboardCard?.roomprice}</p>
                       <p className="text-sm font-semibold">
-                        $
-                        {roomInfo?.room_price
-                          ? `${roomInfo.room_price} ${data.currency_markup}`
+
+                        {roomInfo?.room_actual_price_per_night
+                          ? `${data.currency_markup} ${" "} ${roomInfo.room_actual_price_per_night} `
                           : "—"}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-gray-500">{dict?.dashboardCard?.roomqaunitity}</p>
                       <p className="text-sm font-semibold">
-                        {roomInfo?.room_qaunitity || "—"}
+                        {roomInfo?.room_quantity || "—"}
                       </p>
                     </div>
+
                     <div>
                       <p className="text-xs text-gray-500">{dict?.dashboardCard?.adults}</p>
                       <p className="text-sm font-semibold">
@@ -485,6 +490,18 @@ const DashboardCard = ({ data }: { data: BookingCardData }) => {
                       <p className="text-xs text-gray-500">{dict?.dashboardCard?.childs}</p>
                       <p className="text-sm font-semibold">
                         {data?.childs || "—"}
+                      </p>
+                    </div>
+                     <div>
+                      <p className="text-xs text-gray-500">{dict?.dashboardCard?.total_nights || "Total Nights"}</p>
+                      <p className="text-sm font-semibold">
+                        {roomInfo?.total_nights || "—"}
+                      </p>
+                    </div>
+                     <div>
+                      <p className="text-xs text-gray-500">{dict?.dashboardCard?.total_price || "Total Price"}</p>
+                      <p className="text-sm font-semibold">
+                        {roomInfo?.total_markup_price || "—"}
                       </p>
                     </div>
                   </div>

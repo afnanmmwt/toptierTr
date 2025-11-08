@@ -38,8 +38,19 @@
     "agree_text": "I agree to the",
     "terms_of_use": "Terms of Use",
     "and": "and",
+    "phone_code_label":"Phone Country Code",
     "privacy_policy": "Privacy Policy",
     "create_account_button": "Create Account",
+    "success_message": "Signup successful!.Please check your Email for verification 🎉"
+  },
+    "forget_password": {
+    "title": "Forget Password",
+    "subtitle": "Enter your email to receive a reset password",
+    "label": "Email",
+    "email_placeholder":"Enter your email",
+    "submit":"Submit",
+    "back_to":"Back to",
+    "login":"Login",
     "success_message": "Signup successful!.Please check your Email for verification 🎉"
   },
   "errors": {
@@ -540,6 +551,8 @@
     "roomname": "Room name",
     "roomprice": "Room price",
     "roomqaunitity": "Room qaunitity",
+    "total_nights":"Total Nights",
+    "total_price":"Total Price",
     "childs": "Childs",
     "invoice": "Invoice",
     "close": "Close",

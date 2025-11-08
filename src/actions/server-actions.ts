@@ -7,7 +7,6 @@ import { userInfo } from "os";
 import { z } from 'zod';
 import { json } from "stream/consumers";
 import { redirect } from "next/navigation";
-// console.log("base",baseUrl);
 
 
 // ============== COMMON HEADER ================
@@ -453,7 +452,6 @@ export const forget_password = async (email:string) => {
 
     });
     const data = await response.json().catch(() => null);
-    console.log('forget password', data)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
@@ -601,7 +599,7 @@ if (agent_ref) {
     });
 
     const data = await response.json().catch(() => null);
-console.log('form dataa')
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong", module: payload.modules };
     }
@@ -979,7 +977,6 @@ formData.append(
     });
 
     const data = await response.json().catch(() => null);
-
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }

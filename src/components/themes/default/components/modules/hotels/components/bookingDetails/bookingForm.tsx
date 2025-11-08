@@ -262,17 +262,29 @@ const agent_fee=markup_type ==="user_markup" ? markup_amout : ""
     iso: c.iso,
     phonecode: c.phonecode,
   }));
-  const phoneCodeOptions = countryList.map((c) => ({
+  // const phoneCodeOptions = countryList.map((c) => ({
+  //   value: `+${c.phonecode}`,
+  //   label: `+${c.phonecode}`,
+  //   iso: c.iso,
+  //   phonecode: `${c.phonecode}`,
+  // }));
+
+  const phoneCodeOptions = countryList.map((c) => {
+  const iso = c.phonecode === "1" ? "US" : c.iso;
+  return {
     value: `+${c.phonecode}`,
     label: `+${c.phonecode}`,
-    iso: c.iso,
+    iso, //  overridden for +1
     phonecode: `${c.phonecode}`,
-  }));
-useEffect(()=>{
-   dispatch(setBookingReference(""));
-const ref_no= new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14)
-dispatch(setBookingReference(ref_no))
-},[])
+  };
+});
+useEffect(() => {
+  if (!bookingReference) {
+    const ref_no = new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
+    dispatch(setBookingReference(ref_no));
+  }
+}, [bookingReference, dispatch]);
+
   const currentCountry = watch('currentCountry');
   useEffect(() => {
     if (currentCountry) {
@@ -339,6 +351,7 @@ const bookingPayload = {
   // 🔹 Price and financials
   price_original: sanitizeNumber(price || 0),
   price_markup: sanitizeNumber(markup_price || 0),
+  supplier_cost: sanitizeNumber(price || 0),
   toptier_fee: sanitizeNumber("0"),
   agent_fee: sanitizeNumber(agent_fee || 0),
   vat: sanitizeNumber(0),
@@ -346,7 +359,7 @@ const bookingPayload = {
   gst: sanitizeNumber(0),
   net_profit: sanitizeNumber(net_profit || 0),
   subtotal: sanitizeNumber(subtotal || 0),
-  supplier_cost: sanitizeNumber(price || 0),
+
 
   // 🔹 Customer info
   first_name: firstName || "",
@@ -510,9 +523,11 @@ const bookingPayload = {
   booking_nights: total_nights,
 
   // 🔹 Price and financials
-  price_original: parseFloat(price).toFixed(2) || "",
-  price_markup: parseFloat(markup_price).toFixed(2) || "",
-  actual_price:  parseFloat(price).toFixed(2) || "",
+    price_original: sanitizeNumber(price || 0),
+  price_markup: sanitizeNumber(markup_price || 0),
+  supplier_cost: sanitizeNumber(price || 0),
+
+  actual_price:sanitizeNumber(price || 0),
   toptier_fee: "0",
   agent_fee: agent_fee || "0",
   vat: 0,
@@ -520,7 +535,6 @@ const bookingPayload = {
   gst: 0,
   net_profit: net_profit || 0,
   subtotal: subtotal || 0,
-  supplier_cost:  parseFloat(price).toFixed(2) || "",
   supplier_id: supplier_id || "",
   supplier_payment_type: "",
   customer_payment_type: "",
@@ -698,6 +712,7 @@ user_id: user?.user_id,
         setIsProcessingPayment(false);
         setIsPending(false);
       } else if (result.paymentIntent?.status === 'succeeded') {
+         dispatch(setBookingReference(''));
         router.replace(success_url);
       } else {
         alert("Payment did not succeed. Please try again.");
@@ -713,8 +728,6 @@ user_id: user?.user_id,
 
 
   const getCountryByIso = (iso: string) => countryList.find((c) => c.iso === iso);
-
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {/* Personal Information */}

@@ -32,13 +32,7 @@ export async function POST(req: Request) {
     const user_id = userinfo?.user?.user_id ?? "";
 
     const { amount, currency, email, booking_ref_no, module_type } = await req.json();
-    console.log('amount ==============',amount)
-        console.log('currency ==============',currency)
-
-            console.log('email ==============',email)
-
-                console.log('booking_ref_no ==============',booking_ref_no)
-
+   
     if (!amount || !currency || !email || !booking_ref_no) {
       throw new Error("Missing required payment parameters");
     }

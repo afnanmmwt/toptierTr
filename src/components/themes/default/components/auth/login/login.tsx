@@ -20,7 +20,6 @@ const Login = ({ dict }: { dict?: any }) => {
   const { lang } = useParams();
   const router = useRouter();
   const [direction] = useDirection();
-  console.log("direction", direction)
   const [isDarkMode] = useDarkMode();
   const lastRoute=sessionStorage.getItem('lastRoute')
   const { checkSession,user } = useUser();

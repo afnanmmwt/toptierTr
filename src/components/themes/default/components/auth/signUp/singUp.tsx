@@ -19,13 +19,13 @@ import { useAppSelector } from "@lib/redux/store";
 import { mode as selectMode } from "@lib/redux/base/selectors";
 import useDarkMode from "@hooks/useDarkMode";
 import useCountries from "@hooks/useCountries";
-import Select from "@components/core/select"; // ✅ Import Select
-import useLocale from "@hooks/useLocale"; // ✅ Required for RTL
+import Select from "@components/core/select"; // Import Select
+import useLocale from "@hooks/useLocale"; //  Required for RTL
 
 export default function SignUpForm() {
   const { lang } = useParams();
   const { data: dict, isLoading } = useDictionary(lang as any);
-  const { locale } = useLocale(); // ✅ For RTL support
+  const { locale } = useLocale(); //  For RTL support
   const [direction] = useDirection();
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
@@ -58,13 +58,16 @@ export default function SignUpForm() {
     phonecode: c.phonecode,
   }));
 
-  const phoneCodeOptions = countryList.map((c) => ({
-    value: c.phonecode, // numeric only (e.g., "92")
+const phoneCodeOptions = countryList.map((c) => {
+  // Force US flag for shared code "+1"
+  const displayIso = c.phonecode === "1" ? "US" : c.iso;
+  return {
+    value: c.phonecode,
     label: `+${c.phonecode}`,
-    iso: c.iso,
+    iso: displayIso, //  This controls the flag
     phonecode: c.phonecode,
-  }));
-
+  };
+});
   //  Fix Zod schema — country is NOT email!
   const schema = zod.object({
     first_name: zod.string().min(1, { message: dict?.errors?.first_name_required }),
@@ -145,7 +148,7 @@ export default function SignUpForm() {
 
   const onSubmit = useCallback(
     async (values: Values) => {
-      console.log('values',values)
+
       setLoading(true);
       try {
         await mutate.mutateAsync({
@@ -326,7 +329,7 @@ export default function SignUpForm() {
             {/* Phone Country Code (with flags) */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                {dict?.signup_form?.phone_code_label || "Phone Country Code"}
+                {dict?.signup_form?.phone_code_label }
               </label>
               <Controller
                 name="phone_country_code"
