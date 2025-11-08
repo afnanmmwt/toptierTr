@@ -832,7 +832,7 @@ View Invoice: ${invoiceUrl}`;
           </div>
         </div>
 
-        {bookingData.paymentStatus === "unpaid" && (
+        {/* {bookingData.paymentStatus === "unpaid" && (
           <div className="paymentSection">
             <div className="paymentTitle">Pay With</div>
 
@@ -895,7 +895,7 @@ View Invoice: ${invoiceUrl}`;
               USD {bookingData.total.replace(/[^0-9.,]/g, "")}
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Booking Details */}
         <div className="content">

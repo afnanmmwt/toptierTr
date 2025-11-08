@@ -853,18 +853,11 @@ export const hotel_booking = async (payload: BookingPayload) => {
 let agent_id = '';
 
 if (agent_ref) {
-  // Priority 1: Use referral if present
   agent_id = agent_ref;
 } else if (
-  typeof userinfo === 'object' &&
-  userinfo !== null &&
-  (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
+  userinfo?.user?.user_type === 'Agent'
 ) {
-  // Priority 2: If no referral, and user is an Agent → self-assign
-  agent_id = userId;
-} else {
-  // Priority 3: Not an agent and no referral → no agent_id
-  agent_id = '';
+  agent_id = userinfo.user.user_id; // safe and explicit
 }
 
     const formData = new FormData();
