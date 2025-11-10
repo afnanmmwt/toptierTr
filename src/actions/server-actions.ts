@@ -815,7 +815,7 @@ export interface BookingPayload {
   checkout: string;
   adults: number;
   childs: number;
-  child_ages: string | number;
+  child_ages: string;
   currency_original: string;
   currency_markup: string;
   payment_date: string;
@@ -927,7 +927,10 @@ formData.append(
     formData.append("checkout", payload.checkout);
     formData.append("adults", String(payload.adults));
     formData.append("childs", String(payload.childs));
-    formData.append("child_ages", String(payload.child_ages));
+ const child_ages = payload?.child_ages.split(',').map(age => ({ ages: Number(age) }));
+// Convert to JSON string
+const ages_json = JSON.stringify(child_ages);
+    formData.append("child_ages",ages_json);
 
     // 🔹 Currency
     formData.append("currency_original", payload.currency_original);
@@ -968,7 +971,8 @@ formData.append(
       method: "POST",
       body: formData,
     });
-
+   console.log('children_ages formdata', formData)
+   console.log("children_ages paylaod",payload )
     const data = await response.json().catch(() => null);
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };

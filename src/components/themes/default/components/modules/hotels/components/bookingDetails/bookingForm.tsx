@@ -196,7 +196,8 @@ bookingReference
   const { adults = 0, children = 0, nationality, checkin, checkout } = saveBookingData;
   const travelers = adults + children;
 //================ EXTRACTING VALUES FROM OPTIONS =================
-  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,subtotal,cc_fee,markup_type,markup_amout,net_profit,markup_price,quantity, per_day, service_fee, child, currency } = selectedRoom?.option || {};
+  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,subtotal,cc_fee,markup_type,markup_amout,net_profit,markup_price,quantity, per_day,children_ages, service_fee, child, currency } = selectedRoom?.option || {};
+  console.log('selectedRoom?.option ',selectedRoom?.option )
 // ============= AGENT FEEE ==================
 const agent_fee=markup_type ==="user_markup" ? markup_amout : ""
  const inDate = new Date(checkin);
@@ -406,7 +407,7 @@ const bookingPayload = {
 
   adults: adults || 0,
   childs: children || 0,
-  child_ages: "",
+  child_ages: children_ages,
 
   currency_original: booking_currency || "USD",
   currency_markup: booking_currency || "USD",
@@ -590,7 +591,7 @@ const bookingPayload = {
   checkout: checkout || "14-10-2025",
   adults: adults || 0,
   childs: children || 0,
-  child_ages: "",
+  child_ages: children_ages,
 
   // 🔹 Currency
   currency_original: booking_currency || "USD",

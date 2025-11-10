@@ -77,7 +77,7 @@ export const useHotelDetails = ({
   const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
   };
-  console.log("initial checkin and initail checkout", initialCheckin, initialCheckout)
+
   const today = new Date();
   const defaultCheckin = initialCheckin || formatDate(today);
   const tomorrow = new Date();

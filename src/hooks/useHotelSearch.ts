@@ -471,7 +471,7 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
        parsedFormData = JSON.parse(selectedNationality); // now it's an object
     }
     //  construct URL
-    const url = `/hotelDetails/${hotel.hotel_id}/${slugName}/${parsedFormData.checkin}/${parsedFormData.checkout}/${form.rooms}/${form.adults}/${parsedFormData.children}/${parsedFormData.nationality}`;
+    const url = `/hotelDetails/${hotel.hotel_id}/${slugName}/${parsedFormData.checkin}/${parsedFormData.checkout}/${parsedFormData.rooms}/${parsedFormData.adults}/${parsedFormData.children}/${parsedFormData.nationality}`;
     dispatch(setSeletecHotel(hotel));
      setTimeout(() => {
      setLoadingHotelId(null)

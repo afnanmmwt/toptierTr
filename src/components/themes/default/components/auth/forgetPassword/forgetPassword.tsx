@@ -14,14 +14,15 @@ import Button from "@components/core/button";
 import useDarkMode from "@hooks/useDarkMode";
 import { toast } from "react-toastify";
 
-const schema = zod.object({
-  email: zod.string().min(1, { message: "Email is required" }).email(),
-});
 
-type Values = zod.infer<typeof schema>;
-const defaultValues = { email: "" } satisfies Values;
+
 
 export default function ForgetPassword({ dict }: { dict?: any }) {
+  const schema = zod.object({
+  email: zod.string().min(1, { message:  dict?.errors?.email_invalid }).email(),
+});
+const defaultValues = { email: "" } satisfies Values;
+type Values = zod.infer<typeof schema>;
   const [isDarkMode] = useDarkMode();
   const { lang } = useParams();
   const router = useRouter();

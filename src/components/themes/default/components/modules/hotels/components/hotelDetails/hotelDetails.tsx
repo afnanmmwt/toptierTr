@@ -32,7 +32,7 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
     checkin: "",
     checkout: "",
     rooms: 1,
-    adults: 2,
+    adults: 1,
     children: 0,
     nationality: "US",
   });

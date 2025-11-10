@@ -41,7 +41,12 @@
     "phone_code_label":"Phone Country Code",
     "privacy_policy": "Privacy Policy",
     "create_account_button": "Create Account",
-    "success_message": "Signup successful!.Please check your Email for verification 🎉"
+    "success_message": "Signup successful!.Please check your Email for verification "
+  },
+  "activated_account":{
+  "title":"Account Activated!",
+  "message":"Your email has been verified. You can now log in to your account.",
+  "login_text":"Login Now"
   },
     "forget_password": {
     "title": "Forget Password",
@@ -51,7 +56,7 @@
     "submit":"Submit",
     "back_to":"Back to",
     "login":"Login",
-    "success_message": "Signup successful!.Please check your Email for verification 🎉"
+    "success_message": "Signup successful!.Please check your Email for verification "
   },
   "errors": {
     "first_name_required": "First name is required",

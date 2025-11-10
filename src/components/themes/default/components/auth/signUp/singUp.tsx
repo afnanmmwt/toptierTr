@@ -85,9 +85,9 @@ const phoneCodeOptions = countryList.map((c) => {
     terms: zod.boolean().refine((val) => val === true, {
       message: dict?.errors?.terms_required,
     }),
-    human: zod.boolean().refine((val) => val === true, {
-      message: dict?.errors?.human_required,
-    }),
+    // human: zod.boolean().refine((val) => val === true, {
+    //   message: dict?.errors?.human_required,
+    // }),
   });
 
   type Values = zod.infer<typeof schema>;
@@ -101,7 +101,7 @@ const phoneCodeOptions = countryList.map((c) => {
     phone_country_code: "1", //  numeric code
     password: "",
     terms: false,
-    human: false,
+    // human: false,
 
   };
 
@@ -194,306 +194,296 @@ const phoneCodeOptions = countryList.map((c) => {
               </Alert>
             )}
 
-            {/* First + Last Name */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                  {dict?.signup_form?.first_name}
-                </label>
-                <Controller
-                  name="first_name"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="relative flex flex-col gap-2">
-                      <Input
-                        {...field}
-                        placeholder={dict?.signup_form?.first_name_placeholder}
-                        size="lg"
-                        invalid={!!errors.first_name}
-                      />
-                      {errors.first_name && (
-                        <p className="text-red-500 text-xs flex items-center gap-1">
-                          <Icon icon="mdi:warning-circle" width="15" height="15" />
-                          {errors.first_name.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
+        {/* First + Last Name */}
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <div className="relative">
+    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+      {dict?.signup_form?.first_name}
+    </label>
+    <Controller
+      name="first_name"
+      control={control}
+      render={({ field }) => (
+        <Input
+          {...field}
+          placeholder={dict?.signup_form?.first_name_placeholder}
+          size="lg"
+          invalid={!!errors.first_name}
+        />
+      )}
+    />
+    {errors.first_name && (
+      <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
+        <Icon icon="mdi:warning-circle" width="15" height="15" />
+        {errors.first_name.message}
+      </p>
+    )}
+  </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                  {dict?.signup_form?.last_name}
-                </label>
-                <Controller
-                  name="last_name"
-                  control={control}
-                  render={({ field }) => (
-                    <div className="relative flex flex-col gap-2">
-                      <Input
-                        {...field}
-                        placeholder={dict?.signup_form?.last_name_placeholder}
-                        size="lg"
-                        invalid={!!errors.last_name}
-                      />
-                      {errors.last_name && (
-                        <p className="text-red-500 text-xs flex items-center gap-1">
-                          <Icon icon="mdi:warning-circle" width="15" height="15" />
-                          {errors.last_name.message}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                />
-              </div>
-            </div>
+  <div className="relative">
+    <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+      {dict?.signup_form?.last_name}
+    </label>
+    <Controller
+      name="last_name"
+      control={control}
+      render={({ field }) => (
+        <Input
+          {...field}
+          placeholder={dict?.signup_form?.last_name_placeholder}
+          size="lg"
+          invalid={!!errors.last_name}
+        />
+      )}
+    />
+    {errors.last_name && (
+      <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
+        <Icon icon="mdi:warning-circle" width="15" height="15" />
+        {errors.last_name.message}
+      </p>
+    )}
+  </div>
+</div>
 
-            {/* Country (with flags) */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                {dict?.signup_form?.country_label || "Country"}
-              </label>
-              <Controller
-                name="country"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    options={countryOptions}
-                    placeholder={dict?.signup_form?.country_placeholder || "Select country"}
-                    isSearchable
-                    onChange={(option: any) => field.onChange(option?.value || "")}
-                    value={countryOptions.find((opt) => opt.value === field.value) || null}
-                    className="w-full"
-                    classNames={{
-                      control: () =>
-                        "border border-gray-200 cursor-pointer rounded-lg px-3 py-2.5 flex items-center min-h-[44px] text-base focus:ring-1 focus:ring-[#163C8C] focus:border-[#163C8C] shadow-none",
-                      valueContainer: () => "flex items-center gap-2 px-1",
-                      singleValue: () => "flex items-center gap-2 text-gray-800 font-medium truncate",
-                      placeholder: () => "text-gray-400 font-normal",
-                      indicatorsContainer: () =>
-                        locale?.startsWith("ar") ? "absolute left-4" : "absolute right-4",
-                    }}
-                    onMenuOpen={() => setIsCountryListOpen(true)}
-                    onMenuClose={() => setIsCountryListOpen(false)}
-                    components={{
-                      Option: ({ data, ...props }) => (
-                        <div
-                          {...props.innerProps}
-                          className="px-3 py-2 cursor-pointer flex items-center gap-2 hover:bg-gray-100"
-                        >
-                          <Icon
-                            icon={`flagpack:${data.iso?.toLowerCase()}`}
-                            width="22"
-                            height="16"
-                            className="rounded-sm"
-                          />
-                          <span>{data.label}</span>
-                        </div>
-                      ),
-                      SingleValue: ({ data }) => (
-                        <div className="flex items-center gap-2 truncate">
-                          <Icon
-                            icon={`flagpack:${data.iso?.toLowerCase()}`}
-                            width="22"
-                            height="16"
-                            className="rounded-sm"
-                          />
-                          <span>{data.label}</span>
-                        </div>
-                      ),
-                      DropdownIndicator: () => (
-                        <Icon
-                          icon="mdi:keyboard-arrow-down"
-                          width="24"
-                          height="24"
-                          className={`text-gray-600 transition duration-100 ease-in-out ${
-                            isCountryListOpen ? "rotate-180" : "rotate-0"
-                          }`}
-                        />
-                      ),
-                      IndicatorSeparator: () => null,
-                    }}
-                  />
-                )}
+{/* Country */}
+<div className="relative">
+  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+    {dict?.signup_form?.country_label || "Country"}
+  </label>
+  <Controller
+    name="country"
+    control={control}
+    render={({ field }) => (
+      <Select
+        {...field}
+        options={countryOptions}
+        placeholder={dict?.signup_form?.country_placeholder || "Select country"}
+        isSearchable
+        onChange={(option: any) => field.onChange(option?.value || "")}
+        value={countryOptions.find((opt) => opt.value === field.value) || null}
+        className="w-full"
+        classNames={{
+          control: () =>
+            "border border-gray-200 cursor-pointer rounded-lg px-3 py-2.5 flex items-center min-h-[44px] text-base focus:ring-1 focus:ring-[#163C8C] focus:border-[#163C8C] shadow-none",
+          valueContainer: () => "flex items-center gap-2 px-1",
+          singleValue: () => "flex items-center gap-2 text-gray-800 font-medium truncate",
+          placeholder: () => "text-gray-400 font-normal",
+          indicatorsContainer: () =>
+            locale?.startsWith("ar") ? "absolute left-4" : "absolute right-4",
+        }}
+        onMenuOpen={() => setIsCountryListOpen(true)}
+        onMenuClose={() => setIsCountryListOpen(false)}
+        components={{
+          Option: ({ data, ...props }) => (
+            <div
+              {...props.innerProps}
+              className="px-3 py-2 cursor-pointer flex items-center gap-2 hover:bg-gray-100"
+            >
+              <Icon
+                icon={`flagpack:${data.iso?.toLowerCase()}`}
+                width="22"
+                height="16"
+                className="rounded-sm"
               />
-              {errors.country && (
-                <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
-                  <Icon icon="mdi:warning-circle" width="15" height="15" />
-                  {errors.country.message}
-                </p>
-              )}
+              <span>{data.label}</span>
             </div>
-
-            {/* Phone Country Code (with flags) */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                {dict?.signup_form?.phone_code_label }
-              </label>
-              <Controller
-                name="phone_country_code"
-                control={control}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    options={phoneCodeOptions}
-                    placeholder={dict?.signup_form?.phone_code_placeholder || "Select code"}
-                    isSearchable
-                    onChange={(option: any) => field.onChange(option?.value || "")}
-                    value={phoneCodeOptions.find((opt) => opt.value === field.value) || null}
-                    className="w-full"
-                    classNames={{
-                      control: () =>
-                        "border border-gray-200 cursor-pointer rounded-lg px-3 py-2.5 flex items-center min-h-[44px] text-base focus:ring-1 focus:ring-[#163C8C] focus:border-[#163C8C] shadow-none",
-                      valueContainer: () => "flex items-center gap-2 px-1",
-                      singleValue: () => "flex items-center justify-between text-gray-800 font-medium",
-                      placeholder: () => "text-gray-400 font-normal",
-                      indicatorsContainer: () =>
-                        locale?.startsWith("ar") ? "absolute left-4" : "absolute right-4",
-                    }}
-                    onMenuOpen={() => setIsPhoneCodeListOpen(true)}
-                    onMenuClose={() => setIsPhoneCodeListOpen(false)}
-                    components={{
-                      Option: ({ data, ...props }) => (
-                        <div
-                          {...props.innerProps}
-                          className="px-3 py-2 cursor-pointer flex items-center gap-2 hover:bg-gray-100"
-                        >
-                          <Icon
-                            icon={`flagpack:${data.iso?.toLowerCase()}`}
-                            width="22"
-                            height="16"
-                            className="rounded-sm"
-                          />
-                          <span>+{data.phonecode}</span>
-                        </div>
-                      ),
-                      SingleValue: ({ data }) => (
-                        <div className="flex items-center justify-between gap-2 truncate">
-                          <Icon
-                            icon={`flagpack:${data.iso?.toLowerCase()}`}
-                            width="22"
-                            height="16"
-                            className="rounded-sm"
-                          />
-                          <span>+{data.phonecode}</span>
-                        </div>
-                      ),
-                      DropdownIndicator: () => (
-                        <Icon
-                          icon="mdi:keyboard-arrow-down"
-                          width="24"
-                          height="24"
-                          className={`text-gray-600 transition duration-100 ease-in-out ${
-                            isPhoneCodeListOpen ? "rotate-180" : "rotate-0"
-                          }`}
-                        />
-                      ),
-                      IndicatorSeparator: () => null,
-                    }}
-                  />
-                )}
+          ),
+          SingleValue: ({ data }) => (
+            <div className="flex items-center gap-2 truncate">
+              <Icon
+                icon={`flagpack:${data.iso?.toLowerCase()}`}
+                width="22"
+                height="16"
+                className="rounded-sm"
               />
-              {errors.phone_country_code && (
-                <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
-                  <Icon icon="mdi:warning-circle" width="15" height="15" />
-                  {errors.phone_country_code.message}
-                </p>
-              )}
+              <span>{data.label}</span>
             </div>
+          ),
+          DropdownIndicator: () => (
+            <Icon
+              icon="mdi:keyboard-arrow-down"
+              width="24"
+              height="24"
+              className={`text-gray-600 transition duration-100 ease-in-out ${
+                isCountryListOpen ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          ),
+          IndicatorSeparator: () => null,
+        }}
+      />
+    )}
+  />
+  {errors.country && (
+    <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
+      <Icon icon="mdi:warning-circle" width="15" height="15" />
+      {errors.country.message}
+    </p>
+  )}
+</div>
 
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                {dict?.signup_form?.phone_label}
-              </label>
-              <Controller
-                name="phone"
-                control={control}
-                render={({ field }) => (
-                  <div className="relative flex flex-col gap-2">
-                    <Input
-                      {...field}
-                      placeholder={dict?.signup_form?.phone_placeholder}
-                      size="lg"
-                      invalid={!!errors.phone}
-                    />
-                    {errors.phone && (
-                      <p className="text-red-500 text-xs ps-3 flex items-center gap-1">
-                        <Icon icon="mdi:warning-circle" width="15" height="15" />
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-                )}
+{/* Phone Country Code */}
+<div className="relative">
+  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+    {dict?.signup_form?.phone_code_label}
+  </label>
+  <Controller
+    name="phone_country_code"
+    control={control}
+    render={({ field }) => (
+      <Select
+        {...field}
+        options={phoneCodeOptions}
+        placeholder={dict?.signup_form?.phone_code_placeholder || "Select code"}
+        isSearchable
+        onChange={(option: any) => field.onChange(option?.value || "")}
+        value={phoneCodeOptions.find((opt) => opt.value === field.value) || null}
+        className="w-full"
+        classNames={{
+          control: () =>
+            "border border-gray-200 cursor-pointer rounded-lg px-3 py-2.5 flex items-center min-h-[44px] text-base focus:ring-1 focus:ring-[#163C8C] focus:border-[#163C8C] shadow-none",
+          valueContainer: () => "flex items-center gap-2 px-1",
+          singleValue: () => "flex items-center justify-between text-gray-800 font-medium",
+          placeholder: () => "text-gray-400 font-normal",
+          indicatorsContainer: () =>
+            locale?.startsWith("ar") ? "absolute left-4" : "absolute right-4",
+        }}
+        onMenuOpen={() => setIsPhoneCodeListOpen(true)}
+        onMenuClose={() => setIsPhoneCodeListOpen(false)}
+        components={{
+          Option: ({ data, ...props }) => (
+            <div
+              {...props.innerProps}
+              className="px-3 py-2 cursor-pointer flex items-center gap-2 hover:bg-gray-100"
+            >
+              <Icon
+                icon={`flagpack:${data.iso?.toLowerCase()}`}
+                width="22"
+                height="16"
+                className="rounded-sm"
               />
+              <span>+{data.phonecode}</span>
             </div>
+          ),
+          SingleValue: ({ data }) => (
+            <div className="flex items-center justify-between gap-2 truncate">
+              <Icon
+                icon={`flagpack:${data.iso?.toLowerCase()}`}
+                width="22"
+                height="16"
+                className="rounded-sm"
+              />
+              <span>+{data.phonecode}</span>
+            </div>
+          ),
+          DropdownIndicator: () => (
+            <Icon
+              icon="mdi:keyboard-arrow-down"
+              width="24"
+              height="24"
+              className={`text-gray-600 transition duration-100 ease-in-out ${
+                isPhoneCodeListOpen ? "rotate-180" : "rotate-0"
+              }`}
+            />
+          ),
+          IndicatorSeparator: () => null,
+        }}
+      />
+    )}
+  />
+  {errors.phone_country_code && (
+    <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
+      <Icon icon="mdi:warning-circle" width="15" height="15" />
+      {errors.phone_country_code.message}
+    </p>
+  )}
+</div>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                {dict?.signup_form?.email_label}
-              </label>
-              <Controller
-                name="email"
-                control={control}
-                render={({ field }) => (
-                  <div className="relative flex flex-col gap-2">
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder={dict?.signup_form?.email_placeholder}
-                      size="lg"
-                      invalid={!!errors.email}
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-xs flex items-center gap-1">
-                        <Icon icon="mdi:warning-circle" width="15" height="15" />
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
-            </div>
+{/* Phone */}
+<div className="relative">
+  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+    {dict?.signup_form?.phone_label}
+  </label>
+  <Controller
+    name="phone"
+    control={control}
+    render={({ field }) => (
+      <Input
+        {...field}
+        placeholder={dict?.signup_form?.phone_placeholder}
+        size="lg"
+        invalid={!!errors.phone}
+      />
+    )}
+  />
+  {errors.phone && (
+    <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full  ps-0">
+      <Icon icon="mdi:warning-circle" width="15" height="15" />
+      {errors.phone.message}
+    </p>
+  )}
+</div>
 
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
-                {dict?.signup_form?.password_label}
-              </label>
-              <Controller
-                name="password"
-                control={control}
-                render={({ field }) => (
-                  <div className="relative flex flex-col gap-2">
-                    <Input
-                      {...field}
-                      type={showPassword ? "text" : "password"}
-                      placeholder={dict?.signup_form?.password_placeholder}
-                      size="lg"
-                      invalid={!!errors.password}
-                      suffix={
-                        <button type="button" onClick={() => setShowPassword(!showPassword)}>
-                          <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} width="20" height="20" />
-                        </button>
-                      }
-                    />
-                    {errors.password && (
-                      <p className="text-red-500 text-xs flex items-center gap-1">
-                        <Icon icon="mdi:warning-circle" width="15" height="15" />
-                        {errors.password.message}
-                      </p>
-                    )}
-                  </div>
-                )}
-              />
-            </div>
+{/* Email */}
+<div className="relative">
+  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+    {dict?.signup_form?.email_label}
+  </label>
+  <Controller
+    name="email"
+    control={control}
+    render={({ field }) => (
+      <Input
+        {...field}
+        type="email"
+        placeholder={dict?.signup_form?.email_placeholder}
+        size="lg"
+        invalid={!!errors.email}
+      />
+    )}
+  />
+  {errors.email && (
+    <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
+      <Icon icon="mdi:warning-circle" width="15" height="15" />
+      {errors.email.message}
+    </p>
+  )}
+</div>
+
+{/* Password */}
+<div className="relative">
+  <label className="block text-sm font-medium text-gray-700 mb-2 dark:text-gray-100">
+    {dict?.signup_form?.password_label}
+  </label>
+  <Controller
+    name="password"
+    control={control}
+    render={({ field }) => (
+      <Input
+        {...field}
+        type={showPassword ? "text" : "password"}
+        placeholder={dict?.signup_form?.password_placeholder}
+        size="lg"
+        invalid={!!errors.password}
+        suffix={
+          <button type="button" onClick={() => setShowPassword(!showPassword)}>
+            <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} width="20" height="20" />
+          </button>
+        }
+      />
+    )}
+  />
+  {errors.password && (
+    <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
+      <Icon icon="mdi:warning-circle" width="15" height="15" />
+      {errors.password.message}
+    </p>
+  )}
+</div>
 
             {/* Human + Terms */}
-            <div>
-              <div className="flex items-start space-x-3 gap-2 mb-2">
+            <div className="relative">
+              {/* <div className="  flex items-start space-x-3 gap-2 mb-2">
                 <Controller
                   name="human"
                   control={control}
@@ -508,15 +498,16 @@ const phoneCodeOptions = countryList.map((c) => {
                 <label className="text-sm text-gray-600 dark:text-gray-100 cursor-pointer">
                   {dict?.signup_form?.human_label}
                 </label>
-              </div>
-              {errors.human && (
-                <p className="text-red-500 text-xs flex items-center gap-1">
+              </div> */}
+
+              {/* {errors.human && (
+                <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1  top-4 ">
                   <Icon icon="mdi:warning-circle" width="15" height="15" />
                   {errors.human.message}
                 </p>
-              )}
+              )} */}
 
-              <div className="flex items-start space-x-3 gap-2 mt-3">
+              <div className=" relative flex items-start space-x-3 gap-2 mt-3">
                 <Controller
                   name="terms"
                   control={control}
@@ -550,7 +541,7 @@ const phoneCodeOptions = countryList.map((c) => {
                 </label>
               </div>
               {errors.terms && (
-                <p className="text-red-500 text-xs flex items-center gap-1 mt-1">
+                <p className="absolute mt-1 text-red-500 text-xs flex items-center gap-1 top-full ">
                   <Icon icon="mdi:warning-circle" width="15" height="15" />
                   {errors.terms.message}
                 </p>
