@@ -30,6 +30,7 @@ export default function HomeWrapper({ dict }: { dict: any }) {
 // Capture & store referral code
 useEffect(() => {
   const refParam = searchParams.get('ref');
+
   if (refParam) {
     try {
       // Step 1: URL-decode (in case it was encoded)
@@ -37,7 +38,8 @@ useEffect(() => {
 
       // Step 2: Base64 decode to get the actual agent user_id
       const agentUserId = atob(urlDecoded); // Base64 decode
-     console.log('agent re', agentUserId)
+      console.log('agent re', agentUserId);
+
       // Step 3: Validate it's a reasonable string (optional but safe)
       if (agentUserId && /^[a-zA-Z0-9]+$/.test(agentUserId)) {
         // Store the REAL agent user_id (not the encoded one)
@@ -49,8 +51,13 @@ useEffect(() => {
       console.error('Failed to decode referral code:', refParam, error);
       // Optionally: don't store if decode fails
     }
+  } else {
+    // 🚨 No ref parameter in URL — remove existing agent_ref cookie
+    document.cookie = 'agent_ref=; path=/; max-age=0';
+    console.log('agent_ref cookie removed');
   }
 }, [searchParams]);
+
   // Redirect after login
   useEffect(() => {
     if (lastRoute === "/bookings" && user) {

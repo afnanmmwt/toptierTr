@@ -850,15 +850,14 @@ let agent_id = '';
 
 if (agent_ref) {
   agent_id = agent_ref;
-}else{
-  agent_id=userId
 }
-
-// else if (
-//   userinfo?.user?.user_type === 'Agent'
-// ) {
-//   agent_id = userinfo.user.user_id; // safe and explicit
-// }
+else if (
+  userinfo?.user?.user_type === 'Agent'
+) {
+  agent_id = userinfo.user.user_id; // safe and explicit
+}else{
+  agent_id=""
+}
 
     const formData = new FormData();
 
@@ -938,8 +937,6 @@ if (payload.child_ages && payload.child_ages !== "0") {
 const ages_json = JSON.stringify(child_ages);
 const ages=child_ages.length > 0 ? ages_json : ""
 formData.append("child_ages",ages );
-
-
     formData.append("currency_original", payload.currency_original);
     formData.append("currency_markup", payload.currency_markup);
 
@@ -978,7 +975,6 @@ formData.append("child_ages",ages );
       body: formData,
     });
     const data = await response.json().catch(() => null);
-      // console.log('payload data============', payload)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
