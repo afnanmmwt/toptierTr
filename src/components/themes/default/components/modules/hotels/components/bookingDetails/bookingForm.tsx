@@ -565,7 +565,7 @@ const bookingPayload = {
     room_quantity: quantity || 1,
     room_extrabed_price: sanitizeNumber(extrabed_price || 0),
     room_extrabed: extrabeds_quantity || 0,
-    room_actual_price_per_night: sanitizeNumber(markup_price_per_night),
+    room_actual_price_per_night: sanitizeNumber(per_day),
     total_nights: total_nights,
     total_markup_price: sanitizeNumber(markup_price),
     total_actual_price: sanitizeNumber(price),
