@@ -192,10 +192,11 @@ bookingReference
   const { adults = 0, children = 0, nationality, checkin, checkout } = saveBookingData;
   const travelers = adults + children;
 //================ EXTRACTING VALUES FROM OPTIONS =================
-  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,subtotal,cc_fee,markup_type,markup_amout,net_profit,markup_price,quantity, per_day,children_ages, service_fee, child, currency} = selectedRoom?.option || {};
+  const { price, id: option_id, currency: booking_currency, extrabeds_quantity, extrabed_price, markup_price_per_night,subtotal,cc_fee,markup_type,markup_amount,net_profit,markup_price,quantity, per_day,children_ages, service_fee, child, currency} = selectedRoom?.option || {};
 
 // ============= AGENT FEEE ==================
-const agent_fee=markup_type ==="user_markup" ? markup_amout : ""
+const agent_fee= markup_type === "user_markup" ? markup_amount : ""
+
  const inDate = new Date(checkin);
     const outDate = new Date(checkout);
     const total_nights = Math.ceil(
@@ -206,8 +207,6 @@ const agent_fee=markup_type ==="user_markup" ? markup_amout : ""
   if (value === null || value === undefined) return "0";
   return String(value).replace(/,/g, "");
 };
-
-
  const booking_data = selectedRoom?.option || {};
   const modified_booking_data = {
   ...booking_data,
@@ -888,7 +887,7 @@ user_id: user?.user_id,
                       <span>{data.label}</span>
                     </div>
                   ),
-                  // ✅ ONLY CHANGE: keep arrow rotation, but no margin tricks
+                  //  ONLY CHANGE: keep arrow rotation, but no margin tricks
                   DropdownIndicator: () => (
                     <Icon
                       icon="mdi:keyboard-arrow-down"

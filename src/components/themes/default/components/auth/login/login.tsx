@@ -75,7 +75,6 @@ useEffect(() => {
     // 👇 handle incorrect credentials
     setLoading(false);
     toast.error(state.error || "Invalid email or password");
-
     // Optionally show error inline:
     setError("root", { message: state.error || "Login failed" });
   }
