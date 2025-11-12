@@ -29,7 +29,8 @@ checkSession?.();
       }
       if (user && lastRoute==="/bookings" ) {
         router.push('/bookings')
-      }else if(user && !lastRoute && amdminRef ){
+      }
+      else if(user && !lastRoute && amdminRef ){
         router.push(amdminRef)
         localStorage.removeItem('adminRef')
       }
