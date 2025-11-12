@@ -29,6 +29,7 @@ checkSession?.();
       }
       if (user && lastRoute==="/bookings" ) {
         router.push('/bookings')
+        sessionStorage.removeItem('lastRoute')
       }
       else if(user && !lastRoute && amdminRef ){
         router.push(amdminRef)
