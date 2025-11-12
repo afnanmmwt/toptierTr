@@ -1195,7 +1195,8 @@ View Invoice: ${invoiceUrl}`;
           </span>
         </button>
 
-        <button
+       {invoiceDetails[0].cancellation_request === "1" ?
+       <button
           onClick={handleCancellation}
           className="actionButton cancellationButton"
         >
@@ -1221,6 +1222,32 @@ View Invoice: ${invoiceUrl}`;
             </>
           )}
         </button>
+         : <button
+          // onClick={handleCancellation}
+          className="actionButton cancellationButton"
+        >
+          {isCancelling ? (
+            <>
+              <Icon
+                icon="eos-icons:loading"
+                className="loadingIcon"
+                width="20"
+                height="20"
+              />
+              <span>
+                {dict?.featured_hotels?.cancelling || "جارٍ الإلغاء..."}
+              </span>
+            </>
+          ) : (
+            <>
+              <Icon icon="mdi:close" width="20" height="20" />
+              <span>
+                {
+                  "Cancellation Not Available"}
+              </span>
+            </>
+          )}
+        </button>}
       </div>
     </div>
   );

@@ -53,6 +53,9 @@ useEffect(() => {
   useEffect(() => {
     if (lastRoute === "/bookings" && user) {
       router.replace('/bookings');
+    }else{
+              sessionStorage.removeItem('lastRoute');
+
     }
   }, [user, router, lastRoute]);
   return (

@@ -65,8 +65,7 @@ useEffect(() => {
         if (token && lastRoute !== "/bookings") {
 
           // https://toptier-agent-d-ua92.vercel.app
-
-          window.location.href = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
+          window.location.href = ` https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
           return;
         }
       }
