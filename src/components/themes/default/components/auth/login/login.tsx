@@ -67,8 +67,6 @@ useEffect(() => {
           // https://toptier-agent-d-ua92.vercel.app
 
           window.location.href = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(token)}&user_id=${userId}`;
-
-
           return;
         }
       }
@@ -83,6 +81,7 @@ useEffect(() => {
     setError("root", { message: state.error || "Login failed" });
   }
 }, [state, router, lang, dict, checkSession, lastRoute, setError]);
+
 
   // Client validation only — then submit hidden form
   const onSubmit = useCallback(

@@ -671,8 +671,6 @@ if (agent_ref) {
 }else{
   agent_id=userId
 }
-
-
 // else if (
 //   typeof userinfo === 'object' &&
 //   userinfo !== null &&
