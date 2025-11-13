@@ -190,7 +190,18 @@ const [roomPrice, setRoomPrice] = useState<string>(() => {
                   </span>
                 </div>
               </div>
-
+              {/* tax percentage */}
+{hotelDetails?.tax_percentage ? (
+  <div className="flex justify-between items-center mt-1">
+    <span className="text-gray-600">
+      {dict?.bookingDetails?.tax || "Tax"}
+    </span>
+    &nbsp;
+    <span className="text-gray-900">
+      {hotelDetails.tax_percentage}%
+    </span>
+  </div>
+) : null}
               <div className="flex justify-between items-center border-t border-gray-300 pt-3 mt-2">
                 <span className="text-lg font-semibold text-[#0F172B]">
                   {dict?.bookingDetails?.total}
