@@ -41,7 +41,7 @@ export default function BookingDetails() {
   );
 
   // Editable fields state
-  const [quantity, setQuantity] = useState<string>(String(rooms || 1));
+const [quantity, setQuantity] = useState<string>(String(rooms || 1));
 const [roomPrice, setRoomPrice] = useState<string>(() => {
   // Remove commas and ensure valid number
   const sanitized = String(markup_price_per_night || "0").replace(/,/g, "");
@@ -49,7 +49,7 @@ const [roomPrice, setRoomPrice] = useState<string>(() => {
 });
 
 
-  const finalTotal = markup_price
+const finalTotal = markup_price
 // final calcualtion
 
 

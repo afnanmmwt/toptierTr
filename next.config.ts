@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+   distDir: "build",
   productionBrowserSourceMaps: true,
-
   async rewrites() {
     return [
       {
@@ -14,12 +14,11 @@ const nextConfig: NextConfig = {
 
   experimental: {
     optimizeCss: false,
-  },
 
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
-
   images: {
     remotePatterns: [
       // Your main domain

@@ -53,6 +53,7 @@ const HeaderMenus = () => {
             <div className="hidden md:flex items-center gap-8 text-gray-700 ">
               {filteredModules?.map((item: any, index: number) => (
                 <Link
+                prefetch={false}
                   key={index}
                   href={`/${moduleHref(String(item.type))}`}
                   target={""}
@@ -66,6 +67,7 @@ const HeaderMenus = () => {
 
               {headerPages?.map((item: any, index: number) => (
                 <Link
+                prefetch={false}
                   key={index}
                   href={`/pages/${item.slug_url}`}
                   target={""}

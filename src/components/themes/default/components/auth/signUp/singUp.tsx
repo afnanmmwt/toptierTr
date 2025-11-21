@@ -73,7 +73,12 @@ phone: zod
   .trim()
   .min(1, { message: dict?.errors?.phone_number_required }),
     phone_country_code: zod.string().min(1, { message: dict?.errors?.country_code_required }),
-    password: zod.string().min(6, { message: dict?.errors?.password_min_length }),
+ password: zod
+  .string()
+  .min(8, { message: dict?.errors?.password_min_length ?? "Password must be at least 8 characters." })
+  .regex(/[a-z]/, { message: dict?.errors?.password_lowercase ?? "Password must contain at least one lowercase letter." })
+  .regex(/[A-Z]/, { message: dict?.errors?.password_uppercase ?? "Password must contain at least one uppercase letter." })
+  .regex(/[0-9]/, { message: dict?.errors?.password_number ?? "Password must contain at least one number." }),
     terms: zod.boolean().refine((val) => val === true, {
       message: dict?.errors?.terms_required,
     }),

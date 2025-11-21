@@ -11,7 +11,6 @@ type SkeletonProps = {
     count?: number; // Number of items to render (e.g., for list items)
     animated?: boolean;
 };
-
 export default function Skeleton({
     variant = 'rect',
     width,

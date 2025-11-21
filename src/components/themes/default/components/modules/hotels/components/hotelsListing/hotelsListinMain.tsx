@@ -63,21 +63,18 @@ const HotelsListingMain = ({ slug }: Props) => {
           rating: "",
           language: locale,
           currency: currency,
-
           child_age: parsedForm?.children_ages || [],
-
         },
         hotelModuleNames
       );
       return result?.success ?? [];
     },
     staleTime: 1000 * 60 * 5,
-
     enabled: queryEnabled,
 
   });
 
-  // ✅ Sync hotels with Redux store
+  // Sync hotels with Redux store
   useEffect(() => {
     if (Array.isArray(data)) {
       dispatch(setHotels(data));

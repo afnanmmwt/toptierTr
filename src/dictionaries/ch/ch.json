@@ -60,7 +60,10 @@
     "phone_number_required": "请输入电话号码",
     "phone_number_invalid": "请输入有效的国际电话号码",
     "country_code_required": "请选择国家代码",
-    "password_min_length": "密码至少需要6个字符",
+    "password_min_length": "密码至少需要8个字符",
+    "password_lowercase": "密码必须包含至少一个小写字母",
+"password_uppercase": "密码必须包含至少一个大写字母",
+"password_number": "密码必须包含至少一个数字",
     "terms_required": "您必须同意条款与条件",
     "human_required": "请确认您不是机器人"
   },

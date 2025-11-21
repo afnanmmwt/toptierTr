@@ -61,6 +61,9 @@
     "phone_number_invalid": "Geçerli bir uluslararası telefon numarası girin",
     "country_code_required": "Ülke kodu gereklidir",
     "password_min_length": "Şifre en az 6 karakter olmalıdır",
+    "password_lowercase": "Şifre en az bir küçük harf içermelidir",
+"password_uppercase": "Şifre en az bir büyük harf içermelidir",
+"password_number": "Şifre en az bir rakam içermelidir",
     "terms_required": "Şartları kabul etmelisiniz",
     "human_required": "Lütfen insan olduğunuzu onaylayın"
   },

@@ -326,7 +326,7 @@ export default function BookingForm() {
     hotel_website,
     tax_percentage,
   } = selectedRoom?.hotelDetails || {};
-
+  //==================== MAKE COUNTRY LIST FOR COUNTRY SELECTION ==================
   const excludedCodes = ["0", "381", "599"];
   const countryList = Array.isArray(rawCountries)
     ? rawCountries
@@ -530,7 +530,7 @@ export default function BookingForm() {
       },
     };
 
-    // ✅ FIX: Mark as saved BEFORE API call to prevent race conditions
+    //========= FIX: Mark as saved BEFORE API call to prevent race conditions
     hasAutoSaved.current = true;
     // Hit the API
     hotel_booking(bookingPayload as any)
@@ -581,17 +581,16 @@ export default function BookingForm() {
         })
       );
       const bookingPayload = {
-        // 🔹 Core booking details
+        //========= Core booking details
         booking_ref_no: bookingReference,
         booking_date: new Date().toISOString().split("T")[0],
         booking_status: "pending",
         booking_nights: total_nights,
 
-        // 🔹 Price and financials
+        //========== Price and financials
         price_original: sanitizeNumber(price || 0),
         price_markup: sanitizeNumber(markup_price || 0),
         supplier_cost: sanitizeNumber(price || 0),
-
         actual_price: sanitizeNumber(price || 0),
         toptier_fee: "0",
         agent_fee: agent_fee || "0",
@@ -612,17 +611,17 @@ export default function BookingForm() {
         iata: "",
         agent_id: "",
 
-        // 🔹 Customer info
+        //=========== Customer info
         first_name: firstName || "",
         last_name: lastName || "",
         email: email || "",
         address: address || "",
-        phone_country_code: phoneCountryCode || "+92",
+        phone_country_code: phoneCountryCode || "+1",
         phone: phoneNumber || "000-000-000",
         country: currentCountry || "UNITED ARAB EMIRATES",
         nationality: nationality || "",
 
-        // 🔹 Hotel info
+        //============ Hotel info
         stars: stars || 0,
         hotel_id: hotel_id || "",
         hotel_name: hotel_name || "",
@@ -634,7 +633,7 @@ export default function BookingForm() {
         location: hotel_location || "",
         location_cords: hotel_address || "",
 
-        // 🔹 Room info
+        //============== Room info
         room_data: [
           {
             room_id: option_id,
@@ -650,18 +649,18 @@ export default function BookingForm() {
             cc_fee: sanitizeNumber(cc_fee || 0),
           },
         ],
-        // 🔹 Dates and stay info
+        //============== Dates and stay info
         checkin: checkin || "10-10-2025",
         checkout: checkout || "14-10-2025",
         adults: adults || 0,
         childs: children || 0,
         child_ages: children_ages,
 
-        // 🔹 Currency
+        //=============== Currency
         currency_original: booking_currency || "USD",
         currency_markup: booking_currency || "USD",
 
-        // 🔹 Payment and booking meta
+        //=============== Payment and booking meta
         payment_date: "",
         payment_status: "unpaid",
         payment_gateway: "",
@@ -670,7 +669,7 @@ export default function BookingForm() {
         transaction_id: "",
         user_id: "",
 
-        // 🔹 Cancellation info
+        //================ Cancellation info
         cancellation_request: "0",
         cancellation_status: "0",
         cancellation_response: "",
@@ -678,18 +677,18 @@ export default function BookingForm() {
         cancellation_error: "",
         cancellation_terms: "",
 
-        // 🔹 Booking data & API responses
+        //================= Booking data & API responses
         booking_data: modified_booking_data,
         booking_response: "",
         error_response: "",
 
-        // 🔹 Notes & additional metadata
+        //================= Notes & additional metadata
         booking_note: "",
 
-        // 🔹 Supplier
+        //================= Supplier
         supplier: supplier_name || "",
 
-        // 🔹 Nested user data
+        //================ Nested user data
         user_data: {
           user_id: user?.user_id,
           first_name: firstName || "",
@@ -701,10 +700,10 @@ export default function BookingForm() {
           country_code: nationality || "pk",
         },
 
-        // 🔹 Guest info
+        //================ Guest info
         guest: guestPayload || [],
 
-        // 🔹 Card info
+        //================ Card info
         card: {
           name: cardName || "",
           number: cardNumber || "",
@@ -714,7 +713,7 @@ export default function BookingForm() {
         },
       };
 
-      //  Run hotel booking and paymentIntent API in parallel for performance
+      //================  Run hotel booking and paymentIntent API in parallel for performance
       const [bookingResponse, paymentRes] = await Promise.all([
         hotel_booking(bookingPayload as any),
         fetch("/api/paymentIntent", {
