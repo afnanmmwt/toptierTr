@@ -19,7 +19,7 @@ const Breadcrumb: React.FC = () => {
 
     // Split pathname and remove empty strings
     const pathSegments = pathname.split("/").filter((seg) => seg !== "");
-
+// console.log
     // Map segments to breadcrumb items
     const items = pathSegments.map((segment, index) => {
       // Create href up to current segment
@@ -29,7 +29,6 @@ const Breadcrumb: React.FC = () => {
       const label = segment
         .replace(/[-_]/g, " ")
         .replace(/\b\w/g, (char) => char.toUpperCase());
-
       return { label, href };
     });
 
