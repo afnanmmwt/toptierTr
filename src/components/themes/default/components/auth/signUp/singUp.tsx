@@ -5,7 +5,7 @@ import { z as zod } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Checkbox from "@components/core/checkbox";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import { useRouter, useParams } from "next/navigation";
 import useDictionary from "@hooks/useDict";
 import { useMutation } from "@tanstack/react-query";
@@ -33,16 +33,19 @@ export default function SignUpForm() {
   const [isPhoneCodeListOpen, setIsPhoneCodeListOpen] = useState(false);
 
   //  Filter & format countries
-  const excludedCodes = ["0", "381", "599"];
-  const countryList = Array.isArray(rawCountries)
-    ? rawCountries
-        .map((c: any) => ({
-          iso: c.iso || c.code || "",
-          name: c.nicename || c.name || "",
-          phonecode: c.phonecode?.toString() || "0",
-        }))
-        .filter((c) => c.iso && c.name && !excludedCodes.includes(c.phonecode))
-    : [];
+const excludedCodes = ["0", "381", "599"];
+
+const countryList = useMemo(() => {
+  if (!Array.isArray(rawCountries)) return [];
+
+  return rawCountries
+    .map((c: any) => ({
+      iso: c.iso || c.code || "",
+      name: c.nicename || c.name || "",
+      phonecode: c.phonecode?.toString() || "0",
+    }))
+    .filter((c) => c.iso && c.name && !excludedCodes.includes(c.phonecode));
+}, [rawCountries,excludedCodes]); // ✅ Only recompute when rawCountries changes
 
   const countryOptions = countryList.map((c) => ({
     value: c.iso,

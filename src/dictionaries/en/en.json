@@ -255,7 +255,7 @@
       "subtitle": "We'll use this to send your booking confirmation.",
       "emailLabel": "Email Address",
       "nationalityLabel": "Nationality",
-      "currentCountryLabel": "Current Country",
+      "currentCountryLabel": "Country",
       "phoneCodeLabel": "Country Code",
       "phoneNumberLabel": "Phone Number"
     },

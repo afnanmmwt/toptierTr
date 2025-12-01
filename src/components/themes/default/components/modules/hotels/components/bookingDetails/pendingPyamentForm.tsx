@@ -83,15 +83,26 @@ export default function PendingPaymentForm({ invoiceData }: { invoiceData: any }
       phonecode: c.phonecode,
     })), [countryList]
   );
+const phoneCodeOptions = useMemo(
+  () =>
+    countryList.map((c) => {
+      let iso = c.iso;
 
-  const phoneCodeOptions = useMemo(() =>
-    countryList.map((c) => ({
-      value: `+${c.phonecode}`,
-      label: `+${c.phonecode}`,
-      iso: c.iso,
-      phonecode: `${c.phonecode}`,
-    })), [countryList]
-  );
+      // Force +1 to always show USA flag
+      if (c.phonecode === "1") {
+        iso = "US";
+      }
+
+      return {
+        value: `+${c.phonecode}`,
+        label: `+${c.phonecode}`,
+        iso,
+        phonecode: `${c.phonecode}`,
+      };
+    }),
+  [countryList]
+);
+
 
   // =============== EFFECTS ===============
   // useEffect(() => {
@@ -454,7 +465,7 @@ export default function PendingPaymentForm({ invoiceData }: { invoiceData: any }
           />
           {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
         </div>
-        <div className="w-full max-w-2xl">
+        {/* <div className="w-full max-w-2xl">
           <label className="block text-base font-medium text-[#5B697E] mb-2">
             {dict?.bookingForm?.contactInformation?.nationalityLabel || 'Nationality'}
           </label>
@@ -469,14 +480,14 @@ export default function PendingPaymentForm({ invoiceData }: { invoiceData: any }
             <span>{getCountryByIso(formData.nationality)?.name || formData.nationality}</span>
           </div>
           {errors.nationality && <p className="text-red-500 text-sm mt-1">{errors.nationality}</p>}
-        </div>
+        </div> */}
         <div className="w-full max-w-2xl">
           <label className="block text-base font-medium text-[#5B697E] mb-2">
-            {dict?.bookingForm?.contactInformation?.currentCountryLabel || 'Current Country'}
+            {dict?.bookingForm?.contactInformation?.currentCountryLabel || 'Country'}
           </label>
           <Select
             options={countryOptions}
-            placeholder={dict?.bookingForm?.contactInformation?.currentCountryLabel || 'Current Country'}
+            placeholder={dict?.bookingForm?.contactInformation?.currentCountryLabel || ' Country'}
             isSearchable
             value={countryOptions.find((opt) => opt.value === formData.currentCountry) || null}
             onChange={(option: any) => handleSelectChange('currentCountry', option?.value || '')}

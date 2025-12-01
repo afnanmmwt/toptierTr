@@ -15,7 +15,7 @@ export default async function Page({
   const result = invoice_response?.response?.[0];
   return (
     <TransitionLayout>
-      <div className="flex flex-col bg-white dark:bg-gray-900 dark:text-gray-50 min-h-screen items-center justify-center p-6">
+      <div className="flex flex-col bg-white dark:bg-gray-900 dark:text-gray-50 min-h-screen items-center justify-center ">
         {!status ? (
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-red-500 mb-2">

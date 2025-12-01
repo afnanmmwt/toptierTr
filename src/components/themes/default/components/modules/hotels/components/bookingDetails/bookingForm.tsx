@@ -347,11 +347,11 @@ export default function BookingForm() {
   }));
 
   const phoneCodeOptions = countryList.map((c) => {
-    const iso = c.phonecode === "1" ? "US" : c.iso;
+    const iso = c.phonecode === "1" ? "us" : c.iso;
     return {
       value: `+${c.phonecode}`,
       label: `+${c.phonecode}`,
-      iso, //  overridden for +1
+      iso, //  overridden for +1 to always show US flag
       phonecode: `${c.phonecode}`,
     };
   });
@@ -909,7 +909,7 @@ export default function BookingForm() {
           )}
         </div>
 
-        <div className="w-full ">
+        {/* <div className="w-full ">
           <label
             htmlFor="nationality"
             className="block text-base font-medium text-[#5B697E] mb-2"
@@ -940,7 +940,7 @@ export default function BookingForm() {
               {errors.nationality.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         <div className="w-full ">
           <label
@@ -948,7 +948,7 @@ export default function BookingForm() {
             className="block text-base font-medium text-[#5B697E] mb-2"
           >
             {dict?.bookingForm?.contactInformation?.currentCountryLabel ||
-              "Current Country"}
+              "Country"}
           </label>
           <Controller
             name="currentCountry"
@@ -959,7 +959,7 @@ export default function BookingForm() {
                 options={countryOptions}
                 placeholder={
                   dict?.bookingForm?.contactInformation?.currentCountryLabel ||
-                  "Current Country"
+                  "Country"
                 }
                 isSearchable
                 onChange={(option: any) => field.onChange(option?.value || "")}

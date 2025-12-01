@@ -51,14 +51,16 @@ export default function PendingPaymentDetails({
     booking_nights,
     currency_original,
     price_markup,
+    tax,
   } = invoiceData;
-
+console.log(invoiceData);
   const roomName = roomData?.room_name || "Standard Room";
   const roomPrice = roomData?.room_price_per_night || 0;
+  const quantity = roomData?.room_quantity || 1;
   const total = price_markup;
   return (
     <section className="bg-[#F9FAFB] w-full">
-      <div className="min-h-screen w-full max-w-[1200px] mx-auto justify-between flex flex-col md:flex-row lg:flex-row p-4 md:p-6 lg:p-12 mb-6 gap-8 appHorizantalSpacing">
+      <div className="min-h-screen w-full max-w-[1200px] mx-auto justify-between flex flex-col md:flex-row lg:flex-row md:p-6 lg:p-12 p-4 gap-8 appHorizantalSpacing">
         {/* Left Section — Form */}
         <div className="flex-1 space-y-8">
           <div className="flex items-center gap-4">
@@ -173,7 +175,13 @@ export default function PendingPaymentDetails({
                     : ""}
                 </span>
               </div>
+              <div className="flex justify-between items-center">
+                <span className="text-gray-600">
+                  {dict?.bookingDetails?.roomQuantity || "Quantity"}
+                </span>
 
+                <span className="text-gray-900">{quantity}</span>
+              </div>
               <div className="flex justify-between items-center">
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.roomPrice || "Room Price"}
@@ -188,6 +196,17 @@ export default function PendingPaymentDetails({
                   </span>
                 </div>
               </div>
+              {/* tax percentage */}
+
+  <div className="flex justify-between items-center mt-1">
+    <span className="text-gray-600">
+      {dict?.bookingDetails?.tax || "Tax"}
+    </span>
+    &nbsp;
+    <span className="text-gray-900">
+      {tax}%
+    </span>
+  </div>
 
               <div className="flex justify-between items-center border-t border-gray-300 pt-3 mt-2">
                 <span className="text-lg font-semibold text-[#0F172B]">
