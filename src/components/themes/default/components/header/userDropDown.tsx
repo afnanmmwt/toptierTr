@@ -77,7 +77,7 @@ const handleDashboardClick =async() =>{
           } else if (user.user_type === "Agent") {
 
             const token = await getAccessToken();
-            const url = `https://toptier-agent-d-ua92.vercel.app/?token=${encodeURIComponent(
+            const url = `${process.env.NEXT_PUBLIC_AGENT_URL}/?token=${encodeURIComponent(
               token
             )}&user_id=${user.user_id}`;
             window.location.href = url;
@@ -103,7 +103,7 @@ const handleProfiledClick =async() =>{
             router.push("/profile");
           } else if (user.user_type === "Agent") {
             const token = await getAccessToken();
-            const url = `https://toptier-agent-d-ua92.vercel.app/settings?token=${encodeURIComponent(
+            const url = `${process.env.NEXT_PUBLIC_AGENT_URL}/settings?token=${encodeURIComponent(
               token
             )}&user_id=${user.user_id}`;
             window.location.href = url;
