@@ -77,7 +77,7 @@ const Login = ({ dict }: { dict?: any }) => {
 
           if (token && lastRoute !== "/bookings" && !amdminRef) {
             // https://toptier-agent-d-ua92.vercel.app
-            window.location.href = `${process.env.NEXT_PUBLIC_AGENT_URL}/?token=${encodeURIComponent(
+            window.location.href = `${process.env.NEXT_PUBLIC_AGENT_URL}?token=${encodeURIComponent(
               token
             )}&user_id=${userId}`;
             return;

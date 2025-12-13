@@ -8,8 +8,8 @@ import {
 } from "@src/actions";
 import { z } from "zod";
 import { useAppSelector } from "@lib/redux/store";
-import {  useRouter } from "next/navigation";
-import {  setHotels, setSeletecHotel } from "@lib/redux/base";
+import { useRouter } from "next/navigation";
+import { setHotels, setSeletecHotel } from "@lib/redux/base";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -110,7 +110,7 @@ const useHotelSearch = () => {
   });
 
   const queryClient = useQueryClient();
-    const { currency, locale}=useAppSelector((state)=>state.root)
+  const { currency, locale } = useAppSelector((state) => state.root)
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showGuestsDropdown, setShowGuestsDropdown] = useState(false);
@@ -125,7 +125,7 @@ const useHotelSearch = () => {
   const [isSearching, setIsSearching] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(false);
 
-const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
+  const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
   const listRef = useRef<HTMLDivElement | null>(null);
   const [page, setPage] = useState(1);
 
@@ -317,7 +317,6 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-
       // Reset previous errors
       setErrors({});
 
@@ -379,7 +378,7 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
   const loadMoreData = useCallback(
     async (filters?: any) => {
       // e?.preventDefault();
-      if ( isloadingMore || isProcessingRef.current) return;
+      if (isloadingMore || isProcessingRef.current) return;
       const { priceRange, selectedRating } = filters;
       const from_price = priceRange[0];
       const to_price = priceRange[1];
@@ -407,8 +406,8 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
             price_from: from_price, // or keep current filters if needed
             price_to: to_price,
             rating: selectedRating > 1 ? selectedRating : "",
-            currency:currency,
-            language:locale,
+            currency: currency,
+            language: locale,
             child_age: parsedForm.children_ages || [],
           },
           hotelModuleNames
@@ -420,18 +419,18 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
             queryClient.setQueryData(["hotel-search"], updatedHotels);
             setPage(nextPage);
             setIsLoadingMore(false);
-                    setNoMoreData(false); // Reset the flag
+            setNoMoreData(false); // Reset the flag
 
 
             return { success: true, data: result.success };
 
           } else {
-                                setNoMoreData(true);
+            setNoMoreData(true);
             return { success: false, error: "No new hotels found" };
           }
         } else {
           setIsLoadingMore(false);
-             setNoMoreData(true);
+          setNoMoreData(true);
           return { success: false, error: "No more data" };
         }
       } catch (err) {
@@ -463,17 +462,17 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
     const selectedNationality = localStorage.getItem("hotelSearchForm");
     //  generate slug
     const slugName = hotel.name.toLowerCase().replace(/\s+/g, "-");
-    let parsedFormData:any;
+    let parsedFormData: any;
     if (selectedNationality) {
-       parsedFormData = JSON.parse(selectedNationality); // now it's an object
+      parsedFormData = JSON.parse(selectedNationality); // now it's an object
     }
     //  construct URL
     const url = `/hotelDetails/${hotel.hotel_id}/${slugName}/${parsedFormData.checkin}/${parsedFormData.checkout}/${parsedFormData.rooms}/${parsedFormData.adults}/${parsedFormData.children}/${parsedFormData.nationality}`;
     dispatch(setSeletecHotel(hotel));
-     setTimeout(() => {
-     setLoadingHotelId(null)
-    router.push(url);
-  }, 500);
+    setTimeout(() => {
+      setLoadingHotelId(null)
+      router.push(url);
+    }, 500);
   };
 
   // Other utility functions
@@ -612,7 +611,7 @@ const [loadingHotelId, setLoadingHotelId] = useState<string | null>(null);
     isProcessingRef,
     setSelectedRoom,
     selectedRomm,
-   loadingHotelId, setLoadingHotelId,
+    loadingHotelId, setLoadingHotelId,
 
     // Event handlers
     handleChange,

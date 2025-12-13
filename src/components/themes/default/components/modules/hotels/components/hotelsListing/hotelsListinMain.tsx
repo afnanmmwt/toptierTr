@@ -24,10 +24,10 @@ const HotelsListingMain = ({ slug }: Props) => {
 
   const enabled = isSlugValid && !!hotelModuleNames?.length;
 
-  // ✅ State for form data parsed from localStorage
+  //  State for form data parsed from localStorage
   const [parsedForm, setParsedForm] = useState<any>(null);
 
-  // ✅ Read from localStorage inside useEffect (safe for SSR)
+  //  Read from localStorage inside useEffect (safe for SSR)
   useEffect(() => {
     try {
       const savedForm = localStorage.getItem("hotelSearchForm");

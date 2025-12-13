@@ -2,6 +2,9 @@ export const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 export const token = process.env.NEXT_PUBLIC_API_ACCESS_TOKEN;
 export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
 export const api_key = process.env.NEXT_PUBLIC_API_KEY;
+
+export * from './server-actions';
+
 export const fetchDict = async (lang: string) => {
   try {
     const response = await fetch(`/api/dictionary?lang=${lang}`, {
@@ -19,9 +22,3 @@ export const fetchDict = async (lang: string) => {
     return { error: (error as Error).message || "An error occurred" };
   }
 };
-
-
-
-
-
-

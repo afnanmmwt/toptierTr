@@ -10,18 +10,16 @@ export const setAppData = createAsyncThunk(
       const state = getState() as RootState;
       const language = state.root.locale;
       const currency = state.root.currency;
-    
-     const payload : any={
-      language:language,
-      currency:currency
-     }
+
+      const payload: any = {
+        language: language,
+        currency: currency
+      }
       //  2. Call your API with them
       const response = await fetchAppData(payload);
-
       if (!response || response.error) {
         throw new Error(response.error || "Invalid response from API");
       }
-
       const { data } = response;
       return data;
     } catch (err: any) {

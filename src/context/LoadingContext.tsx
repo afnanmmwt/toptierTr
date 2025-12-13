@@ -26,10 +26,12 @@ useEffect(() => {
   const loadAppData = async () => {
     setLoading(true);
     try {
+      console.log('dispatching action');
       const resultAction = await dispatch(setAppData());
+      console.log('resultAction=======================',resultAction);
       const appData = (resultAction as any)?.payload;
+      console.log('appData=======================',appData);
       // Now you can check agency status from response
-
     } catch (err) {
       console.error("Failed to load app data:", err);
     } finally {

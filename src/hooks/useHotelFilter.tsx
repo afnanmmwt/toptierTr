@@ -54,11 +54,10 @@ const useHotelFilter = () => {
 const {hotelSearchMutation,form,hotelModuleNames,removeDuplicates,setIsSearching,isSearching,setIsInitialLoading,handleSubmit,callAllModulesAPI,allHotelsData}=useHotelSearch()
     const dispatch = useDispatch();
       const {country, currency, locale}=useAppSelector((state)=>state.root)
-
 const queryClient = useQueryClient();
   const [selectedStars, setSelectedStars] = useState<number | null>(null);
   const [isFilterLoading, setIsFilterLoading] = useState(false);
-  const hotelsData=[...allHotelsData]
+  const hotelsData = Array.isArray(allHotelsData) ? [...allHotelsData] : [];
   // Calculate price range from actual data
 //  static price range
 const priceRange = useMemo(() => {
@@ -79,7 +78,7 @@ useEffect(() => {
     if (!hotelsData) return [];
 
     const amenitiesSet = new Set<string>();
-    hotelsData.forEach(hotel => {
+    hotelsData?.forEach(hotel => {
       if (hotel.amenities && Array.isArray(hotel.amenities)) {
         hotel.amenities.forEach((amenity:any) => amenitiesSet.add(amenity));
       }
@@ -92,7 +91,7 @@ useEffect(() => {
   const filteredHotels = useMemo(() => {
     if (!hotelsData || hotelsData?.length === 0) return [];
 
-     const filtered = hotelsData.filter(hotel => {
+     const filtered = hotelsData?.filter(hotel => {
       // Price filter
       // const hotelPrice = parseFloat(hotel.actual_price_per_night) || 0;
       // if (hotelPrice <= filters.priceRange[0] || hotelPrice >= filters.priceRange[1]) {
@@ -317,7 +316,8 @@ const applyFilters = useCallback(async () => {
     );
 
     if (result.success?.length > 0) {
-      const updatedHotels = [...allHotelsData, ...result.success];
+      const safeAllHotels = Array.isArray(allHotelsData) ? allHotelsData : [];
+      const updatedHotels = [...safeAllHotels, ...result.success];
       dispatch(setHotels(updatedHotels));
       queryClient.setQueryData(["hotel-search"], updatedHotels);
        setIsFilterLoading(false);
@@ -450,7 +450,8 @@ const resetFilters = useCallback(async (e?: any) => {
         );
         if (result.success.length > 0) {
           if (result.success.length > 0) {
-            const updatedHotels = [...allHotelsData, ...result.success];
+            const safeAllHotels = Array.isArray(allHotelsData) ? allHotelsData : [];
+            const updatedHotels = [...safeAllHotels, ...result.success];
             dispatch(setHotels(updatedHotels));
             queryClient.setQueryData(["hotel-search"], updatedHotels);
 

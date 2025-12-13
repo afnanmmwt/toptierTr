@@ -6,7 +6,6 @@ import useDictionary from "@hooks/useDict";
 import useDirection from "@hooks/useDirection";
 
 import { useParams, useRouter } from "next/navigation";
-
 import useHotelSearch from "@hooks/useHotelSearch";
 import Dropdown from "@components/core/Dropdown";
 import useCountries from "@hooks/useCountries";
@@ -16,7 +15,6 @@ import { boolean } from "zod";
 import CustomDateRangePicker from "@components/core/dateRange/dateRange";
 import { addDays, format } from 'date-fns';
 import useLocale from "@hooks/useLocale";
-// import useHotelSearch from "@hooks/useHotelSearch"; // Import the hook
 
 export default function HotelSearch() {
   const { lang } = useParams();
@@ -207,7 +205,7 @@ export default function HotelSearch() {
                 {dict?.home_page?.hero_section?.check_in || "Check in"} {"|"} {dict?.home_page?.hero_section?.check_out || "Check out"}
               </label>
               <CustomDateRangePicker
-              
+
                 initialStartDate={
                   form.checkin
                     ? new Date(form.checkin)
@@ -265,7 +263,7 @@ export default function HotelSearch() {
                 </span>
                 <Icon icon="mdi:chevron-down" width={20} height={20} className={`text-gray-600 transition-transform duration-200 ${showGuestsDropdown ? "rotate-180" : ""}`} />
               </button>
-             
+
               {showGuestsDropdown && (
                 <div className="absolute z-20 w-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg mt-1 md:min-w-[350px] max-h-auto overflow-visible">
                   <div className="p-4 space-y-4">
@@ -484,7 +482,7 @@ export default function HotelSearch() {
               <div className="mt-3 md:mt-7" />
               <button
                 type="submit"
-                
+
                 className="w-full bg-blue-900 py-2 px-6 cursor-pointer font-medium flex items-center hover:bg-gray-800 border border-gray-200 rounded-xl text-white dark:border-gray-600 dark:hover:bg-gray-700 justify-center gap-2 focus:outline-none transition-all duration-200"
               >
                 {isSearching ? (

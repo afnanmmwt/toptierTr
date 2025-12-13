@@ -4,6 +4,12 @@ import { baseUrl, api_key } from "./actions";
 import { cookies } from "next/headers";
 import { z } from 'zod';
 
+// ⚠️ SECURITY WARNING: This bypasses SSL certificate verification.
+// Use ONLY in development if the API server has an expired certificate.
+if (process.env.NODE_ENV === 'development') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 
 // ============== COMMON HEADER ================
 export async function getHeaders(contentType: string = "application/x-www-form-urlencoded") {
@@ -42,6 +48,7 @@ export const fetchAppData = async (payload: appDataPayload) => {
     // explicitly type userinfo
     const userinfo = (await getSession()) as SessionUser | null;
     const user_id = userinfo?.user?.user_id ?? "";
+
     const formData = new FormData();
     formData.append("api_key", api_key ?? "");
     formData.append("language", payload.language);
@@ -50,19 +57,26 @@ export const fetchAppData = async (payload: appDataPayload) => {
     if (user_id) {
       formData.append("user_id", user_id);
     }
-    const response = await fetch(`${baseUrl}/app`, {
+
+    // Ensure baseUrl has a trailing slash or add it
+    const url = baseUrl?.endsWith('/') ? `${baseUrl}app` : `${baseUrl}/app`;
+
+    const response = await fetch(url, {
       method: "POST",
       body: formData,
       headers: {
         Accept: "application/json, text/plain, */*",
       },
     });
+
     const data = await response.json().catch(() => null);
     if (!response.ok || data?.status === false) {
+      console.error('fetchAppData failed:', data);
       return { error: data?.message || "Something went wrong" };
     }
     return data;
   } catch (error) {
+    console.error('fetchAppData exception:', error);
     return { error: (error as Error).message || "An error occurred" };
   }
 };
@@ -75,7 +89,6 @@ export const fetchCountries = async () => {
     formData.append("api_key", api_key ?? "");
 
     const response = await fetch(`${baseUrl}/countries`, {
-
       method: "POST",
       body: formData,
       headers: await getHeaders("application/json"), // do NOT set Content-Type manually
@@ -207,7 +220,7 @@ export const sign_up = async (signUpData: {
   phone: string;
   phone_country_code: number | string;
   password: string;
-  country:string
+  country: string
   // terms?: boolean;
 }) => {
   try {
@@ -219,7 +232,7 @@ export const sign_up = async (signUpData: {
     formData.append("phone_country_code", String(signUpData.phone_country_code));
     formData.append("password", signUpData.password);
     formData.append("api_key", api_key ?? "");
-    formData.append("country",signUpData.country)
+    formData.append("country", signUpData.country)
     formData.append("user_type", "Customer");
 
 
@@ -336,7 +349,7 @@ export async function signIn(
   }
 }
 export const signOut = async () => {
-   const userinfo = (await getSession()) as any | null;
+  const userinfo = (await getSession()) as any | null;
 
   try {
     //  Ensure user_id is always a string
@@ -344,8 +357,8 @@ export const signOut = async () => {
       typeof userinfo === 'object' && userinfo !== null
         ? (userinfo.user_id || userinfo?.user?.user_id || '')
         : '';
- const cookie = await cookies();
- const token = cookie.get('access-token')?.value || '';
+    const cookie = await cookies();
+    const token = cookie.get('access-token')?.value || '';
     const formData = new FormData();
     formData.append('user_id', String(userId)); //always a string
     formData.append('token', String(token));
@@ -354,7 +367,7 @@ export const signOut = async () => {
       body: formData,
     });
     const data = await response.json().catch(() => null);
-     await logout();
+    await logout();
     if (!response.ok || data?.status === false) {
       return { error: data?.message || 'Something went wrong' };
     }
@@ -373,7 +386,7 @@ export const getUser = async () => {
 // }
 //------------- SAVE TOKEN --------------------//
 export const save_token = async () => {
-   const userinfo = (await getSession()) as any | null;
+  const userinfo = (await getSession()) as any | null;
   const cookie = await cookies();
   const token = cookie.get('access-token')?.value || '';
   try {
@@ -403,7 +416,7 @@ export const save_token = async () => {
 };
 //------------------------ VERIFY_TOKEN -----------------------------//
 export const verify_token = async () => {
-   const userinfo = (await getSession()) as any | null;
+  const userinfo = (await getSession()) as any | null;
   const cookie = await cookies();
   const token = cookie.get('access-token')?.value || '';
 
@@ -436,11 +449,11 @@ export const getAccessToken = async () => {
   return token;
 };
 //------------------------ FORGET PASSWORD -----------------------------//
-export const forget_password = async (email:string) => {
+export const forget_password = async (email: string) => {
   try {
-    const formData=new FormData()
-    formData.append('email',email)
-    formData.append('api_key',api_key ?? "")
+    const formData = new FormData()
+    formData.append('email', email)
+    formData.append('api_key', api_key ?? "")
     const response = await fetch(`${baseUrl}/forget_password`, {
       method: "POST",
       body: formData,
@@ -528,8 +541,8 @@ interface HotelSearchPayload {
   price_from: string;
   price_to: string;
   rating: string;
-  language:string;
-  currency:string;
+  language: string;
+  currency: string;
   child_age?: string[];
 
   // Remove `modules` from this interface if you're handling it externally
@@ -538,30 +551,19 @@ interface HotelSearchPayload {
 export const hotel_search = async (payload: HotelSearchPayload & { modules: string }) => {
   const userinfo = (await getSession()) as any | null;
   const cookie = await cookies();
- const agent_ref = cookie.get('agent_ref')?.value || '';
-     const userId =
-      typeof userinfo === 'object' && userinfo !== null
-        ? (userinfo.user_id || userinfo?.user?.user_id || '')
-        : '';
-let agent_id = '';
+  const agent_ref = cookie.get('agent_ref')?.value || '';
+  const userId =
+    typeof userinfo === 'object' && userinfo !== null
+      ? (userinfo.user_id || userinfo?.user?.user_id || '')
+      : '';
+  let agent_id = '';
 
-if (agent_ref) {
-  // Priority 1: Use referral if present
-  agent_id = agent_ref;
-}else{
-   agent_id = userId;
-}
-// else if (
-//   typeof userinfo === 'object' &&
-//   userinfo !== null &&
-//   (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
-// ) {
-//   // Priority 2: If no referral, and user is an Agent → self-assign
-//   agent_id = userId;
-// } else {
-//   // Priority 3: Not an agent and no referral → no agent_id
-//   agent_id = '';
-// }
+  if (agent_ref) {
+    // Priority 1: Use referral if present
+    agent_id = agent_ref;
+  } else {
+    agent_id = userId;
+  }
 
   const formData = new FormData();
   formData.append("city", String(payload.destination));
@@ -587,8 +589,12 @@ if (agent_ref) {
   } else {
     formData.append("child_age", "[]"); // send empty array if no children
   }
+  console.log('hotel search payload hitting...', payload);
+  // Ensure baseUrl has a trailing slash or add it
+  const url = baseUrl?.endsWith('/') ? `${baseUrl}hotel_search` : `${baseUrl}/hotel_search`;
+  console.log('hotel_search calling:', url);
   try {
-    const response = await fetch(`${baseUrl}/hotel_search`, {
+    const response = await fetch(url, {
       method: "POST",
       body: formData,
       headers: {
@@ -597,10 +603,11 @@ if (agent_ref) {
     });
 
     const data = await response.json().catch(() => null);
+    console.log('hotel search response', data);
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong", module: payload.modules };
     }
-
+    console.log('hotel search response', data);
     return { ...data, module: payload.modules }; //  attach module name to result
   } catch (error) {
     return { error: (error as Error).message || "An error occurred", module: payload.modules };
@@ -611,6 +618,7 @@ export const hotel_search_multi = async (
   basePayload: Omit<HotelSearchPayload, "modules">,
   modules: string[]
 ) => {
+
   if (!modules?.length) {
     throw new Error("At least one module is required");
   }
@@ -622,7 +630,7 @@ export const hotel_search_multi = async (
   );
   // Use allSettled to avoid one failure breaking all
   const results = await Promise.allSettled(promises);
-// console.log('successful hotels', JSON.parse(results));
+  // console.log('successful hotels', JSON.parse(results));
   const successful = results
     .map((result) => {
       if (result.status === "fulfilled") {
@@ -635,6 +643,7 @@ export const hotel_search_multi = async (
     })
     .filter(Boolean) // remove nulls
     .flat(); // flatten into single array
+  console.log('successful hotels', successful);
   return {
     success: successful,
     total: successful.length,
@@ -657,32 +666,32 @@ interface HotelDetailsPayload {
 }
 
 export const hotel_details = async (payload: HotelDetailsPayload) => {
-       const userinfo = (await getSession()) as any | null;
+  const userinfo = (await getSession()) as any | null;
   const cookie = await cookies();
- const agent_ref = cookie.get('agent_ref')?.value || '';
-     const userId =
-      typeof userinfo === 'object' && userinfo !== null
-        ? (userinfo.user_id || userinfo?.user?.user_id || '')
-        : '';
-let agent_id = '';
-if (agent_ref) {
-  // Priority 1: Use referral if present
-  agent_id = agent_ref;
-}else{
-  agent_id=userId
-}
-// else if (
-//   typeof userinfo === 'object' &&
-//   userinfo !== null &&
-//   (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
-// ) {
-//   // Priority 2: If no referral, and user is an Agent → self-assign
-//   agent_id = userId;
-// }
-//  else {
-//   // Priority 3: Not an agent and no referral → no agent_id
-//   agent_id = '';
-// }
+  const agent_ref = cookie.get('agent_ref')?.value || '';
+  const userId =
+    typeof userinfo === 'object' && userinfo !== null
+      ? (userinfo.user_id || userinfo?.user?.user_id || '')
+      : '';
+  let agent_id = '';
+  if (agent_ref) {
+    // Priority 1: Use referral if present
+    agent_id = agent_ref;
+  } else {
+    agent_id = userId
+  }
+  // else if (
+  //   typeof userinfo === 'object' &&
+  //   userinfo !== null &&
+  //   (userinfo.user?.type === 'Agent' || userinfo.type === 'Agent')
+  // ) {
+  //   // Priority 2: If no referral, and user is an Agent → self-assign
+  //   agent_id = userId;
+  // }
+  //  else {
+  //   // Priority 3: Not an agent and no referral → no agent_id
+  //   agent_id = '';
+  // }
   try {
     const formData = new FormData();
     //  match exactly with API keys
@@ -696,14 +705,14 @@ if (agent_ref) {
     formData.append("language", payload.language || "en");
     formData.append("currency", payload.currency || "usd");
     formData.append("supplier_name", payload.supplier_name || "hotels");
-    formData.append('user_id',agent_id || '')
+    formData.append('user_id', agent_id || '')
     // formData.append('agent_id',agent_id || '');
-     if(payload.child_age && payload.child_age.length > 0) {
-    const formattedAges = payload.child_age.map((age: string) => ({ ages: age }));
-    formData.append("child_age", JSON.stringify(formattedAges));
-  } else {
-    formData.append("child_age", "[]"); // send empty array if no children
-  }
+    if (payload.child_age && payload.child_age.length > 0) {
+      const formattedAges = payload.child_age.map((age: string) => ({ ages: age }));
+      formData.append("child_age", JSON.stringify(formattedAges));
+    } else {
+      formData.append("child_age", "[]"); // send empty array if no children
+    }
     const response = await fetch(`${baseUrl}/hotel_details`, {
       method: "POST",
       body: formData,
@@ -728,20 +737,20 @@ interface financialPayload {
   checkin: string;
   checkout: string;
   rooms?: string;
-  option:any
+  option: any
 
 }
 export const get_financial = async (payload: financialPayload) => {
-       const userinfo = (await getSession()) as any | null;
+  const userinfo = (await getSession()) as any | null;
 
-     const userId =
-      typeof userinfo === 'object' && userinfo !== null
-        ? (userinfo.user_id || userinfo?.user?.user_id || '')
-        : '';
+  const userId =
+    typeof userinfo === 'object' && userinfo !== null
+      ? (userinfo.user_id || userinfo?.user?.user_id || '')
+      : '';
   try {
     const formData = new FormData();
     //  match exactly with API keys
-    formData.append('user_id',userId || '')
+    formData.append('user_id', userId || '')
     formData.append("checkin", payload.checkin);
     formData.append("checkout", payload.checkout);
     formData.append("rooms", String(payload.rooms));
@@ -884,25 +893,25 @@ export interface BookingPayload {
 
 export const hotel_booking = async (payload: BookingPayload) => {
   try {
-     const userinfo = (await getSession()) as any | null;
-  const cookie = await cookies();
- const agent_ref = cookie.get('agent_ref')?.value || '';
-     const userId =
+    const userinfo = (await getSession()) as any | null;
+    const cookie = await cookies();
+    const agent_ref = cookie.get('agent_ref')?.value || '';
+    const userId =
       typeof userinfo === 'object' && userinfo !== null
         ? (userinfo.user_id || userinfo?.user?.user_id || '')
         : '';
-let agent_id = '';
+    let agent_id = '';
 
-if (agent_ref) {
-  agent_id = agent_ref;
-}
-else if (
-  userinfo?.user?.user_type === 'Agent'
-) {
-  agent_id = userinfo.user.user_id; // safe and explicit
-}else{
-  agent_id=""
-}
+    if (agent_ref) {
+      agent_id = agent_ref;
+    }
+    else if (
+      userinfo?.user?.user_type === 'Agent'
+    ) {
+      agent_id = userinfo.user.user_id; // safe and explicit
+    } else {
+      agent_id = ""
+    }
 
     const formData = new FormData();
 
@@ -913,14 +922,14 @@ else if (
     formData.append("booking_nights", payload.booking_nights || "1");
 
     // 🔹 Financial details
-formData.append(
-  "price_original",
-  String(payload.price_original).replace(/,/g, "")
-);
-formData.append(
-  "price_markup",
-  String(payload.price_markup).replace(/,/g, "")
-);
+    formData.append(
+      "price_original",
+      String(payload.price_original).replace(/,/g, "")
+    );
+    formData.append(
+      "price_markup",
+      String(payload.price_markup).replace(/,/g, "")
+    );
 
 
     // formData.append("actual_price", String(payload.actual_price));
@@ -970,18 +979,18 @@ formData.append(
     formData.append("checkout", payload.checkout);
     formData.append("adults", String(payload.adults));
     formData.append("childs", String(payload.childs));
-    let child_ages:any[]=[];
+    let child_ages: any[] = [];
 
-if (payload.child_ages && payload.child_ages !== "0") {
-  child_ages = payload.child_ages
-    .split(',')
-    .map(age => ({ ages: Number(age) }));
-}
+    if (payload.child_ages && payload.child_ages !== "0") {
+      child_ages = payload.child_ages
+        .split(',')
+        .map(age => ({ ages: Number(age) }));
+    }
 
-// Convert to JSON string
-const ages_json = JSON.stringify(child_ages);
-const ages=child_ages.length > 0 ? ages_json : ""
-formData.append("child_ages",ages );
+    // Convert to JSON string
+    const ages_json = JSON.stringify(child_ages);
+    const ages = child_ages.length > 0 ? ages_json : ""
+    formData.append("child_ages", ages);
     formData.append("currency_original", payload.currency_original);
     formData.append("currency_markup", payload.currency_markup);
 
@@ -1059,7 +1068,7 @@ export const hotel_invoice = async (payload: string) => {
 interface payment1_payload {
   booking_ref_no: string;
   invoice_url: string;
-  payment_getway:string;
+  payment_getway: string;
 }
 export const prapare_payment = async (payload: payment1_payload) => {
   try {
@@ -1115,7 +1124,7 @@ export const processed_payment = async (payload: processedPay_payload) => {
     return { error: (error as Error).message || "An error occurred" };
   }
 };
-export const cancel_payment = async (booking_ref_no:string) => {
+export const cancel_payment = async (booking_ref_no: string) => {
   try {
     const formData = new FormData();
 
@@ -1175,7 +1184,7 @@ export const cms_pages_content = async (payload: cms_page_payload) => {
 //===================== PROFILE =======================
 export const get_profile = async () => {
   try {
-     const userinfo = (await getSession()) as SessionUser | null;
+    const userinfo = (await getSession()) as SessionUser | null;
     const user_id = userinfo?.user?.user_id ?? "";
     const formData = new FormData();
     formData.append("user_id", user_id);
@@ -1200,28 +1209,28 @@ export const get_profile = async () => {
 };
 // ================== DASHBOARD API ====================
 interface dashboardPayload {
-page : string;
-limit : string ;
-search : string ;
-payment_status: string;
-booking_status:string ;
+  page: string;
+  limit: string;
+  search: string;
+  payment_status: string;
+  booking_status: string;
 }
 export const fetch_dashboard_data = async (payload: dashboardPayload) => {
   try {
-     const userinfo = (await getSession()) as SessionUser | null;
+    const userinfo = (await getSession()) as SessionUser | null;
     const user_id = userinfo?.user?.user_id ?? "";
 
     const formData = new FormData();
 
     // match exactly with API keys
     formData.append("api_key", api_key ?? "");
-    formData.append("user_id",user_id );
+    formData.append("user_id", user_id);
     formData.append("page", payload.page);
-    formData.append("limit",payload.limit);
+    formData.append("limit", payload.limit);
     formData.append("search", payload.search ?? "");
     formData.append("payment_status", payload.payment_status ?? "");
     formData.append("type", "customer");
-    formData.append('booking_status', payload.booking_status ==="cancelled" ? "cancelled" : "")
+    formData.append('booking_status', payload.booking_status === "cancelled" ? "cancelled" : "")
     const response = await fetch(`${baseUrl}/user_bookings`, {
       method: "POST",
       body: formData,
@@ -1264,17 +1273,17 @@ export const profile_update = async (payload: ProfileUpdatePayload) => {
   //     formData.append(key, String(value));
   //   }
   // }
-formData.append('user_id', String(payload.user_id));
-formData.append('first_name', String(payload.first_name));
-formData.append('last_name', String(payload.last_name));
-formData.append('email', String(payload.email));
-formData.append('phone', String(payload.phone));
-formData.append('phone_country_code', String(payload.phone_country_code));
-formData.append('country_code', String(payload.country_code));
-formData.append('state', String(payload.state));
-formData.append('city', String(payload.city));
-formData.append('address1', String(payload.address1));
-formData.append('address2', String(payload.address2));
+  formData.append('user_id', String(payload.user_id));
+  formData.append('first_name', String(payload.first_name));
+  formData.append('last_name', String(payload.last_name));
+  formData.append('email', String(payload.email));
+  formData.append('phone', String(payload.phone));
+  formData.append('phone_country_code', String(payload.phone_country_code));
+  formData.append('country_code', String(payload.country_code));
+  formData.append('state', String(payload.state));
+  formData.append('city', String(payload.city));
+  formData.append('address1', String(payload.address1));
+  formData.append('address2', String(payload.address2));
   try {
     const response = await fetch(`${baseUrl}/profile_update`, {
       method: "POST",
@@ -1297,7 +1306,7 @@ formData.append('address2', String(payload.address2));
 // ========================= get gateayyyyyyyyyy==================
 export const fetch_gateway = async () => {
   try {
-   const response = await fetch(`${baseUrl}/get_gateway`, {
+    const response = await fetch(`${baseUrl}/get_gateway`, {
       method: "GET",
       headers: {
         Accept: "application/json",
