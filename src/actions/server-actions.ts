@@ -589,10 +589,8 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
   } else {
     formData.append("child_age", "[]"); // send empty array if no children
   }
-  console.log('hotel search payload hitting...', payload);
   // Ensure baseUrl has a trailing slash or add it
   const url = baseUrl?.endsWith('/') ? `${baseUrl}hotel_search` : `${baseUrl}/hotel_search`;
-  console.log('hotel_search calling:', url);
   try {
     const response = await fetch(url, {
       method: "POST",
@@ -603,11 +601,9 @@ export const hotel_search = async (payload: HotelSearchPayload & { modules: stri
     });
 
     const data = await response.json().catch(() => null);
-    console.log('hotel search response', data);
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong", module: payload.modules };
     }
-    console.log('hotel search response', data);
     return { ...data, module: payload.modules }; //  attach module name to result
   } catch (error) {
     return { error: (error as Error).message || "An error occurred", module: payload.modules };
@@ -643,7 +639,6 @@ export const hotel_search_multi = async (
     })
     .filter(Boolean) // remove nulls
     .flat(); // flatten into single array
-  console.log('successful hotels', successful);
   return {
     success: successful,
     total: successful.length,
@@ -766,8 +761,7 @@ export const get_financial = async (payload: financialPayload) => {
       },
     });
     const data = await response.json().catch(() => null);
-    // console.log('financial data', data)
-    // console.log('financial paylaod', formData)
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }

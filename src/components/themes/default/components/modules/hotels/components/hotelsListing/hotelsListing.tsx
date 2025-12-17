@@ -244,7 +244,7 @@ function getOptionLabel(option: string) {
                   {dict?.hotel_listing?.hotel_stars || "Hotel Stars"}
                 </label>
                 <div className="space-y-3">
-                  {[5, 4, 3, 2, 1].map((stars) => (
+                  {[5, 4].map((stars) => (
                     <div
                       key={stars}
                       className="flex items-center justify-between "
@@ -575,7 +575,7 @@ function getOptionLabel(option: string) {
                   {dict?.hotel_listing?.hotel_stars || "Hotel Stars"}
                 </label>
                 <div className="space-y-3">
-                  {[5, 4, 3, 2, 1].map((stars) => (
+                  {[5, 4].map((stars) => (
                     <div
                       key={stars}
                       className="flex items-center justify-between cursor-pointer"

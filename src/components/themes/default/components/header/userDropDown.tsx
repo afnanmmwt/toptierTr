@@ -47,11 +47,12 @@ export default function ProfileDropdown() {
   }, []);
 
   const handleLogout = async () => {
-    await signOut();
-    await checkSession?.();
+   setOpen(false)
     toast.success("Logged out successfully");
     sessionStorage.removeItem('lastRoute')
     localStorage.removeItem('adminRef')
+     await signOut();
+    await checkSession?.();
     router.push("/");
   };
 
@@ -59,7 +60,6 @@ const defaultImage =
   user?.profile_photo && user.profile_photo !== null
     ? user.profile_photo
     : "https://images.unsplash.com/photo-1633332755192-727a05c4013d";
-
   // Safe URL resolver for profile photos
 
 const handleDashboardClick =async() =>{
@@ -75,7 +75,6 @@ const handleDashboardClick =async() =>{
           if (user.user_type === "Customer") {
             router.push("/dashboard");
           } else if (user.user_type === "Agent") {
-
             const token = await getAccessToken();
             const url = `${process.env.NEXT_PUBLIC_AGENT_URL}/?token=${encodeURIComponent(
               token
