@@ -6,9 +6,9 @@ import { z } from 'zod';
 
 // ⚠️ SECURITY WARNING: This bypasses SSL certificate verification.
 // Use ONLY in development if the API server has an expired certificate.
-if (process.env.NODE_ENV === 'development') {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-}
+// if (process.env.NODE_ENV === 'development') {
+//   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// }
 
 
 // ============== COMMON HEADER ================
@@ -397,7 +397,7 @@ export const save_token = async () => {
         : '';
 
     const formData = new FormData();
-    formData.append('user_id', String(userId)); // ✅ always a string
+    formData.append('user_id', String(userId)); //  always a string
     formData.append('token', String(token));
 
     const response = await fetch(`${baseUrl}/save_token`, {
@@ -428,7 +428,7 @@ export const verify_token = async () => {
         : '';
 
     const formData = new FormData();
-    formData.append('user_id', String(userId)); // ✅ always a string
+    formData.append('user_id', String(userId)); // always a string
     formData.append('token', String(token));
     const response = await fetch(`${baseUrl}/verify_token`, {
       method: 'POST',
@@ -479,7 +479,7 @@ export const activate_account = async (payload: {
     const formData = new FormData();
     formData.append("user_id", payload.user_id);
     formData.append("email_code", payload.email_code);
-    // formData.append("api_key", api_key ?? ""); // ✅ if your API always needs api_key
+    // formData.append("api_key", api_key ?? ""); //  if your API always needs api_key
 
     const response = await fetch(`${baseUrl}/activation`, {
       method: "POST",

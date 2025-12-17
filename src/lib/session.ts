@@ -47,9 +47,10 @@ export async function createSession(user: any) {
   // (await cookies()).set("access-token", session, { httpOnly: true, expires });
   (await cookies()).set("access-token", session, {
     httpOnly: false,
+    domain: ".toptiertravel.vip",
     secure: true, //  Must be true because your site is HTTPS (toptiertravel.vip)
     sameSite: "lax", // Required for cross-origin safety
-    path: "/", //  Critical — makes cookie available site-wide
+    path: "/",//Critical — makes cookie available site-wide
     expires,
   });
 }
@@ -57,8 +58,8 @@ export async function createSession(user: any) {
 export async function logout() {
   (await cookies()).set("access-token", "", { expires: new Date(0) });
   (await cookies()).set("agent_ref", "", { expires: new Date(0) });
-    sessionStorage.removeItem('lastRoute')
-    localStorage.removeItem('adminRef')
+  sessionStorage.removeItem('lastRoute')
+  localStorage.removeItem('adminRef')
 }
 
 export async function getSession() {
