@@ -44,12 +44,12 @@ const HeaderMenus = () => {
         {/* Left: Logo + Menu */}
         <div className="flex items-center gap-10">
           {/* Logo */}
-          <Link href="/" className="text-xl font-bold pt-1.5 text-blue-800">
-            <HeaderLogo imgClass="w-32" />
+          <Link href="/" className="text-xl font-bold text-blue-800">
+            <HeaderLogo imgClass="w-32 pt-1" />
           </Link>
 
           {/* Desktop Menu */}
-          <nav className="text-[16px] pt-1.5">
+          <nav className="text-[16px]">
             <div className="hidden md:flex items-center gap-8 text-gray-700 ">
               {filteredModules?.map((item: any, index: number) => (
                 <Link
@@ -59,7 +59,7 @@ const HeaderMenus = () => {
                   target={""}
                   className="text-[#11223399] text-base hover:text-blue-700 transition-colors duration-200 ease-in-out"
                 >
-                  <h3 className="text-base font-medium text-gray-800 mb-4">
+                  <h3 className="text-base font-medium text-gray-800 ">
                     {moduleLabel(String(item.type))}
                   </h3>
                 </Link>
@@ -73,7 +73,7 @@ const HeaderMenus = () => {
                   target={""}
                   className="text-[#11223399] text-base hover:text-blue-700 transition-colors duration-200 ease-in-out"
                 >
-                  <h3 className="text-base font-medium text-gray-800 mb-4">
+                  <h3 className="text-base font-medium text-gray-800 ">
                     {capitalize(String(item.page_name))}
                   </h3>
                 </Link>

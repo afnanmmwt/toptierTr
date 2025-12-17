@@ -41,26 +41,45 @@ interface SessionUser {
   country_name: null | string;
 }
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const cookieDefaults = {
+  httpOnly: false,
+  secure: isProduction,
+  sameSite: "lax" as const,
+  path: "/",
+  domain: isProduction ? ".toptiertravel.vip" : undefined,
+};
+
 export async function createSession(user: any) {
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const session = await encrypt({ user });
-  // (await cookies()).set("access-token", session, { httpOnly: true, expires });
+
   (await cookies()).set("access-token", session, {
-    httpOnly: false,
-    domain: ".toptiertravel.vip",
-    secure: true, //  Must be true because your site is HTTPS (toptiertravel.vip)
-    sameSite: "lax", // Required for cross-origin safety
-    path: "/",//Critical — makes cookie available site-wide
+    ...cookieDefaults,
     expires,
   });
 }
 
 export async function logout() {
-  (await cookies()).set("access-token", "", { expires: new Date(0) });
-  (await cookies()).set("agent_ref", "", { expires: new Date(0) });
-  sessionStorage.removeItem('lastRoute')
-  localStorage.removeItem('adminRef')
+  const cookieStore = await cookies();
+
+  // Clear access-token
+  cookieStore.set("access-token", "", {
+    ...cookieDefaults,
+    expires: new Date(0),
+  });
+
+  // Clear agent_ref
+  cookieStore.set("agent_ref", "", {
+    ...cookieDefaults,
+    expires: new Date(0),
+  });
+
+  sessionStorage.removeItem("lastRoute");
+  localStorage.removeItem("adminRef");
 }
+
 
 export async function getSession() {
   const session = (await cookies()).get("access-token")?.value;
@@ -77,11 +96,13 @@ export async function updateSession(request: NextRequest) {
   if (!parsed) return;
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000);
   const res = NextResponse.next();
+
   res.cookies.set({
     name: "access-token",
     value: await encrypt(parsed),
-    httpOnly: true,
+    ...cookieDefaults,
     expires,
+    httpOnly: true, // Overriding default for updateSession if specifically needed, but keeping consistent with original intent
   });
 
   return res;
