@@ -19,16 +19,15 @@ export const generateMetadata = async ({
   }
   const response = await cms_pages_content(payload);
   const page_data = response?.data;
-console.log('page data',page_data)
   return {
-    title: page_data?.page_name ? `${page_data.page_name} - Page Details` : 'Page Details',
+    title: page_data ? `${page_data[0]?.page_name} ` : 'Page Details',
     description: page_data?.short_description
       ? page_data.short_description.substring(0, 160)
       : 'View page details.',
     openGraph: {
-      title: page_data?.page_name || 'Booknow',
-      description: 'Launch your travel business in minutes with Booknow.',
-      siteName: 'Booknow',
+      title: page_data[0]?.page_name || 'toptierTravel.vip',
+      description: 'Launch your travel business in minutes with toptierTravel.vip.',
+      siteName: 'toptierTravel.vip',
     },
   };
 };

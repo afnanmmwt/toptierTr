@@ -3,6 +3,8 @@ import React from 'react'
 import { getDictionary } from '@src/get-dictionary'
 import TransitionLayout from '@src/utils/pageTransition'
 import { BookingDetails } from '@components/themes/default'
+import { Metadata } from 'next'
+export const metadata = { title: ` Booking Details` } satisfies Metadata;
 export default async function Page() {
   return (
     // <div>home page</div>

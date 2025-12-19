@@ -4,7 +4,7 @@ import { CustomerProfile } from '@components/themes/layout'
 import TransitionLayout from '@src/utils/pageTransition'
 import { Metadata } from 'next/types'
 
-export const metadata = { title: `Toptier | Profile ` } satisfies Metadata;
+export const metadata = { title: ` Profile ` } satisfies Metadata;
 
 export default async function Page() {
 

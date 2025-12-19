@@ -3,6 +3,8 @@ import { getDictionary } from "@src/get-dictionary";
 import TransitionLayout from "@src/utils/pageTransition";
 import PendingPaymentDetails from "@components/themes/default/components/modules/hotels/components/bookingDetails/pendingPaymentDetails";
 import { hotel_invoice } from "@src/actions";
+import { Metadata } from "next";
+export const metadata = { title: `Pending Payment` } satisfies Metadata;
 
 export default async function Page({
   params,

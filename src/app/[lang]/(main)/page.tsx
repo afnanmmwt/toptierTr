@@ -1,6 +1,8 @@
 import React from "react";
 import TransitionLayout from "@src/utils/pageTransition";
 import HomeWrapper from "@components/themes/default/components/home/homeWrapper/homeWrapper";
+import { Metadata } from "next";
+// export const metadata = { title: `toptiertravel` } satisfies Metadata;
 export default async function Page() {
   return (
     <TransitionLayout>
