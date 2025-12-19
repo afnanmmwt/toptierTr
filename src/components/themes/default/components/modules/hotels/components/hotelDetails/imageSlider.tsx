@@ -9,6 +9,7 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
   const [slidesToShow, setSlidesToShow] = useState(3);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -71,6 +72,18 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
     }
   };
 
+  const handleImageError = (index: number) => {
+    setFailedImages(prev => new Set([...Array.from(prev), index]));
+  };
+
+  const getImageUrl = (testimonial: any, index: number) => {
+    const defaultImage = "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG90ZWx8ZW58MHx8MHx8fDA%3D";
+    if (failedImages.has(index) || !testimonial) {
+      return defaultImage;
+    }
+    return testimonial;
+  };
+
   const getTransformValue = () => {
     return -(currentIndex * (100 / slidesToShow));
   };
@@ -104,13 +117,14 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
             >
               <div className="relative w-[480px] h-[300px]  rounded-2xl overflow-hidden">
                 <Image
-                  src={testimonial || "/images/default-placeholder.jpg"}
+                  src={getImageUrl(testimonial, index)}
                   alt={`Slide ${index + 1}`}
                   fill
                   className="object-cover !w-full !h-full"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33.333vw"
                   placeholder="blur"
                   blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAfFcSJYYAAAAJ0lEQVR42mNkYPhfDwAChwG/yN8eIAAAAABJRU5ErkJggg=="
+                  onError={() => handleImageError(index)}
                 />
               </div>
             </div>
