@@ -2,7 +2,7 @@ import ForgetPassword from "@components/themes/default/components/auth/forgetPas
 import { getDictionary } from "@src/get-dictionary";
 import React from "react";
 import { Metadata } from "next/types";
-export const metadata = { title: `Auth | Forget Password` } satisfies Metadata;
+export const metadata = { title: `Forget Password` } satisfies Metadata;
 export default async function Page({
   params,
 }: {
