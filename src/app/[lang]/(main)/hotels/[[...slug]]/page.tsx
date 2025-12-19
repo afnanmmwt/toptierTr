@@ -8,7 +8,7 @@ import {
   HotelsListingMain,
 } from "@components/themes/default";
 
-export const metadata = { title: `Toptier |  Hotels` } satisfies Metadata;
+export const metadata = { title: ` Hotels` } satisfies Metadata;
 export default async function Page({
   params,
 }: {

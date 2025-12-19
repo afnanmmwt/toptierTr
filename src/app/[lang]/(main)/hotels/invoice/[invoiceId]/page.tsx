@@ -3,6 +3,9 @@ import TransitionLayout from "@src/utils/pageTransition";
 import { HotelInvoice } from "@components/themes/default";
 import { hotel_invoice } from "@src/actions";
 import { Icon } from "@iconify/react";
+import { Metadata } from "next";
+
+export const metadata = { title: `Invoice` } satisfies Metadata;
 
 export default async function Page({
   params,
