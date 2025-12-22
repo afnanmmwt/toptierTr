@@ -26,7 +26,7 @@ export const RoomCard = ({ room, getAmenityIcon, options, onReserve,loading }: R
   const price = room.markup_price;
   const currency = room.currency || "USD";
   const imageUrl = room.img || "/images/auth_bg.jpg";
-
+  
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
 
@@ -177,7 +177,7 @@ export const RoomCard = ({ room, getAmenityIcon, options, onReserve,loading }: R
         </div>
 
         {/* Buttons */}
-        <div className="mt-auto pt-2 border-gray-100">
+        <div className="mt-auto pt-2 border-t border-gray-100">
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center">
               <h2 className="text-xl font-[900] text-[#0F172B]">
