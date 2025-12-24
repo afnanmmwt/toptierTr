@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -94,7 +95,7 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
 
   return (
     <div className="max-w-[1200px] mx-auto py-8 sm:py-12 lg:py-16 relative px-4">
-      <div 
+      <div
         className="overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
@@ -104,7 +105,7 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
           className={`flex transition-transform duration-500 ease-in-out ${isAnimating ? "pointer-events-none" : ""}`}
           style={{
             transform: `translateX(${getTransformValue()}%)`,
-            width: 'auto', // ⬅️ Fixed width per slide ke liye
+            width: slidesToShow === 1 ? '100%' : 'auto', // ⬅️ Conditional width
           }}
         >
           {testimonials.map((testimonial: any, index: number) => (
@@ -112,10 +113,15 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
               key={index}
               className="flex-shrink-0 px-2"
               style={{
-                width: '500px', // ⬅️ Fixed width per slide
+                width: slidesToShow === 1 ? '100%' : '500px', // ⬅️ Conditional width
               }}
             >
-              <div className="relative w-[480px] h-[300px]  rounded-2xl overflow-hidden">
+              <div
+                className="relative h-[300px] rounded-2xl overflow-hidden"
+                style={{
+                  width: slidesToShow === 1 ? '100%' : '480px', // ⬅️ Conditional width
+                }}
+              >
                 <Image
                   src={getImageUrl(testimonial, index)}
                   alt={`Slide ${index + 1}`}

@@ -16,5 +16,4 @@ const HotelsListingMain = () => {
     </div>
   )
 }
-
 export default HotelsListingMain

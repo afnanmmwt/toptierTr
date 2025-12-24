@@ -76,7 +76,7 @@ const HotelSuggestionSlider = ({ hotels, onHotelClick, loading }: HotelSuggestio
 
         {/* Left Arrow */}
         <button
-          className={`custom-prev absolute top-[148px] -left-3 cursor-pointer -translate-y-1/2 z-20 rounded-full w-11 h-11 flex items-center justify-center shadow-md transition ${isBeginning
+          className={`custom-prev absolute top-1/2 -left-3 cursor-pointer -translate-y-1/2 z-20 rounded-full w-11 h-11 flex items-center justify-center shadow-md transition ${isBeginning
               ? "bg-gray-200 cursor-not-allowed opacity-50"
               : "bg-white hover:bg-gray-100"
             }`}
@@ -108,7 +108,7 @@ const HotelSuggestionSlider = ({ hotels, onHotelClick, loading }: HotelSuggestio
         {/* Right Arrow */}
         <button
 
-          className={`custom-next absolute top-[148px] -right-3 cursor-pointer -translate-y-1/2 z-20 rounded-full w-11 h-11 flex items-center justify-center shadow-md transition ${isEnd
+          className={`custom-next absolute top-1/2 -right-3 cursor-pointer -translate-y-1/2 z-20 rounded-full w-11 h-11 flex items-center justify-center shadow-md transition ${isEnd
               ? "bg-gray-200 cursor-not-allowed opacity-50"
               : "bg-white hover:bg-gray-100"
             }`}
