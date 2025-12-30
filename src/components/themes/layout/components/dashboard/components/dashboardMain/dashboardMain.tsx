@@ -169,8 +169,7 @@ export default function Dashboard() {
 
   const bookings: Booking[] = pages.flatMap((p) => p?.data || []);
 
-  // ✅ FIX: Remove frontend filtering - API already handles search
-  // Since the backend filters by search, we should display all returned bookings
+ 
   const visibleBookings = bookings;
   // Counts from API (first page)
   const firstPage = pages[0] as PageResult | undefined;

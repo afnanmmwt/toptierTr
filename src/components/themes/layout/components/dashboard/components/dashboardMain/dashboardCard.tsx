@@ -457,7 +457,7 @@ const DashboardCard = ({ data }: { data: any }) => {
                 alert(dict?.dashboardCard?.invoicenotfound);
                 return;
               }
-              const invoiceUrl = `https://toptier-tr-ef19.vercel.app/hotels/invoice/${ref}`;
+              const invoiceUrl = `https://toptiertravel.vip/hotels/invoice/${ref}`;
               window.location.href = invoiceUrl;
             }}
           >
