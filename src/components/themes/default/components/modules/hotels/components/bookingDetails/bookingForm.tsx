@@ -1424,7 +1424,7 @@ export default function BookingForm() {
         </div>
         {showTerms && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white w-full max-w-lg rounded-xl shadow-lg p-6 relative">
+            <div className="bg-white w-full max-w-xs md:max-w-xl rounded-xl shadow-lg p-6 relative">
 
               {/* Close button */}
               <button
@@ -1440,38 +1440,38 @@ export default function BookingForm() {
               </h2>
 
               {/* Content */}
-              <div className="text-sm text-gray-600 max-h-100 overflow-y-auto">
-                <p>
+              <div className="text-sm text-gray-600 flex flex-col gap-2 max-h-60 md:max-h-100 overflow-y-auto">
+                <p className="text-base font-medium text-[#0F172B66]">
                   {/* Example text — replace with API / dict text */}
                   Welcome to the Top Tier Travel website. By accessing or using our website
                   and services, you agree to comply with the following terms and conditions.
                   Please read these Terms of Service carefully before using the website.
                 </p>
-                <h3> Acceptance of Terms</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Acceptance of Terms</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   By accessing, browsing, or using our website, you acknowledge that you have
                   read, understood, and agree to be bound by these Terms of Service, as well
                   as our Privacy Policy.
                 </p>
-                <h3> Services Provided</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Services Provided</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   Top Tier Travel provides luxury travel services, including but not limited
                   to hotel bookings, event coordination, private accommodations, and concierge
                   services. All services are subject to availability, and specific terms and
                   conditions may apply to individual bookings and packages.
                 </p>
-                <h3> Client Responsibilities</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Client Responsibilities</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   When using our services, you agree to provide accurate, current, and
                   complete information as required for reservations and other services. You
                   are responsible for ensuring that all personal and payment information is
                   correct and up-to-date.
                 </p>
-                <h3> Payment Terms</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Payment Terms</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   All fees for services are outlined at the time of booking. Payments must be
                   made through approved methods, which may include credit cards, bank
@@ -1480,8 +1480,8 @@ export default function BookingForm() {
                   cancellation of the booking or service. Any outstanding balances must be
                   settled before the travel date.
                 </p>
-                <h3> Cancellations and Refunds</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Cancellations and Refunds</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   Cancellation policies vary based on the services booked and the terms of our
                   third-party partners (e.g., hotels, airlines, or event venues). Any
@@ -1490,8 +1490,8 @@ export default function BookingForm() {
                   processed according to these terms. In some cases, bookings may be
                   non-refundable or subject to a cancellation fee.
                 </p>
-                <h3> Changes to Bookings</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Changes to Bookings</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   If you need to make changes to your booking, such as dates, destinations, or
                   services, you must notify us as soon as possible. Changes are subject to
@@ -1499,8 +1499,8 @@ export default function BookingForm() {
                   changeable or may have restrictions based on the terms and conditions of
                   third-party service providers.
                 </p>
-                <h3> Liability Disclaimer</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Liability Disclaimer</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   We are not responsible for the acts, errors, omissions, warranties,
                   representations, breaches, or negligence of these suppliers or for any
@@ -1509,8 +1509,8 @@ export default function BookingForm() {
                   cancellations, overbookings, strikes, force majeure events (such as natural
                   disasters or political unrest), or any other issues beyond our control.
                 </p>
-                <h3> Privacy Policy</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Privacy Policy</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   Your use of the website and services is also governed by our Privacy Policy,
                   which outlines how we collect, use, and protect your personal information.
@@ -1518,8 +1518,8 @@ export default function BookingForm() {
                   information as described in the Privacy Policy.
                 </p>
 
-                <h3> Governing Law</h3>
-                <p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Governing Law</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
                   {" "}
                   These Terms of Service are governed by and construed in accordance with the
                   laws of United States without regard to its conflict of law provisions. Any

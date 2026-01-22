@@ -28,7 +28,10 @@ const HotelsDetails = () => {
   const { user } = useUser();
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
-  const { setLoadingHotelId, loadingHotelId } = useHotelSearch()
+
+  const { setLoadingHotelId, loadingHotelId } = useHotelSearch();
+
+
   const [searchParams, setSearchParams] = useState({
     checkin: "",
     checkout: "",
@@ -133,10 +136,11 @@ const HotelsDetails = () => {
   const parsedForm = savedForm ? JSON.parse(savedForm) : null;
   const parsedHotel = savedhotel ? JSON.parse(savedhotel) : null;
   const supplier_name = parsedHotel?.supplier_name || "";
-  const {
-    bookingReference
-  } = useAppSelector((state: any) => state.root);
-  const dispatch = useAppDispatch()
+
+  const { bookingReference } = useAppSelector((state: any) => state.root);
+  const dispatch = useAppDispatch();
+
+
   const { data: hotelDetails, isLoading } = useQuery({
     queryKey: ["hotel-details", { hotel_id, ...searchParams }],
     queryFn: () =>
@@ -236,7 +240,9 @@ const HotelsDetails = () => {
       localStorage.setItem("currentHotel", JSON.stringify(hotelData));
     }
     setTimeout(() => {
-      setLoadingHotelId(null)
+
+      setLoadingHotelId(null);
+
       router.push(newUrl);
     }, 500);
   };
@@ -686,22 +692,32 @@ const HotelsDetails = () => {
           </div>
         ) : hotelDetails?.rooms && hotelDetails.rooms.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {hotelDetails.rooms.map((room: any, index: number) => (
-              <RoomCard
-                loading={roomOptionLoadingId}
-                key={index}
-                room={room}
-                options={""}
-                getAmenityIcon={getAmenityIcon}
-                onReserve={(room, option) => {
-                  dispatch(setBookingReference(""));
-                  const ref = new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
-                  dispatch(setBookingReference(ref));
 
-                  handleReserveRoom(room, option, hotelDetails);
-                }}
-              />
-            ))}
+            {[...hotelDetails.rooms]
+              .sort(
+                (a: any, b: any) =>
+                  (Number(a.markup_price_per_night) || 0) - (Number(b.markup_price_per_night) || 0)
+              )
+              .map((room: any, index: number) => (
+                <RoomCard
+                  loading={roomOptionLoadingId}
+                  key={index}
+                  room={room}
+                  options={""}
+                  getAmenityIcon={getAmenityIcon}
+                  onReserve={(room, option) => {
+                    dispatch(setBookingReference(""));
+                    const ref = new Date()
+                      .toISOString()
+                      .replace(/[-T:.Z]/g, "")
+                      .slice(0, 14);
+                    dispatch(setBookingReference(ref));
+
+                    handleReserveRoom(room, option, hotelDetails);
+                  }}
+                />
+              ))}
+
           </div>
         ) : (
           <div className="text-center py-12">
