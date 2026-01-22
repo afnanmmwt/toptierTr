@@ -41,7 +41,7 @@ const useBookingFormSchema = (dict: any) => {
         .min(
           1,
           dict?.bookingForm?.errors?.phoneNumberRequired ||
-            "Phone number is required"
+          "Phone number is required"
         ),
 
       travellers: z
@@ -330,12 +330,12 @@ export default function BookingForm() {
   const excludedCodes = ["0", "381", "599"];
   const countryList = Array.isArray(rawCountries)
     ? rawCountries
-        .map((c: any) => ({
-          iso: c.iso || c.code || "",
-          name: c.nicename || c.name || "",
-          phonecode: c.phonecode?.toString() || "0",
-        }))
-        .filter((c) => c.iso && c.name && !excludedCodes.includes(c.phonecode))
+      .map((c: any) => ({
+        iso: c.iso || c.code || "",
+        name: c.nicename || c.name || "",
+        phonecode: c.phonecode?.toString() || "0",
+      }))
+      .filter((c) => c.iso && c.name && !excludedCodes.includes(c.phonecode))
     : [];
 
   // options for SELECT DROPDOWN
@@ -1015,9 +1015,8 @@ export default function BookingForm() {
                       icon="mdi:keyboard-arrow-down"
                       width="24"
                       height="24"
-                      className={`text-gray-600 transition duration-100 ease-in-out ${
-                        isCountryListOpen ? "rotate-180" : "rotate-0"
-                      }`}
+                      className={`text-gray-600 transition duration-100 ease-in-out ${isCountryListOpen ? "rotate-180" : "rotate-0"
+                        }`}
                     />
                   ),
                   IndicatorSeparator: () => null,
@@ -1106,9 +1105,8 @@ export default function BookingForm() {
                         icon="mdi:keyboard-arrow-down"
                         width="24"
                         height="24"
-                        className={`text-gray-600 transition duration-100 ease-in-out ${
-                          isPhoneCodeListOpen ? "rotate-180" : "rotate-0"
-                        }`}
+                        className={`text-gray-600 transition duration-100 ease-in-out ${isPhoneCodeListOpen ? "rotate-180" : "rotate-0"
+                          }`}
                       />
                     ),
                     IndicatorSeparator: () => null,
@@ -1165,12 +1163,10 @@ export default function BookingForm() {
             <div className="flex justify-between items-center">
               <h4 className="text-lg text-[#0F172BE5] font-medium">
                 {index < adults
-                  ? `${
-                      dict?.bookingForm?.travelersInformation?.adultTraveller
-                    } ${index + 1}`
-                  : `${
-                      dict?.bookingForm?.travelersInformation?.childTraveller
-                    } ${index - adults + 1}`}
+                  ? `${dict?.bookingForm?.travelersInformation?.adultTraveller
+                  } ${index + 1}`
+                  : `${dict?.bookingForm?.travelersInformation?.childTraveller
+                  } ${index - adults + 1}`}
               </h4>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-[1fr_1.5fr_1.5fr] gap-4">
@@ -1209,11 +1205,10 @@ export default function BookingForm() {
                               icon="material-symbols:keyboard-arrow-up"
                               width="24"
                               height="24"
-                              className={`h-5 w-5 text-gray-500 transition-transform ${
-                                isTitleOpen === index
+                              className={`h-5 w-5 text-gray-500 transition-transform ${isTitleOpen === index
                                   ? "rotate-0"
                                   : "rotate-180"
-                              }`}
+                                }`}
                             />
                           </button>
                           {isTitleOpen === index && (
@@ -1245,11 +1240,10 @@ export default function BookingForm() {
                     </label>
                     <input
                       type="text"
-                      value={`${
-                        option?.children_ages
+                      value={`${option?.children_ages
                           ?.split(",")
-                          [index - adults]?.trim() || ""
-                      } years`}
+                        [index - adults]?.trim() || ""
+                        } years`}
                       disabled
                       className="block border border-gray-300 rounded-xl px-3 py-4 text-base w-full bg-gray-100 text-gray-700 cursor-not-allowed"
                     />
@@ -1434,11 +1428,10 @@ export default function BookingForm() {
       <button
         type="submit"
         disabled={isPending || isProcessingPayment} //  Block during booking OR payment
-        className={`w-full text-lg text-white py-3 font-medium rounded-lg mt-5 transition-colors focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2 ${
-          isPending || isProcessingPayment
+        className={`w-full text-lg text-white py-3 font-medium rounded-lg mt-5 transition-colors focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2 ${isPending || isProcessingPayment
             ? "bg-gray-400 cursor-not-allowed"
             : "bg-[#163C8C] hover:bg-[#0f2d6b] cursor-pointer focus:ring-[#163C8C]"
-        }`}
+          }`}
       >
         {isPending || isProcessingPayment ? (
           <>
