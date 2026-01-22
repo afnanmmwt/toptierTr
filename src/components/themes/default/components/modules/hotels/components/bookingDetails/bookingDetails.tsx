@@ -3,7 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import BookingForm from "./bookingForm";
-import {  useAppSelector } from "@lib/redux/store";
+import { useAppSelector } from "@lib/redux/store";
 import Image from "next/image";
 import useDictionary from "@hooks/useDict";
 import useLocale from "@hooks/useLocale";
@@ -39,18 +39,34 @@ export default function BookingDetails() {
     1,
     (checkoutDate.getTime() - checkinDate.getTime()) / (1000 * 60 * 60 * 24)
   );
+  const formatDateMMDDYYYY = (dateString?: string): string => {
+    if (!dateString) return "";
+
+    const date = new Date(dateString);
+
+    if (isNaN(date.getTime())) {
+      return dateString; // fallback if invalid date
+    }
+
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+
+    return `${month}-${day}-${year}`;
+  };
+
 
   // Editable fields state
-const [quantity, setQuantity] = useState<string>(String(rooms || 1));
-const [roomPrice, setRoomPrice] = useState<string>(() => {
-  // Remove commas and ensure valid number
-  const sanitized = String(markup_price_per_night || "0").replace(/,/g, "");
-  return sanitized;
-});
+  const [quantity, setQuantity] = useState<string>(String(rooms || 1));
+  const [roomPrice, setRoomPrice] = useState<string>(() => {
+    // Remove commas and ensure valid number
+    const sanitized = String(markup_price_per_night || "0").replace(/,/g, "");
+    return sanitized;
+  });
 
 
-const finalTotal = markup_price
-// final calcualtion
+  const finalTotal = markup_price
+  // final calcualtion
 
 
 
@@ -92,7 +108,7 @@ const finalTotal = markup_price
 
           {/* Pass live values to BookingForm */}
           <StripeProvider>
-            <BookingForm/>
+            <BookingForm />
           </StripeProvider>
         </div>
 
@@ -141,13 +157,13 @@ const finalTotal = markup_price
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.checkinDate}
                 </span>
-                <span className="font-semibold text-[#0F172B]">{checkin}</span>
+                <span className="font-semibold text-[#0F172B]"> {formatDateMMDDYYYY(checkin)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.checkoutDate}
                 </span>
-                <span className="font-semibold text-[#0F172B]">{checkout}</span>
+                <span className="font-semibold text-[#0F172B]"> {formatDateMMDDYYYY(checkout)}</span>
               </div>
 
               <div className="flex justify-between">
@@ -191,17 +207,17 @@ const finalTotal = markup_price
                 </div>
               </div>
               {/* tax percentage */}
-{hotelDetails?.tax_percentage ? (
-  <div className="flex justify-between items-center mt-1">
-    <span className="text-gray-600">
-      {dict?.bookingDetails?.tax || "Tax"}
-    </span>
-    &nbsp;
-    <span className="text-gray-900">
-      {hotelDetails.tax_percentage}%
-    </span>
-  </div>
-) : null}
+              {hotelDetails?.tax_percentage ? (
+                <div className="flex justify-between items-center mt-1">
+                  <span className="text-gray-600">
+                    {dict?.bookingDetails?.tax || "Tax"}
+                  </span>
+                  &nbsp;
+                  <span className="text-gray-900">
+                    {hotelDetails.tax_percentage}%
+                  </span>
+                </div>
+              ) : null}
               <div className="flex justify-between items-center border-t border-gray-300 pt-3 mt-2">
                 <span className="text-lg font-semibold text-[#0F172B]">
                   {dict?.bookingDetails?.total}
