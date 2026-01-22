@@ -38,6 +38,9 @@ const HotelsDetails = () => {
     nationality: "US",
   });
 
+  // ✅ Add ref to track if we're updating from search (not from URL)
+  const isUpdatingFromSearch = useRef(false);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const textRef = useRef<HTMLDivElement>(null);
@@ -48,13 +51,21 @@ const HotelsDetails = () => {
 
   const hotel_id = slugArr[0] || "";
 
+  // ✅ Modified useEffect - only update if NOT from search
   useEffect(() => {
+    // Skip if this update came from our own search submission
+    if (isUpdatingFromSearch.current) {
+      isUpdatingFromSearch.current = false;
+      return;
+    }
+
     const initialCheckin = slugArr[2] || "";
     const initialCheckout = slugArr[3] || "";
     const initialRooms = Number(slugArr[4]) || 1;
     const initialAdults = Number(slugArr[5]) || 2;
     const initialChildren = Number(slugArr[6]) || 0;
     const initialNationality = slugArr[7] || "US";
+
     setSearchParams({
       checkin: initialCheckin,
       checkout: initialCheckout,
@@ -64,6 +75,7 @@ const HotelsDetails = () => {
       nationality: initialNationality,
     });
   }, [slugArr]);
+
   //  Now define ALL remaining hooks — no early return before this point!
   const updateUrl = useCallback(
     (params: typeof searchParams, hotelName: string) => {
@@ -92,6 +104,9 @@ const HotelsDetails = () => {
     initialCheckout: searchParams.checkout,
     initialNationality: searchParams.nationality,
     onSearchRefetch: (newForm: any) => {
+      // ✅ Set flag BEFORE updating state to prevent useEffect from running
+      isUpdatingFromSearch.current = true;
+
       const newParams = {
         checkin: newForm.checkin,
         checkout: newForm.checkout,
@@ -100,6 +115,8 @@ const HotelsDetails = () => {
         children: newForm.children,
         nationality: newForm.nationality,
       };
+
+      // Update local state for query refetch
       setSearchParams(newParams);
     },
   });
@@ -139,7 +156,7 @@ const HotelsDetails = () => {
     enabled: !!hotel_id && !!savedForm && !!savedhotel, // only fetch if data is valid
     staleTime: 0,
   });
-
+  // console.log('hotelDetails', hotelDetails.room);
   // Clamp logic — fix unused var warning
   useEffect(() => {
     if (textRef.current && hotelDetails?.desc) {
@@ -198,7 +215,7 @@ const HotelsDetails = () => {
   };
 
   const handleSuggestionClick = (hotel: any) => {
-    setLoadingHotelId(hotel.id)
+    setLoadingHotelId(hotel.id);
     const { checkin, checkout, rooms, adults, children, nationality } =
       searchParams;
     const hotelNameSlug = hotel.name.toLowerCase().replace(/\s+/g, "-");
@@ -853,4 +870,5 @@ const HotelsDetails = () => {
     </div>
   );
 };
+
 export default HotelsDetails;
