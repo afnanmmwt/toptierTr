@@ -156,7 +156,7 @@ const HotelsDetails = () => {
     enabled: !!hotel_id && !!savedForm && !!savedhotel, // only fetch if data is valid
     staleTime: 0,
   });
-
+// console.log('hotelDetails', hotelDetails.room);
   // Clamp logic — fix unused var warning
   useEffect(() => {
     if (textRef.current && hotelDetails?.desc) {
@@ -686,25 +686,30 @@ const HotelsDetails = () => {
           </div>
         ) : hotelDetails?.rooms && hotelDetails.rooms.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {hotelDetails.rooms.map((room: any, index: number) => (
-              <RoomCard
-                loading={roomOptionLoadingId}
-                key={index}
-                room={room}
-                options={""}
-                getAmenityIcon={getAmenityIcon}
-                onReserve={(room, option) => {
-                  dispatch(setBookingReference(""));
-                  const ref = new Date()
-                    .toISOString()
-                    .replace(/[-T:.Z]/g, "")
-                    .slice(0, 14);
-                  dispatch(setBookingReference(ref));
+            {[...hotelDetails.rooms]
+              .sort(
+                (a: any, b: any) =>
+                  (Number(a.markup_price_per_night) || 0) - (Number(b.markup_price_per_night) || 0)
+              )
+              .map((room: any, index: number) => (
+                <RoomCard
+                  loading={roomOptionLoadingId}
+                  key={index}
+                  room={room}
+                  options={""}
+                  getAmenityIcon={getAmenityIcon}
+                  onReserve={(room, option) => {
+                    dispatch(setBookingReference(""));
+                    const ref = new Date()
+                      .toISOString()
+                      .replace(/[-T:.Z]/g, "")
+                      .slice(0, 14);
+                    dispatch(setBookingReference(ref));
 
-                  handleReserveRoom(room, option, hotelDetails);
-                }}
-              />
-            ))}
+                    handleReserveRoom(room, option, hotelDetails);
+                  }}
+                />
+              ))}
           </div>
         ) : (
           <div className="text-center py-12">
