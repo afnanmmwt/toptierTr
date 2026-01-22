@@ -16,17 +16,19 @@ interface RoomCardProps {
   options?: any;
   getAmenityIcon: (amenity: string) => string;
   onReserve: (room: any, option: any) => void;
-  loading:null | string
+  loading: null | string
 }
 
-export const RoomCard = ({ room, getAmenityIcon, options, onReserve,loading }: RoomCardProps) => {
+export const RoomCard = ({ room, getAmenityIcon, options, onReserve, loading }: RoomCardProps) => {
   const { user } = useUser();
   const { priceRateConverssion } = useCurrency();
   const option = options || {};
-  const price = room.markup_price;
+  console.log(room);
+
+  const price = room.markup_price_per_night;
   const currency = room.currency || "USD";
   const imageUrl = room.img || "/images/auth_bg.jpg";
-  
+
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
 
@@ -66,7 +68,7 @@ export const RoomCard = ({ room, getAmenityIcon, options, onReserve,loading }: R
     }
   };
 
-  const [showPopup,setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
   return (
     <div className="w-full rounded-4xl bg-[#FFFFFF] hover:scale-100 hover:shadow-sm p-2 transition-all duration-200 border border-gray-100 flex flex-col h-[590px]">
