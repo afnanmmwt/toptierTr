@@ -28,7 +28,8 @@ const HotelsDetails = () => {
   const { user } = useUser();
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
-const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
+  const { setLoadingHotelId, loadingHotelId } = useHotelSearch();
+
   const [searchParams, setSearchParams] = useState({
     checkin: "",
     checkout: "",
@@ -37,6 +38,9 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
     children: 0,
     nationality: "US",
   });
+
+  // ✅ Add ref to track if we're updating from search (not from URL)
+  const isUpdatingFromSearch = useRef(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -48,13 +52,21 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
 
   const hotel_id = slugArr[0] || "";
 
+  // ✅ Modified useEffect - only update if NOT from search
   useEffect(() => {
+    // Skip if this update came from our own search submission
+    if (isUpdatingFromSearch.current) {
+      isUpdatingFromSearch.current = false;
+      return;
+    }
+
     const initialCheckin = slugArr[2] || "";
     const initialCheckout = slugArr[3] || "";
     const initialRooms = Number(slugArr[4]) || 1;
     const initialAdults = Number(slugArr[5]) || 2;
     const initialChildren = Number(slugArr[6]) || 0;
     const initialNationality = slugArr[7] || "US";
+
     setSearchParams({
       checkin: initialCheckin,
       checkout: initialCheckout,
@@ -64,6 +76,7 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
       nationality: initialNationality,
     });
   }, [slugArr]);
+
   //  Now define ALL remaining hooks — no early return before this point!
   const updateUrl = useCallback(
     (params: typeof searchParams, hotelName: string) => {
@@ -92,6 +105,9 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
     initialCheckout: searchParams.checkout,
     initialNationality: searchParams.nationality,
     onSearchRefetch: (newForm: any) => {
+      // ✅ Set flag BEFORE updating state to prevent useEffect from running
+      isUpdatingFromSearch.current = true;
+
       const newParams = {
         checkin: newForm.checkin,
         checkout: newForm.checkout,
@@ -100,6 +116,8 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
         children: newForm.children,
         nationality: newForm.nationality,
       };
+
+      // Update local state for query refetch
       setSearchParams(newParams);
     },
   });
@@ -116,10 +134,9 @@ const {setLoadingHotelId,loadingHotelId} = useHotelSearch()
   const parsedForm = savedForm ? JSON.parse(savedForm) : null;
   const parsedHotel = savedhotel ? JSON.parse(savedhotel) : null;
   const supplier_name = parsedHotel?.supplier_name || "";
-  const {
-bookingReference
-} = useAppSelector((state:any) => state.root);
- const dispatch=useAppDispatch()
+  const { bookingReference } = useAppSelector((state: any) => state.root);
+  const dispatch = useAppDispatch();
+
   const { data: hotelDetails, isLoading } = useQuery({
     queryKey: ["hotel-details", { hotel_id, ...searchParams }],
     queryFn: () =>
@@ -198,7 +215,7 @@ bookingReference
   };
 
   const handleSuggestionClick = (hotel: any) => {
-    setLoadingHotelId(hotel.id)
+    setLoadingHotelId(hotel.id);
     const { checkin, checkout, rooms, adults, children, nationality } =
       searchParams;
     const hotelNameSlug = hotel.name.toLowerCase().replace(/\s+/g, "-");
@@ -218,10 +235,10 @@ bookingReference
     if (typeof window !== "undefined") {
       localStorage.setItem("currentHotel", JSON.stringify(hotelData));
     }
-     setTimeout(() => {
-     setLoadingHotelId(null)
-    router.push(newUrl);
-  }, 500);
+    setTimeout(() => {
+      setLoadingHotelId(null);
+      router.push(newUrl);
+    }, 500);
   };
 
   const getFaqIcon = (question: string) => {
@@ -573,8 +590,8 @@ bookingReference
                   const defaultAmenities = ["Free Wi-Fi", "Room Cleaning"];
                   const validAmenities = Array.isArray(hotelDetails.amenities)
                     ? hotelDetails.amenities.filter(
-                        (item: any) => item && item.trim() !== ""
-                      )
+                      (item: any) => item && item.trim() !== ""
+                    )
                     : [];
                   const amenitiesToShow =
                     validAmenities.length > 0
@@ -677,9 +694,12 @@ bookingReference
                 options={""}
                 getAmenityIcon={getAmenityIcon}
                 onReserve={(room, option) => {
-                   dispatch(setBookingReference(""));
-                      const ref=    new Date().toISOString().replace(/[-T:.Z]/g, "").slice(0, 14);
-                      dispatch(setBookingReference(ref));
+                  dispatch(setBookingReference(""));
+                  const ref = new Date()
+                    .toISOString()
+                    .replace(/[-T:.Z]/g, "")
+                    .slice(0, 14);
+                  dispatch(setBookingReference(ref));
 
                   handleReserveRoom(room, option, hotelDetails);
                 }}
@@ -802,9 +822,8 @@ bookingReference
           <div className="relative bg-white rounded-xl max-w-2xl w-full max-h-[80vh] overflow-y-auto p-6">
             <button
               onClick={() => setIsModalOpen(false)}
-              className={`absolute top-4 cursor-pointer ${
-                document.dir === "rtl" ? "left-4" : "right-4"
-              } text-gray-500 hover:text-gray-700`}
+              className={`absolute top-4 cursor-pointer ${document.dir === "rtl" ? "left-4" : "right-4"
+                } text-gray-500 hover:text-gray-700`}
               aria-label="Close"
             >
               <svg
@@ -854,4 +873,5 @@ bookingReference
     </div>
   );
 };
+
 export default HotelsDetails;

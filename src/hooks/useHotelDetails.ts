@@ -9,7 +9,6 @@ import { setSeletecRoom } from '@lib/redux/base';
 import { toast } from 'react-toastify';
 import { useUser } from './use-user';
 
-// ✅ Updated: Add children_ages
 export interface HotelForm {
   checkin: string;
   checkout: string;
@@ -18,10 +17,9 @@ export interface HotelForm {
   children: number;
   nationality: string;
   currency: string;
-  children_ages?: number[]; //  NEW
+  children_ages?: number[];
 }
 
-// ✅ Updated schema with optional children_ages
 export const hotelSearchSchema = z
   .object({
     checkin: z.string().min(1, "Check-in date is required"),
@@ -33,7 +31,6 @@ export const hotelSearchSchema = z
     children_ages: z.array(z.number().int().min(0).max(17)).optional(),
   })
   .refine((data) => {
-    // Validate child ages only if children > 0
     if (data.children > 0) {
       return (
         data.children_ages &&
@@ -59,21 +56,26 @@ interface UseHotelDetailsOptions {
   onSearchSuccess?: (formData: HotelForm) => void;
   onSearchError?: (error: string) => void;
   onSearchRefetch?: (formData: HotelForm) => void;
+  onSearchStart?: () => void; // ✅ New callback
+  onSearchComplete?: () => void; // ✅ New callback
 }
 
 export const useHotelDetails = ({
   initialCheckin,
   initialCheckout,
-  initialNationality = "US", // 👈 Default United States
+  initialNationality = "US",
   initialCurrency = "USD",
   onSearchSuccess,
   onSearchError,
   onSearchRefetch,
+  onSearchStart, // ✅ New
+  onSearchComplete, // ✅ New
 }: UseHotelDetailsOptions = {}) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { setSelectedRoom } = useHotelSearch();
   const pathname = usePathname();
+
   const formatDate = (date: Date) => {
     return date.toISOString().split("T")[0];
   };
@@ -83,51 +85,47 @@ export const useHotelDetails = ({
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
   const defaultCheckout = initialCheckout || formatDate(tomorrow);
-// Get saved form (if any)
-const storedForm = typeof window !== "undefined"
-  ? localStorage.getItem("hotelSearchForm")
-  : null;
-const {user}=useUser()
-let initialForm: HotelForm = {
-  checkin: defaultCheckin,
-  checkout: defaultCheckout,
-  rooms: 1,
-  adults: 2,
-  children: 0,
-  children_ages: [],
-  nationality: initialNationality || "US",
-  currency: initialCurrency || "USD",
 
-};
+  const storedForm = typeof window !== "undefined"
+    ? localStorage.getItem("hotelSearchForm")
+    : null;
+  const { user } = useUser();
 
-// If localStorage has previous form, parse and merge it
-if (storedForm) {
-  try {
-    const parsed = JSON.parse(storedForm);
-    initialForm = {
-      ...initialForm,
-      ...parsed,
-      children_ages: parsed.children_ages || [],
-      adults: parsed.adults ?? 2,
-      rooms: parsed.rooms ?? 1,
-      children: parsed.children ?? 0,
-    };
-  } catch (error) {
-    console.warn("Error parsing hotelSearchForm:", error);
+  let initialForm: HotelForm = {
+    checkin: defaultCheckin,
+    checkout: defaultCheckout,
+    rooms: 1,
+    adults: 2,
+    children: 0,
+    children_ages: [],
+    nationality: initialNationality || "US",
+    currency: initialCurrency || "USD",
+  };
+
+  if (storedForm) {
+    try {
+      const parsed = JSON.parse(storedForm);
+      initialForm = {
+        ...initialForm,
+        ...parsed,
+        children_ages: parsed.children_ages || [],
+        adults: parsed.adults ?? 2,
+        rooms: parsed.rooms ?? 1,
+        children: parsed.children ?? 0,
+      };
+    } catch (error) {
+      console.warn("Error parsing hotelSearchForm:", error);
+    }
   }
-}
 
-//  Initialize state
-const [form, setForm] = useState<HotelForm>(initialForm);
-
-
+  const [form, setForm] = useState<HotelForm>(initialForm);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showGuestsDropdown, setShowGuestsDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const guestsDropdownRef = useRef<HTMLDivElement | null>(null);
   const totalGuests = form.adults + form.children;
   const isFormValid = Object.keys(errors).length === 0;
-  const [roomOptionLoadingId, setRommOptionLoadingId]=useState<null>(null)
+  const [roomOptionLoadingId, setRommOptionLoadingId] = useState<null>(null);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -142,25 +140,21 @@ const [form, setForm] = useState<HotelForm>(initialForm);
     }
   }, [errors]);
 
-  //  Enhanced updateForm to handle children_ages
   const updateForm = useCallback((updates: Partial<HotelForm>) => {
-      if (updates.children !== undefined && updates.children > 12) {
-          toast.warning("You’ve reached the maximum limit of children.");
-          return;
-        }
+    if (updates.children !== undefined && updates.children > 12) {
+      toast.warning("You've reached the maximum limit of children.");
+      return;
+    }
     setForm(prev => {
       const newForm = { ...prev, ...updates };
 
-      // Auto-manage children_ages when children count changes
       if (updates.children !== undefined) {
         const newChildren = updates.children;
         const currentAges = prev.children_ages || [];
         if (newChildren > currentAges.length) {
-          // Add new slots (default age 0)
           const newAges = [...currentAges, ...Array(newChildren - currentAges.length).fill(0)];
           newForm.children_ages = newAges;
         } else if (newChildren < currentAges.length) {
-          // Trim excess
           newForm.children_ages = currentAges.slice(0, newChildren);
         }
       }
@@ -209,6 +203,9 @@ const [form, setForm] = useState<HotelForm>(initialForm);
     if (!isValid) return { success: false, errors };
 
     setIsSearching(true);
+    // ✅ Call onSearchStart before any async operations
+    onSearchStart?.();
+
     try {
       localStorage.setItem('hotelSearchForm', JSON.stringify(form));
 
@@ -216,41 +213,37 @@ const [form, setForm] = useState<HotelForm>(initialForm);
       if (!currentHotelString) {
         throw new Error("No current hotel found in storage");
       }
-  //  store full hotel object in localStorage
 
-    const formData = localStorage.getItem("hotelSearchForm");
-    //  generate slug
-    let parsedFormData:any;
-    let suplier_name;
-    if (formData) {
-       parsedFormData = JSON.parse(formData); // now it's an object
-    }
       const currentHotel = JSON.parse(currentHotelString);
-      const nationality = form.nationality;
       const slugName = currentHotel.name.toLowerCase().replace(/\s+/g, "-");
-      // const supplier=storedForm?.suplier_name
-      //  Include children_ages in URL
-      const childrenAgesParam = form.children_ages?.join(",") || "";
-      const url = `/hotelDetails/${currentHotel.hotel_id}/${slugName}/${parsedFormData.checkin}/${parsedFormData.checkout}/${parsedFormData.rooms}/${parsedFormData.adults}/${parsedFormData.children}/${nationality}/${childrenAgesParam}`;
 
+      const childrenAgesParam = form.children_ages?.join(",") || "";
+      const url = `/hotelDetails/${currentHotel.hotel_id}/${slugName}/${form.checkin}/${form.checkout}/${form.rooms}/${form.adults}/${form.children}/${form.nationality}${childrenAgesParam ? `/${childrenAgesParam}` : ''}`;
+
+      router.replace(url);
 
       if (onSearchRefetch) {
         onSearchRefetch(form);
-        return { success: true, data: form };
       }
 
       onSearchSuccess?.(form);
-      router.push(url);
+
+      // ✅ Add small delay to ensure query starts fetching
+      setTimeout(() => {
+        onSearchComplete?.();
+      }, 100);
+
       return { success: true, data: form };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setErrors({ submit: 'Search failed. Please try again.' });
       onSearchError?.(errorMessage);
+      onSearchComplete?.(); // ✅ Also call on error
       return { success: false, error: errorMessage };
     } finally {
       setIsSearching(false);
     }
-  }, [form, validateForm, router, errors, onSearchSuccess, onSearchError, onSearchRefetch]);
+  }, [form, validateForm, router, errors, onSearchSuccess, onSearchError, onSearchRefetch, onSearchStart, onSearchComplete]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -268,24 +261,22 @@ const [form, setForm] = useState<HotelForm>(initialForm);
       room,
       option,
     };
-setRommOptionLoadingId(option.id)
+    setRommOptionLoadingId(option.id);
+
     dispatch(setSeletecRoom(roomData));
-    if(!user){
-        setTimeout(() => {
-          setRommOptionLoadingId(null)
-     sessionStorage.setItem('lastRoute', "/bookings");
-  router.replace('/auth/login');
-  }, 500);
 
+    if (!user) {
+      setTimeout(() => {
+        setRommOptionLoadingId(null);
+        sessionStorage.setItem('lastRoute', "/bookings");
+        router.replace('/auth/login');
+      }, 500);
+    } else {
+      setTimeout(() => {
+        setRommOptionLoadingId(null);
+        router.push(`/bookings`);
+      }, 500);
     }
-    else{
-       setTimeout(() => {
-          setRommOptionLoadingId(null)
- router.push(`/bookings`);
-  }, 500);
-    }
-
-
   };
 
   const resetForm = useCallback(() => {
@@ -300,11 +291,11 @@ setRommOptionLoadingId(option.id)
       children: 0,
       nationality: initialNationality,
       currency: initialCurrency || "USD",
-      children_ages: [], // 👈 Reset
+      children_ages: [],
     });
     setErrors({});
     closeGuestsDropdown();
-  }, [initialNationality, closeGuestsDropdown, formatDate]);
+  }, [initialNationality, initialCurrency, closeGuestsDropdown]);
 
   const setExternalForm = useCallback((newForm: Partial<HotelForm>) => {
     setForm(prev => ({ ...prev, ...newForm }));
@@ -319,7 +310,7 @@ setRommOptionLoadingId(option.id)
     isFormValid,
     guestsDropdownRef,
     handleChange,
-    updateForm, // Now handles children_ages
+    updateForm,
     toggleGuestsDropdown,
     closeGuestsDropdown,
     onSubmit,
