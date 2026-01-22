@@ -719,7 +719,6 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }
-
     return data;
   } catch (error) {
     return { error: (error as Error).message || "An error occurred" };
