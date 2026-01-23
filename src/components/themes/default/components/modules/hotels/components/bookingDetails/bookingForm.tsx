@@ -1417,6 +1417,9 @@ export default function BookingForm() {
               </label>
             )}
           />
+          <span className="text-[#0F172B66] text-base font-medium">
+            Cancellation Policy &
+          </span>
           <span onClick={() => setShowTerms(true)} className="text-[#163C8C] underline cursor-pointer hover:text-[#0f2d6b]">
 
             {dict?.bookingForm?.cancellationPolicy?.termsAndConditions}
