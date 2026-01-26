@@ -109,6 +109,19 @@ const useHotelSearch = () => {
     children_ages: [], //  NEW
   });
 
+  // Load from local storage on mount
+  useEffect(() => {
+    try {
+      const savedForm = localStorage.getItem("hotelSearchForm");
+      if (savedForm) {
+        const parsedData = JSON.parse(savedForm);
+        setForm((prev) => ({ ...prev, ...parsedData }));
+      }
+    } catch (error) {
+      console.error("Failed to load search form from local storage", error);
+    }
+  }, []);
+
   const queryClient = useQueryClient();
   const { currency, locale } = useAppSelector((state) => state.root)
 

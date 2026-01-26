@@ -67,8 +67,8 @@ const HotelsDetails = () => {
   const parsedForm = savedForm ? JSON.parse(savedForm) : null;
   const parsedHotel = savedhotel ? JSON.parse(savedhotel) : null;
 
-  //  Add ref to track if initial fetch is done
-  const initialFetchDoneRef = useRef(false);
+  //  Add ref to track last fetch key to prevent duplicates but allow updates
+  const lastFetchKeyRef = useRef("");
 
   // NEW: Function to fetch hotel details
   const fetchHotelDetails = useCallback(async (
@@ -83,7 +83,7 @@ const HotelsDetails = () => {
     supplierName: string = ""
   ) => {
     if (!hotelId || !checkin || !checkout) return;
-    
+
     setIsLoadingHotelDetails(true);
     try {
       const response = await hotel_details({
@@ -108,17 +108,21 @@ const HotelsDetails = () => {
   }, [currency, language]);
 
   //  NEW: Initial fetch when component mounts with URL params - only once
+  //  NEW: Initial fetch when component mounts with URL params - properly handling updates
   useEffect(() => {
-    if (hotel_id && slugArr[2] && slugArr[3] && !initialFetchDoneRef.current) {
-      initialFetchDoneRef.current = true;
-      
-      const initialCheckin = slugArr[2];
-      const initialCheckout = slugArr[3];
-      const initialRooms = Number(slugArr[4]) || 1;
-      const initialAdults = Number(slugArr[5]) || 2;
-      const initialChildren = Number(slugArr[6]) || 0;
-      const initialNationality = slugArr[7] || "US";
-      
+    const initialCheckin = slugArr[2];
+    const initialCheckout = slugArr[3];
+    const initialRooms = Number(slugArr[4]) || 1;
+    const initialAdults = Number(slugArr[5]) || 2;
+    const initialChildren = Number(slugArr[6]) || 0;
+    const initialNationality = slugArr[7] || "US";
+
+    // Create a unique key for the current parameters
+    const currentKey = `${hotel_id}-${initialCheckin}-${initialCheckout}-${initialRooms}-${initialAdults}-${initialChildren}-${initialNationality}`;
+
+    if (hotel_id && initialCheckin && initialCheckout && lastFetchKeyRef.current !== currentKey) {
+      lastFetchKeyRef.current = currentKey;
+
       fetchHotelDetails(
         hotel_id,
         initialCheckin,
@@ -131,7 +135,7 @@ const HotelsDetails = () => {
         parsedHotel?.supplier_name || ""
       );
     }
-  }, [hotel_id, slugArr[0], slugArr[2], slugArr[3], fetchHotelDetails]);
+  }, [hotel_id, slugArr, fetchHotelDetails]);
 
   // ✅ Modified useEffect - only update if NOT from search
   useEffect(() => {
@@ -190,9 +194,9 @@ const HotelsDetails = () => {
     onSearchSubmit: async (newForm: any) => {
       // ✅ Set flag BEFORE updating state to prevent useEffect from running
       isUpdatingFromSearch.current = true;
-      
-      // ✅ Reset the initial fetch ref so it doesn't trigger on URL change
-      initialFetchDoneRef.current = false;
+
+      // ✅ Reset the last fetch key so it doesn't conflict
+      lastFetchKeyRef.current = "";
 
       // ✅ Fetch new hotel details
       await fetchHotelDetails(
