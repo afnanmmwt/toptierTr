@@ -3,7 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import BookingForm from "./bookingForm";
-import {  useAppSelector } from "@lib/redux/store";
+import { useAppSelector } from "@lib/redux/store";
 import Image from "next/image";
 import useDictionary from "@hooks/useDict";
 import useLocale from "@hooks/useLocale";
@@ -41,16 +41,31 @@ export default function BookingDetails() {
   );
 
   // Editable fields state
-const [quantity, setQuantity] = useState<string>(String(rooms || 1));
-const [roomPrice, setRoomPrice] = useState<string>(() => {
-  // Remove commas and ensure valid number
-  const sanitized = String(markup_price_per_night || "0").replace(/,/g, "");
-  return sanitized;
-});
+  const [quantity, setQuantity] = useState<string>(String(rooms || 1));
+  const [roomPrice, setRoomPrice] = useState<string>(() => {
+    // Remove commas and ensure valid number
+    const sanitized = String(markup_price_per_night || "0").replace(/,/g, "");
+    return sanitized;
+  });
 
 
-const finalTotal = markup_price
-// final calcualtion
+  const finalTotal = markup_price
+  // final calcualtion
+  // Handle back navigation
+  const handleBack = () => {
+    if (hotelDetails?.id && checkin && checkout) {
+      const hotelNameSlug = (hotelDetails.name || "")
+        .toLowerCase()
+        .replace(/\s+/g, "-");
+      const nationality = saveBookingData.nationality || "US"; // Default to US if missing
+
+      const url = `/hotelDetails/${hotelDetails.id}/${hotelNameSlug}/${checkin}/${checkout}/${rooms || 1}/${adults || 2}/${children || 0}/${nationality}`;
+
+      router.push(url);
+    } else {
+      router.back();
+    }
+  };
 
 
 
@@ -62,7 +77,7 @@ const finalTotal = markup_price
           {/* Back Button and Header */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.back()}
+              onClick={handleBack}
               className="w-10 h-10 cursor-pointer rounded-full bg-gray-50 border border-[#CACACA] flex items-center justify-center hover:bg-gray-100 transition-colors"
             >
               <svg
@@ -92,7 +107,7 @@ const finalTotal = markup_price
 
           {/* Pass live values to BookingForm */}
           <StripeProvider>
-            <BookingForm/>
+            <BookingForm />
           </StripeProvider>
         </div>
 
@@ -191,17 +206,17 @@ const finalTotal = markup_price
                 </div>
               </div>
               {/* tax percentage */}
-{hotelDetails?.tax_percentage ? (
-  <div className="flex justify-between items-center mt-1">
-    <span className="text-gray-600">
-      {dict?.bookingDetails?.tax || "Tax"}
-    </span>
-    &nbsp;
-    <span className="text-gray-900">
-      {hotelDetails.tax_percentage}%
-    </span>
-  </div>
-) : null}
+              {hotelDetails?.tax_percentage ? (
+                <div className="flex justify-between items-center mt-1">
+                  <span className="text-gray-600">
+                    {dict?.bookingDetails?.tax || "Tax"}
+                  </span>
+                  &nbsp;
+                  <span className="text-gray-900">
+                    {hotelDetails.tax_percentage}%
+                  </span>
+                </div>
+              ) : null}
               <div className="flex justify-between items-center border-t border-gray-300 pt-3 mt-2">
                 <span className="text-lg font-semibold text-[#0F172B]">
                   {dict?.bookingDetails?.total}

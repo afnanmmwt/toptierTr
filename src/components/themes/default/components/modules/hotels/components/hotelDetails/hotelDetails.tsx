@@ -1,7 +1,6 @@
 "use client";
 import React, { useCallback, useState, useRef, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
 import { hotel_details } from "@src/actions/server-actions";
 import HotelDetailsSearch from "./hotelDetailsSearch";
 import SwiperImageSlider from "./imageSlider";
@@ -39,8 +38,12 @@ const HotelsDetails = () => {
     nationality: "US",
   });
 
-  // ✅ Add ref to track if we're updating from search (not from URL)
+  //  Add ref to track if we're updating from search (not from URL)
   const isUpdatingFromSearch = useRef(false);
+
+  //  NEW: State for hotel details data
+  const [hotelDetailsData, setHotelDetailsData] = useState<any>(null);
+  const [isLoadingHotelDetails, setIsLoadingHotelDetails] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -51,6 +54,84 @@ const HotelsDetails = () => {
   const slugArr = (params?.slug as string[]) || [];
 
   const hotel_id = slugArr[0] || "";
+
+  //  Move localStorage parsing here before using in callbacks
+  const savedForm =
+    typeof window !== "undefined"
+      ? localStorage.getItem("hotelSearchForm")
+      : null;
+  const savedhotel =
+    typeof window !== "undefined" ? localStorage.getItem("currentHotel") : null;
+
+  // Parse only if available
+  const parsedForm = savedForm ? JSON.parse(savedForm) : null;
+  const parsedHotel = savedhotel ? JSON.parse(savedhotel) : null;
+
+  //  Add ref to track if initial fetch is done
+  const initialFetchDoneRef = useRef(false);
+
+  // NEW: Function to fetch hotel details
+  const fetchHotelDetails = useCallback(async (
+    hotelId: string,
+    checkin: string,
+    checkout: string,
+    rooms: number,
+    adults: number,
+    children: number,
+    nationality: string,
+    childrenAges: number[] = [],
+    supplierName: string = ""
+  ) => {
+    if (!hotelId || !checkin || !checkout) return;
+    
+    setIsLoadingHotelDetails(true);
+    try {
+      const response = await hotel_details({
+        hotel_id: hotelId,
+        checkin,
+        checkout,
+        rooms,
+        adults,
+        childs: children,
+        child_age: childrenAges.length > 0 ? childrenAges.map(String) : [],
+        nationality,
+        language,
+        currency,
+        supplier_name: supplierName,
+      });
+      setHotelDetailsData(response);
+    } catch (error) {
+      console.error("Error fetching hotel details:", error);
+    } finally {
+      setIsLoadingHotelDetails(false);
+    }
+  }, [currency, language]);
+
+  //  NEW: Initial fetch when component mounts with URL params - only once
+  useEffect(() => {
+    if (hotel_id && slugArr[2] && slugArr[3] && !initialFetchDoneRef.current) {
+      initialFetchDoneRef.current = true;
+      
+      const initialCheckin = slugArr[2];
+      const initialCheckout = slugArr[3];
+      const initialRooms = Number(slugArr[4]) || 1;
+      const initialAdults = Number(slugArr[5]) || 2;
+      const initialChildren = Number(slugArr[6]) || 0;
+      const initialNationality = slugArr[7] || "US";
+      
+      fetchHotelDetails(
+        hotel_id,
+        initialCheckin,
+        initialCheckout,
+        initialRooms,
+        initialAdults,
+        initialChildren,
+        initialNationality,
+        parsedForm?.children_ages || [],
+        parsedHotel?.supplier_name || ""
+      );
+    }
+  }, [hotel_id, slugArr[0], slugArr[2], slugArr[3], fetchHotelDetails]);
 
   // ✅ Modified useEffect - only update if NOT from search
   useEffect(() => {
@@ -99,14 +180,32 @@ const HotelsDetails = () => {
     toggleGuestsDropdown,
     onSubmit: handleSearchSubmit,
     handleReserveRoom,
-    roomOptionLoadingId
+    roomOptionLoadingId,
+    hotelDetails: hookHotelDetails,
+    isLoadingHotelDetails: hookIsLoading,
   } = useHotelDetails({
     initialCheckin: searchParams.checkin,
     initialCheckout: searchParams.checkout,
     initialNationality: searchParams.nationality,
-    onSearchRefetch: (newForm: any) => {
+    onSearchSubmit: async (newForm: any) => {
       // ✅ Set flag BEFORE updating state to prevent useEffect from running
       isUpdatingFromSearch.current = true;
+      
+      // ✅ Reset the initial fetch ref so it doesn't trigger on URL change
+      initialFetchDoneRef.current = false;
+
+      // ✅ Fetch new hotel details
+      await fetchHotelDetails(
+        hotel_id,
+        newForm.checkin,
+        newForm.checkout,
+        newForm.rooms,
+        newForm.adults,
+        newForm.children,
+        newForm.nationality,
+        newForm.children_ages || [],
+        parsedHotel?.supplier_name || ""
+      );
 
       const newParams = {
         checkin: newForm.checkin,
@@ -117,46 +216,20 @@ const HotelsDetails = () => {
         nationality: newForm.nationality,
       };
 
-      // Update local state for query refetch
+      // Update local state
       setSearchParams(newParams);
     },
   });
 
-  // Safely access localStorage (client-only)
-  const savedForm =
-    typeof window !== "undefined"
-      ? localStorage.getItem("hotelSearchForm")
-      : null;
-  const savedhotel =
-    typeof window !== "undefined" ? localStorage.getItem("currentHotel") : null;
-
-  // Parse only if available
-  const parsedForm = savedForm ? JSON.parse(savedForm) : null;
-  const parsedHotel = savedhotel ? JSON.parse(savedhotel) : null;
+  // ✅ Use supplier_name from parsedHotel
   const supplier_name = parsedHotel?.supplier_name || "";
   const { bookingReference } = useAppSelector((state: any) => state.root);
   const dispatch = useAppDispatch();
 
-  const { data: hotelDetails, isLoading } = useQuery({
-    queryKey: ["hotel-details", { hotel_id, ...searchParams }],
-    queryFn: () =>
-      hotel_details({
-        hotel_id,
-        checkin: searchParams.checkin,
-        checkout: searchParams.checkout,
-        rooms: searchParams.rooms,
-        adults: searchParams.adults,
-        childs: searchParams.children,
-        child_age: parsedForm?.children_ages || [],
-        nationality: searchParams.nationality,
-        language,
-        currency,
-        supplier_name,
-      }),
-    enabled: !!hotel_id && !!savedForm && !!savedhotel, // only fetch if data is valid
-    staleTime: 0,
-  });
-// console.log('hotelDetails', hotelDetails.room);
+  // ✅ Use component's hotelDetailsData instead of React Query
+  const hotelDetails = hotelDetailsData;
+  const isLoading = isLoadingHotelDetails;
+
   // Clamp logic — fix unused var warning
   useEffect(() => {
     if (textRef.current && hotelDetails?.desc) {
