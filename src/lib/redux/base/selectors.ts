@@ -8,5 +8,6 @@ export const currency = (state: RootState) => state.root.currency;
 export const country = (state: RootState) => state.root.country;
 export const sidebarExpanded = (state: RootState) => state.root.sidebarExpanded;
 export const hotels = (state: RootState) => state.root.hotels;
-export const bookingReference=(state: RootState) => state.root.bookingReference
+export const bookingReference = (state: RootState) => state.root.bookingReference
+export const hotelId = (state: RootState) => state.root.hotelId;
 

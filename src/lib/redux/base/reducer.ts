@@ -12,7 +12,8 @@ import {
   setSidebarExpanded,
   setSeletecHotel,
   setSeletecRoom,
-  setBookingReference
+  setBookingReference,
+  setHotelId
 } from "./actions";
 
 // Destination interface
@@ -61,9 +62,10 @@ interface State {
   destination: Destination[];
   sidebarExpanded?: boolean;
   hotels: HotelData[];
-  selectedRoom:any;
-  selectedHotel:any;
-  bookingReference:string;
+  selectedRoom: any;
+  selectedHotel: any;
+  bookingReference: string;
+  hotelId: string;
 }
 
 const initialState: State = {
@@ -76,9 +78,10 @@ const initialState: State = {
   destination: [],
   sidebarExpanded: true,
   hotels: [],
-  selectedRoom:{},
-  selectedHotel:{},
-  bookingReference:""
+  selectedRoom: {},
+  selectedHotel: {},
+  bookingReference: "",
+  hotelId: ""
 };
 export const appReducer = createReducer(initialState, (builder) => {
   builder
@@ -118,6 +121,9 @@ export const appReducer = createReducer(initialState, (builder) => {
     })
     .addCase(setBookingReference, (state, action: PayloadAction<string>) => {
       state.bookingReference = action.payload;
+    })
+    .addCase(setHotelId, (state, action: PayloadAction<string>) => {
+      state.hotelId = action.payload;
     });
 });
 

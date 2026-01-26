@@ -14,6 +14,7 @@ import { useState } from "react";
 
 export default function BookingDetails() {
   const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
+  const hotelIdFromRedux = useAppSelector((state) => state.root.hotelId);
   const curruntBooking = localStorage.getItem("hotelSearchForm");
   const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
   const router = useRouter();
@@ -64,6 +65,27 @@ export default function BookingDetails() {
     return sanitized;
   });
 
+  console.log("hotelDetails", hotelIdFromRedux);
+  const finalTotal = markup_price
+  // final calcualtion
+  // Handle back navigation
+  const handleBack = () => {
+
+    const id = hotelIdFromRedux ? hotelIdFromRedux : hotelDetails?.id;
+    if (id && checkin && checkout) {
+      const hotelNameSlug = (hotelDetails?.name || "")
+        .toLowerCase()
+        .replace(/\s+/g, "-");
+      const nationality = saveBookingData.nationality || "US"; // Default to US if missing
+
+      const url = `/hotelDetails/${id}/${hotelNameSlug}/${checkin}/${checkout}/${rooms || 1}/${adults || 2}/${children || 0}/${nationality}`;
+
+      router.push(url);
+    } else {
+      router.back();
+    }
+  };
+
 
   const finalTotal = markup_price
   // final calcualtion
@@ -84,7 +106,7 @@ export default function BookingDetails() {
           {/* Back Button and Header */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.back()}
+              onClick={handleBack}
               className="w-10 h-10 cursor-pointer rounded-full bg-gray-50 border border-[#CACACA] flex items-center justify-center hover:bg-gray-100 transition-colors"
             >
               <svg
