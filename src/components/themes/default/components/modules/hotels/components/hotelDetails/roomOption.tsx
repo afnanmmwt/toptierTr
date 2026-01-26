@@ -33,12 +33,7 @@ const RoomOption: React.FC<{
   const toggleAmenities = (key: string | number) => {
     setExpandedAmenities((s) => ({ ...s, [key]: !s[key] }));
   };
-  const fallbackImage =
-    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
 
-  const [imgSrc, setImgSrc] = useState(
-    roomImage || fallbackImage
-  );
 
   return (
     <div className="rounded-lg">
@@ -83,23 +78,10 @@ const RoomOption: React.FC<{
               >
                 <div className="px-4">
                   <img
-                    src={imgSrc}
+                    src={roomImage}
                     alt={dict?.roomOption?.roomImage || "Room"}
                     className="w-36 h-24 object-cover rounded-md mx-auto sm:mx-0"
-                    onError={() => {
-                      setImgSrc(fallbackImage);
-                    }}
                   />
-                  {/* <Image
-                                src={imgSrc}
-                                alt="Hotel"
-                                width={200}
-                                height={200}
-                                className="w-19 h-18 rounded-md object-cover"
-                                onError={() => {
-                                  setImgSrc(fallbackImage);
-                                }}
-                              /> */}
                 </div>
 
                 <div className="px-4 text-blue-500  font-bold">
