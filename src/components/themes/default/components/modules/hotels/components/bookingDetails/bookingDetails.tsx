@@ -68,6 +68,12 @@ export default function BookingDetails() {
   const finalTotal = markup_price
   // final calcualtion
 
+  const fallbackImage =
+    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
+
+  const [imgSrc, setImgSrc] = useState(
+    selectedRoom?.hotelDetails?.img?.[0] || fallbackImage
+  );
 
 
   return (
@@ -116,15 +122,25 @@ export default function BookingDetails() {
         <div className="w-full sm:max-w-full md:max-w-95 lg:max-w-95 border border-[#CACACA] shadow rounded-xl p-5 h-fit">
           <div className="flex gap-3 items-center mb-2">
             <Image
-              src={
-                selectedRoom?.hotelDetails?.img?.[0] ||
-                "https://toptiertravel.vip/uploads/7xd0llauy5gkwcgwk.jpg"
-              }
+              src={imgSrc}
               alt="Hotel"
               width={200}
               height={200}
               className="w-19 h-18 rounded-md object-cover"
+              onError={() => {
+                setImgSrc(fallbackImage);
+              }}
             />
+
+            {/* <img
+          className="h-full w-full object-cover rounded-3xl"
+          src={imageUrl}
+          alt={room.name || "Room"}
+          onError={(e) => {
+            e.currentTarget.src =
+              "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
+          }}
+        /> */}
             <div>
               <h4 className="font-semibold text-[#0F172B] text-base text-ellipsis">
                 {hotelDetails?.name}

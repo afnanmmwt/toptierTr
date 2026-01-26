@@ -97,8 +97,8 @@ const HotelCard = memo(function HotelCard({
       {/* Hotel Image */}
       <div
         className={`relative overflow-hidden rounded-[40px] ${viewMode === "list"
-            ? "sm:w-80 sm:h-64 flex-shrink-0 aspect-square sm:aspect-auto"
-            : "aspect-square"
+          ? "sm:w-80 sm:h-64 flex-shrink-0 aspect-square sm:aspect-auto"
+          : "aspect-square"
           }`}
       >
         <img
@@ -153,8 +153,8 @@ const HotelCard = memo(function HotelCard({
       {/* Hotel Details */}
       <div
         className={`p-3 ${viewMode === "list"
-            ? "flex-1 flex flex-col truncate justify-between"
-            : ""
+          ? "flex-1 flex flex-col truncate justify-between"
+          : ""
           }`}
       >
         <div>
@@ -189,8 +189,8 @@ const HotelCard = memo(function HotelCard({
           {/* Price */}
           <div
             className={`flex ${viewMode === "list"
-                ? "flex-col sm:flex-row sm:justify-between"
-                : "justify-between"
+              ? "flex-col sm:flex-row sm:justify-between"
+              : "justify-between"
               } items-start sm:items-center pl-2 mb-4`}
           >
             <div className="flex gap-2 items-center mb-2 sm:mb-0">
