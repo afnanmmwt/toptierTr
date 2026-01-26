@@ -21,7 +21,7 @@ interface HotelListingCardProps {
   onBookNow: any;
   loading: null | string;
 
-  favourite:boolean;
+  favourite: boolean;
 
 }
 
@@ -34,7 +34,7 @@ const HotelCard = memo(function HotelCard({
   setActiveHotelId,
   loading,
 
-  favourite=true
+  favourite = true
 
 }: HotelListingCardProps) {
   const { user } = useUser();
@@ -91,17 +91,15 @@ const HotelCard = memo(function HotelCard({
   return (
     <div
       key={hotel.hotel_id}
-      className={`bg-white p-[8px] rounded-[45px] border border-gray-200  transition-all duration-300 hover:shadow-lg ${
-        viewMode === "list" ? "flex flex-col sm:flex-row max-w-none" : ""
-      }`}
+      className={`bg-white p-[8px] rounded-[45px] border border-gray-200  transition-all duration-300 hover:shadow-lg ${viewMode === "list" ? "flex flex-col sm:flex-row max-w-none" : ""
+        }`}
     >
       {/* Hotel Image */}
       <div
-        className={`relative overflow-hidden rounded-[40px] ${
-          viewMode === "list"
-            ? "sm:w-80 sm:h-64 flex-shrink-0 aspect-square sm:aspect-auto"
-            : "aspect-square"
-        }`}
+        className={`relative overflow-hidden rounded-[40px] ${viewMode === "list"
+          ? "sm:w-80 sm:h-64 flex-shrink-0 aspect-square sm:aspect-auto"
+          : "aspect-square"
+          }`}
       >
         <img
           src={hotel.img}
@@ -123,9 +121,8 @@ const HotelCard = memo(function HotelCard({
               }
               onMapShow?.(hotel);
             }}
-            className={`cursor-pointer rounded-full w-9 h-9 sm:w-10 sm:h-10 lg:w-9 lg:h-9 flex items-center justify-center absolute top-3 right-3 shadow transition-colors duration-300 ${
-              activeHotelId === hotel.hotel_id ? "bg-blue-800" : "bg-[#EBEFF4]"
-            }`}
+            className={`cursor-pointer rounded-full w-9 h-9 sm:w-10 sm:h-10 lg:w-9 lg:h-9 flex items-center justify-center absolute top-3 right-3 shadow transition-colors duration-300 ${activeHotelId === hotel.hotel_id ? "bg-blue-800" : "bg-[#EBEFF4]"
+              }`}
           >
             <svg
               width="15"
@@ -155,18 +152,16 @@ const HotelCard = memo(function HotelCard({
 
       {/* Hotel Details */}
       <div
-        className={`p-3 ${
-          viewMode === "list"
-            ? "flex-1 flex flex-col truncate justify-between"
-            : ""
-        }`}
+        className={`p-3 ${viewMode === "list"
+          ? "flex-1 flex flex-col truncate justify-between"
+          : ""
+          }`}
       >
         <div>
           <h3
             title={hotel.name}
             className={`text-xl font-extrabold text-gray-900 mb-0 sm:text-2xl md:text-xl lg:text-2xl
-              overflow-hidden whitespace-nowrap ${
-                viewMode === "list" ? "w-full" : "block"
+              overflow-hidden whitespace-nowrap ${viewMode === "list" ? "w-full" : "block"
               }
               ltr:pl-1 rtl:pr-1 rtl:text-right`}
             style={{ fontFamily: "Urbanist, sans-serif" }}
@@ -193,22 +188,21 @@ const HotelCard = memo(function HotelCard({
           </div>
           {/* Price */}
           <div
-            className={`flex ${
-              viewMode === "list"
-                ? "flex-col sm:flex-row sm:justify-between"
-                : "justify-between"
-            } items-start sm:items-center pl-2 mb-4`}
+            className={`flex ${viewMode === "list"
+              ? "flex-col sm:flex-row sm:justify-between"
+              : "justify-between"
+              } items-start sm:items-center pl-2 mb-4`}
           >
             <div className="flex gap-2 items-center mb-2 sm:mb-0">
               <p className="text-[24px] sm:text-[28px] lg:text-[30px] font-[900]">
                 <span className="text-xl">
                   {" "}
                   {getCurrencySymbol(hotel.currency || currency)}{" "}
-                  {hotel.markup_price || hotel.price}
+                  {hotel.markup_price_per_night || hotel.price}
                 </span>
                 {/* {hotel.actual_price || hotel.price} */}
                 <span className="text-[14px] sm:text-[16px] lg:text-xl font-[400] text-[#5B697E]">
-                 /{dict?.hotel_listing?.per_night} 
+                  /{dict?.hotel_listing?.per_night}
                 </span>
               </p>
               {/* <p className="text-[14px] sm:text-[16px] lg:text-[14px] font-[400] text-[#5B697E]">
@@ -219,9 +213,8 @@ const HotelCard = memo(function HotelCard({
         </div>
         {/* Buttons */}
         <div
-          className={`flex items-center gap-2 ${
-            viewMode === "list" ? "mt-auto" : ""
-          }`}
+          className={`flex items-center gap-2 ${viewMode === "list" ? "mt-auto" : ""
+            }`}
         >
           <button
             disabled={loading === hotel.hotel_id}
@@ -236,7 +229,7 @@ const HotelCard = memo(function HotelCard({
               dict?.hotel_listing?.book_now || "Book Now"
             )}
           </button>
-         {favourite && <button
+          {favourite && <button
             onClick={toggleLike}
             className="bg-[#EBEFF4] cursor-pointer hover:bg-gray-200 rounded-full transition-all duration-200 flex items-center justify-center flex-shrink-0 w-12 h-12 sm:w-11 sm:h-11 lg:w-11.5 lg:h-11.5"
             aria-label={`${isFav === 1 ? "Unlike" : "Like"} ${hotel.name}`}

@@ -786,6 +786,8 @@ export default function BookingForm() {
     }
   };
 
+  const [showTerms, setShowTerms] = useState<boolean>(false);
+
   const getCountryByIso = (iso: string) =>
     countryList.find((c) => c.iso === iso);
   return (
@@ -1206,8 +1208,8 @@ export default function BookingForm() {
                               width="24"
                               height="24"
                               className={`h-5 w-5 text-gray-500 transition-transform ${isTitleOpen === index
-                                  ? "rotate-0"
-                                  : "rotate-180"
+                                ? "rotate-0"
+                                : "rotate-180"
                                 }`}
                             />
                           </button>
@@ -1241,8 +1243,8 @@ export default function BookingForm() {
                     <input
                       type="text"
                       value={`${option?.children_ages
-                          ?.split(",")
-                        [index - adults]?.trim() || ""
+                        ?.split(",")
+                      [index - adults]?.trim() || ""
                         } years`}
                       disabled
                       className="block border border-gray-300 rounded-xl px-3 py-4 text-base w-full bg-gray-100 text-gray-700 cursor-not-allowed"
@@ -1396,27 +1398,153 @@ export default function BookingForm() {
             </AccordionInfoCard>
           </>
         )}
+        <div className="flex item-center gap-1">
+          <Controller
+            name="acceptPolicy"
+            control={control}
+            render={({ field }) => (
+              <label className="flex gap-2 items-start">
+                <input
+                  type="checkbox"
+                  checked={field.value}
+                  onChange={(e) => field.onChange(e.target.checked)}
+                  className="w-5 h-5 rounded border border-[#0F172B66] mt-0.5 focus:ring-[#163C8C] focus:border-[#163C8C]"
+                />
+                <span className="text-[#0F172B66] text-base font-medium">
+                  {dict?.bookingForm?.cancellationPolicy?.acceptText}{" "}
 
-        <Controller
-          name="acceptPolicy"
-          control={control}
-          render={({ field }) => (
-            <label className="flex gap-2 items-start">
-              <input
-                type="checkbox"
-                checked={field.value}
-                onChange={(e) => field.onChange(e.target.checked)}
-                className="w-5 h-5 rounded border border-[#0F172B66] mt-0.5 focus:ring-[#163C8C] focus:border-[#163C8C]"
-              />
-              <span className="text-[#0F172B66] text-base font-medium">
-                {dict?.bookingForm?.cancellationPolicy?.acceptText}{" "}
-                <span className="text-[#163C8C] underline cursor-pointer hover:text-[#0f2d6b]">
-                  {dict?.bookingForm?.cancellationPolicy?.termsAndConditions}
                 </span>
-              </span>
-            </label>
-          )}
-        />
+              </label>
+            )}
+          />
+          <span className="text-[#0F172B66] text-base font-medium">
+            Cancellation Policy &
+          </span>
+          <span onClick={() => setShowTerms(true)} className="text-[#163C8C] underline cursor-pointer hover:text-[#0f2d6b]">
+
+            {dict?.bookingForm?.cancellationPolicy?.termsAndConditions}
+          </span>
+        </div>
+        {showTerms && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white w-full max-w-xs md:max-w-xl rounded-xl shadow-lg p-6 relative">
+
+              {/* Close button */}
+              <button
+                onClick={() => setShowTerms(false)}
+                className="absolute top-3 right-3 text-gray-500 hover:text-black"
+              >
+                ✕
+              </button>
+
+              {/* Title */}
+              <h2 className="text-xl font-semibold text-[#0F172B] mb-4">
+                {dict?.bookingForm?.cancellationPolicy?.termsAndConditions}
+              </h2>
+
+              {/* Content */}
+              <div className="text-sm text-gray-600 flex flex-col gap-2 max-h-60 md:max-h-100 overflow-y-auto">
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {/* Example text — replace with API / dict text */}
+                  Welcome to the Top Tier Travel website. By accessing or using our website
+                  and services, you agree to comply with the following terms and conditions.
+                  Please read these Terms of Service carefully before using the website.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Acceptance of Terms</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  By accessing, browsing, or using our website, you acknowledge that you have
+                  read, understood, and agree to be bound by these Terms of Service, as well
+                  as our Privacy Policy.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Services Provided</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  Top Tier Travel provides luxury travel services, including but not limited
+                  to hotel bookings, event coordination, private accommodations, and concierge
+                  services. All services are subject to availability, and specific terms and
+                  conditions may apply to individual bookings and packages.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Client Responsibilities</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  When using our services, you agree to provide accurate, current, and
+                  complete information as required for reservations and other services. You
+                  are responsible for ensuring that all personal and payment information is
+                  correct and up-to-date.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Payment Terms</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  All fees for services are outlined at the time of booking. Payments must be
+                  made through approved methods, which may include credit cards, bank
+                  transfers, or other electronic payment methods. Certain services may require
+                  deposits or full payment upfront. Failure to complete payment may result in
+                  cancellation of the booking or service. Any outstanding balances must be
+                  settled before the travel date.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Cancellations and Refunds</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  Cancellation policies vary based on the services booked and the terms of our
+                  third-party partners (e.g., hotels, airlines, or event venues). Any
+                  cancellations must be made in writing and are subject to the specific
+                  cancellation terms provided at the time of booking. Refunds will be
+                  processed according to these terms. In some cases, bookings may be
+                  non-refundable or subject to a cancellation fee.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Changes to Bookings</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  If you need to make changes to your booking, such as dates, destinations, or
+                  services, you must notify us as soon as possible. Changes are subject to
+                  availability and may incur additional fees. Some bookings may not be
+                  changeable or may have restrictions based on the terms and conditions of
+                  third-party service providers.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Liability Disclaimer</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  We are not responsible for the acts, errors, omissions, warranties,
+                  representations, breaches, or negligence of these suppliers or for any
+                  personal injuries, death, property damage, or other damages or expenses
+                  resulting from their services. We are not liable for any delays,
+                  cancellations, overbookings, strikes, force majeure events (such as natural
+                  disasters or political unrest), or any other issues beyond our control.
+                </p>
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Privacy Policy</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  Your use of the website and services is also governed by our Privacy Policy,
+                  which outlines how we collect, use, and protect your personal information.
+                  By using our services, you consent to the collection and use of your
+                  information as described in the Privacy Policy.
+                </p>
+
+                <h3 className="font-semibold text-[#0F172B] text-lg"> Governing Law</h3>
+                <p className="text-base font-medium text-[#0F172B66]">
+                  {" "}
+                  These Terms of Service are governed by and construed in accordance with the
+                  laws of United States without regard to its conflict of law provisions. Any
+                  disputes arising under or in connection with these terms shall be subject to
+                  the exclusive jurisdiction of the courts.
+                </p>
+              </div>
+
+
+              {/* Footer */}
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setShowTerms(false)}
+                  className="px-4 py-2 bg-[#163C8C] text-white rounded-md hover:bg-[#0f2d6b]"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {errors.acceptPolicy && (
           <p className="text-red-500 text-sm mt-1">
             {errors.acceptPolicy.message}
@@ -1429,8 +1557,8 @@ export default function BookingForm() {
         type="submit"
         disabled={isPending || isProcessingPayment} //  Block during booking OR payment
         className={`w-full text-lg text-white py-3 font-medium rounded-lg mt-5 transition-colors focus:ring-2 focus:ring-offset-2 flex items-center justify-center gap-2 ${isPending || isProcessingPayment
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#163C8C] hover:bg-[#0f2d6b] cursor-pointer focus:ring-[#163C8C]"
+          ? "bg-gray-400 cursor-not-allowed"
+          : "bg-[#163C8C] hover:bg-[#0f2d6b] cursor-pointer focus:ring-[#163C8C]"
           }`}
       >
         {isPending || isProcessingPayment ? (

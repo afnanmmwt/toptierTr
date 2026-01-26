@@ -27,7 +27,9 @@ const HotelsDetails = () => {
   const { user } = useUser();
   const { locale } = useLocale();
   const { data: dict } = useDictionary(locale as any);
+
   const { setLoadingHotelId, loadingHotelId } = useHotelSearch();
+
 
   const [searchParams, setSearchParams] = useState({
     checkin: "",
@@ -234,7 +236,9 @@ const HotelsDetails = () => {
 
   // ✅ Use supplier_name from parsedHotel
   const supplier_name = parsedHotel?.supplier_name || "";
+
   const { bookingReference } = useAppSelector((state: any) => state.root);
+
 
   // ✅ Use component's hotelDetailsData instead of React Query
   const hotelDetails = hotelDetailsData;
@@ -319,7 +323,9 @@ const HotelsDetails = () => {
       localStorage.setItem("currentHotel", JSON.stringify(hotelData));
     }
     setTimeout(() => {
+
       setLoadingHotelId(null);
+
       router.push(newUrl);
     }, 500);
   };
@@ -769,6 +775,7 @@ const HotelsDetails = () => {
           </div>
         ) : hotelDetails?.rooms && hotelDetails.rooms.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
             {[...hotelDetails.rooms]
               .sort(
                 (a: any, b: any) =>
@@ -793,6 +800,7 @@ const HotelsDetails = () => {
                   }}
                 />
               ))}
+
           </div>
         ) : (
           <div className="text-center py-12">
