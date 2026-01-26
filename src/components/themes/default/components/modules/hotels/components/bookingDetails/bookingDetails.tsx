@@ -140,16 +140,6 @@ export default function BookingDetails() {
               height={200}
               className="w-19 h-18 rounded-md object-cover"
             />
-
-            {/* <img
-          className="h-full w-full object-cover rounded-3xl"
-          src={imageUrl}
-          alt={room.name || "Room"}
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
-          }}
-        /> */}
             <div>
               <h4 className="font-semibold text-[#0F172B] text-base text-ellipsis">
                 {hotelDetails?.name}

@@ -78,10 +78,10 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
   };
 
   const getImageUrl = (testimonial: any, index: number) => {
-    const defaultImage = "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG90ZWx8ZW58MHx8MHx8fDA%3D";
-    if (failedImages.has(index) || !testimonial) {
-      return defaultImage;
-    }
+    // const defaultImage = "https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8aG90ZWx8ZW58MHx8MHx8fDA%3D";
+    // if (failedImages.has(index) || !testimonial) {
+    //   return defaultImage;
+    // }
     return testimonial;
   };
 
@@ -128,9 +128,9 @@ const ImageSlider = ({ testimonials }: { testimonials: any[] }) => {
                   fill
                   className="object-cover !w-full !h-full"
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33.333vw"
-                  placeholder="blur"
-                  blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAfFcSJYYAAAAJ0lEQVR42mNkYPhfDwAChwG/yN8eIAAAAABJRU5ErkJggg=="
-                  onError={() => handleImageError(index)}
+                // placeholder="blur"
+                // blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAfFcSJYYAAAAJ0lEQVR42mNkYPhfDwAChwG/yN8eIAAAAABJRU5ErkJggg=="
+                // onError={() => handleImageError(index)}
                 />
               </div>
             </div>
