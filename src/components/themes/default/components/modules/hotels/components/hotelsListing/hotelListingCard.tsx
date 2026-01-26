@@ -105,10 +105,10 @@ const HotelCard = memo(function HotelCard({
           src={hotel.img}
           alt={hotel.name}
           className="w-full h-full object-cover"
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
-          }}
+        // onError={(e) => {
+        //   e.currentTarget.src =
+        //     "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
+        // }}
         />
         {viewMode === "map" && (
           <button
