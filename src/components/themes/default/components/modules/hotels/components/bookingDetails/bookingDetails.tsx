@@ -86,12 +86,6 @@ export default function BookingDetails() {
     }
   };
 
-  const fallbackImage =
-    "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
-
-  const [imgSrc, setImgSrc] = useState(
-    selectedRoom?.hotelDetails?.img?.[0] || fallbackImage
-  );
 
 
   return (
@@ -140,14 +134,11 @@ export default function BookingDetails() {
         <div className="w-full sm:max-w-full md:max-w-95 lg:max-w-95 border border-[#CACACA] shadow rounded-xl p-5 h-fit">
           <div className="flex gap-3 items-center mb-2">
             <Image
-              src={imgSrc}
+              src={selectedRoom?.hotelDetails?.img?.[0] || ""}
               alt="Hotel"
               width={200}
               height={200}
               className="w-19 h-18 rounded-md object-cover"
-              onError={() => {
-                setImgSrc(fallbackImage);
-              }}
             />
 
             {/* <img
