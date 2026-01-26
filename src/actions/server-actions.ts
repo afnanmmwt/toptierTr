@@ -309,7 +309,7 @@ export async function signIn(
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
 
-    // ✅ Validate input first
+    // Validate input first
     signInSchema.parse({ email, password });
 
     const body = new FormData();
@@ -324,7 +324,7 @@ export async function signIn(
     });
 
     const data = await response.json();
-
+    console.log("login data", data);
     // Check if login actually succeeded
     if (!response.ok || data?.status === false) {
       return { success: false, error: data?.message || 'Invalid credentials' };
@@ -716,6 +716,7 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
       },
     });
     const data = await response.json().catch(() => null);
+
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }

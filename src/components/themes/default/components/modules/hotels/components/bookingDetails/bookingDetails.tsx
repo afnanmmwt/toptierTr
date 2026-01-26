@@ -14,6 +14,7 @@ import { useState } from "react";
 
 export default function BookingDetails() {
   const selectedRoom = useAppSelector((state) => state.root.selectedRoom);
+  const hotelIdFromRedux = useAppSelector((state) => state.root.hotelId);
   const curruntBooking = localStorage.getItem("hotelSearchForm");
   const saveBookingData = curruntBooking ? JSON.parse(curruntBooking) : {};
   const router = useRouter();
@@ -48,18 +49,20 @@ export default function BookingDetails() {
     return sanitized;
   });
 
-
+  console.log("hotelDetails", hotelIdFromRedux);
   const finalTotal = markup_price
   // final calcualtion
   // Handle back navigation
   const handleBack = () => {
-    if (hotelDetails?.id && checkin && checkout) {
-      const hotelNameSlug = (hotelDetails.name || "")
+
+    const id = hotelIdFromRedux ? hotelIdFromRedux : hotelDetails?.id;
+    if (id && checkin && checkout) {
+      const hotelNameSlug = (hotelDetails?.name || "")
         .toLowerCase()
         .replace(/\s+/g, "-");
       const nationality = saveBookingData.nationality || "US"; // Default to US if missing
 
-      const url = `/hotelDetails/${hotelDetails.id}/${hotelNameSlug}/${checkin}/${checkout}/${rooms || 1}/${adults || 2}/${children || 0}/${nationality}`;
+      const url = `/hotelDetails/${id}/${hotelNameSlug}/${checkin}/${checkout}/${rooms || 1}/${adults || 2}/${children || 0}/${nationality}`;
 
       router.push(url);
     } else {

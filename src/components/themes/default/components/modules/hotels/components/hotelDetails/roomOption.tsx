@@ -144,7 +144,7 @@ const RoomOption: React.FC<{
                 </div>
 
                 <div className="px-4 font-bold flex items-center justify-center sm:justify-start">
-                  {getCurrencySymbol(opt.currency)} {opt.markup_price}
+                  {getCurrencySymbol(opt.currency)} {opt.markup_price_per_night}
                 </div>
 
                 <div className="px-4 py-2 flex items-center justify-center">

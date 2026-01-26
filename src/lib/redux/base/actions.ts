@@ -47,8 +47,9 @@ interface HotelData {
 // Add these hotel actions to your existing actions
 export const setHotels = createAction<HotelData[]>("SET_HOTELS");
 export const setSidebarExpanded = createAction<boolean>("SET_SIDEBAR_EXPANDED");
-export const setSeletecRoom= createAction<any>("SET_SELECTED_ROOM")
-export const setSeletecHotel= createAction<any>("SET_SELECTED_HOTEL")
-export const setBookingReference=createAction<string>('SET_BOOKINGRERENCE')
+export const setSeletecRoom = createAction<any>("SET_SELECTED_ROOM")
+export const setSeletecHotel = createAction<any>("SET_SELECTED_HOTEL")
+export const setBookingReference = createAction<string>('SET_BOOKINGRERENCE')
+export const setHotelId = createAction<string>("SET_HOTEL_ID");
 
 

@@ -17,7 +17,7 @@ import useDictionary from "@hooks/useDict";
 import { useUser } from "@hooks/use-user";
 import Image from "next/image";
 import useHotelSearch from "@hooks/useHotelSearch";
-import { setBookingReference } from "@lib/redux/base";
+import { setBookingReference, setHotelId } from "@lib/redux/base";
 
 const HotelsDetails = () => {
   //  ALL HOOKS MUST BE CALLED UNCONDITIONALLY AT THE TOP
@@ -54,6 +54,13 @@ const HotelsDetails = () => {
   const slugArr = (params?.slug as string[]) || [];
 
   const hotel_id = slugArr[0] || "";
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    if (hotel_id) {
+      dispatch(setHotelId(hotel_id));
+    }
+  }, [hotel_id, dispatch]);
 
   //  Move localStorage parsing here before using in callbacks
   const savedForm =
@@ -228,7 +235,6 @@ const HotelsDetails = () => {
   // ✅ Use supplier_name from parsedHotel
   const supplier_name = parsedHotel?.supplier_name || "";
   const { bookingReference } = useAppSelector((state: any) => state.root);
-  const dispatch = useAppDispatch();
 
   // ✅ Use component's hotelDetailsData instead of React Query
   const hotelDetails = hotelDetailsData;
