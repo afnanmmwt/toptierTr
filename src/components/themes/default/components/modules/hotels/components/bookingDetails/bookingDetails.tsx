@@ -68,6 +68,23 @@ export default function BookingDetails() {
   const finalTotal = markup_price
   // final calcualtion
 
+  // Handle back navigation
+  const handleBack = () => {
+    if (hotelDetails?.id && checkin && checkout) {
+      const hotelNameSlug = (hotelDetails.name || "")
+        .toLowerCase()
+        .replace(/\s+/g, "-");
+      const nationality = saveBookingData.nationality || "US"; // Default to US if missing
+
+      const url = `/hotelDetails/${hotelDetails.id}/${hotelNameSlug}/${checkin}/${checkout}/${rooms || 1}/${adults || 2}/${children || 0}/${nationality}`;
+
+      router.push(url);
+    } else {
+      router.back();
+    }
+  };
+
+
 
 
   return (
@@ -78,7 +95,7 @@ export default function BookingDetails() {
           {/* Back Button and Header */}
           <div className="flex items-center gap-4">
             <button
-              onClick={() => router.back()}
+              onClick={handleBack}
               className="w-10 h-10 cursor-pointer rounded-full bg-gray-50 border border-[#CACACA] flex items-center justify-center hover:bg-gray-100 transition-colors"
             >
               <svg

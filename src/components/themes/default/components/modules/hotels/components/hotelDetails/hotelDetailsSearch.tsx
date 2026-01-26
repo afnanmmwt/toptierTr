@@ -295,7 +295,7 @@ export default function HotelDetailsSearch({
                           <path d="M12.7761 13.5548L15.635 16.4137M14.7318 8.524C14.7318 10.3703 13.9984 12.141 12.6929 13.4465C11.3873 14.7521 9.61664 15.4855 7.77033 15.4855C5.92403 15.4855 4.15335 14.7521 2.84781 13.4465C1.54228 12.141 0.808838 10.3703 0.808838 8.524C0.808838 6.67769 1.54228 4.90701 2.84781 3.60148C4.15335 2.29594 5.92403 1.5625 7.77033 1.5625C9.61664 1.5625 11.3873 2.29594 12.6929 3.60148C13.9984 4.90701 14.7318 6.67769 14.7318 8.524Z" stroke="white" strokeWidth="1.3923" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                         <span className="hidden md:block text-white">
-                          {dict?.hotel_search?.search_btnText}
+                          {dict?.hotel_search?.search_btnText_mobile}
                         </span>
                         <span className="md:hidden text-white">
                           {dict?.hotel_search?.search_btnText_mobile}

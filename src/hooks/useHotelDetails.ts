@@ -4,10 +4,11 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 import { z } from 'zod';
 import { usePathname, useRouter } from 'next/navigation';
 import useHotelSearch from './useHotelSearch';
-import { useAppDispatch } from '@lib/redux/store';
+import { useAppDispatch, useAppSelector } from '@lib/redux/store';
 import { setSeletecRoom } from '@lib/redux/base';
 import { toast } from 'react-toastify';
 import { useUser } from './use-user';
+import { hotel_details } from '@src/actions/server-actions';
 
 // ✅ Updated: Add children_ages
 export interface HotelForm {
@@ -59,6 +60,7 @@ interface UseHotelDetailsOptions {
   onSearchSuccess?: (formData: HotelForm) => void;
   onSearchError?: (error: string) => void;
   onSearchRefetch?: (formData: HotelForm) => void;
+  onSearchSubmit?: (formData: HotelForm) => Promise<void>;
 }
 
 export const useHotelDetails = ({
@@ -69,9 +71,11 @@ export const useHotelDetails = ({
   onSearchSuccess,
   onSearchError,
   onSearchRefetch,
+  onSearchSubmit,
 }: UseHotelDetailsOptions = {}) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { currency, locale: language } = useAppSelector((state: any) => state.root);
   const { setSelectedRoom } = useHotelSearch();
   const pathname = usePathname();
   const formatDate = (date: Date) => {
@@ -120,14 +124,17 @@ export const useHotelDetails = ({
   //  Initialize state
   const [form, setForm] = useState<HotelForm>(initialForm);
 
-
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showGuestsDropdown, setShowGuestsDropdown] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const guestsDropdownRef = useRef<HTMLDivElement | null>(null);
   const totalGuests = form.adults + form.children;
   const isFormValid = Object.keys(errors).length === 0;
-  const [roomOptionLoadingId, setRommOptionLoadingId] = useState<null>(null)
+  const [roomOptionLoadingId, setRommOptionLoadingId] = useState<null>(null);
+  
+  // ✅ NEW: State for hotel details
+  const [hotelDetails, setHotelDetails] = useState<any>(null);
+  const [isLoadingHotelDetails, setIsLoadingHotelDetails] = useState(false);
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -258,6 +265,7 @@ export const useHotelDetails = ({
     if (!isValid) return { success: false, errors };
 
     setIsSearching(true);
+    setIsLoadingHotelDetails(true);
     try {
       localStorage.setItem('hotelSearchForm', JSON.stringify(form));
 
@@ -272,26 +280,20 @@ export const useHotelDetails = ({
       // Use the current form state directly instead of re-parsing from localStorage
       const childrenAgesParam = form.children_ages?.join(",") || "";
       const url = `/hotelDetails/${currentHotel.hotel_id}/${slugName}/${form.checkin}/${form.checkout}/${form.rooms}/${form.adults}/${form.children}/${form.nationality}/${childrenAgesParam}`;
-
-      // ✅ ALWAYS update the URL first
       router.push(url);
 
-      // ✅ Then call the refetch callback if provided
-      if (onSearchRefetch) {
-        onSearchRefetch(form);
-      }
-
-      onSearchSuccess?.(form);
       return { success: true, data: form };
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
       setErrors({ submit: 'Search failed. Please try again.' });
-      onSearchError?.(errorMessage);
+      // onSearchError?.(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setIsSearching(false);
+      setIsLoadingHotelDetails(false);
     }
-  }, [form, validateForm, router, errors, onSearchSuccess, onSearchError, onSearchRefetch]);
+  }, [form, validateForm]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (guestsDropdownRef.current && !guestsDropdownRef.current.contains(event.target as Node)) {
@@ -368,6 +370,10 @@ export const useHotelDetails = ({
     validateForm,
     formatDate,
     handleReserveRoom,
-    roomOptionLoadingId
+    roomOptionLoadingId,
+    // ✅ NEW: Export hotel details
+    hotelDetails,
+    isLoadingHotelDetails,
+    setHotelDetails,
   };
 };
