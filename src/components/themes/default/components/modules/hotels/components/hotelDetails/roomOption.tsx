@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { Icon } from "@iconify/react";
 import useCurrency from "@hooks/useCurrency";
 import { useRouter } from "next/navigation";
@@ -33,6 +33,7 @@ const RoomOption: React.FC<{
   const toggleAmenities = (key: string | number) => {
     setExpandedAmenities((s) => ({ ...s, [key]: !s[key] }));
   };
+
 
   return (
     <div className="rounded-lg">
@@ -77,7 +78,7 @@ const RoomOption: React.FC<{
               >
                 <div className="px-4">
                   <img
-                    src={roomImage || "https://shop.ggarabia.com/wp-content/uploads/2017/06/wood-blog-placeholder.jpg"}
+                    src={roomImage}
                     alt={dict?.roomOption?.roomImage || "Room"}
                     className="w-36 h-24 object-cover rounded-md mx-auto sm:mx-0"
                   />

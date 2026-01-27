@@ -23,6 +23,7 @@ export const RoomCard = ({ room, getAmenityIcon, options, onReserve, loading }: 
   const { user } = useUser();
   const { priceRateConverssion } = useCurrency();
   const option = options || {};
+
   const price = room.markup_price_per_night;
   const currency = room.currency || "USD";
   const imageUrl = room.img || "/images/auth_bg.jpg";
@@ -76,10 +77,10 @@ export const RoomCard = ({ room, getAmenityIcon, options, onReserve, loading }: 
           className="h-full w-full object-cover rounded-3xl"
           src={imageUrl}
           alt={room.name || "Room"}
-          onError={(e) => {
-            e.currentTarget.src =
-              "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
-          }}
+        // onError={(e) => {
+        //   e.currentTarget.src =
+        //     "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=400&h=300&fit=crop";
+        // }}
         />
         {/* <div className="absolute top-2 right-2 bg-[#EBEFF4] w-7 h-7 rounded-full flex items-center justify-center">
           <svg width="3" height="14" viewBox="0 0 3 14" fill="none" xmlns="http://www.w3.org/2000/svg">

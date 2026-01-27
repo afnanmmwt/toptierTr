@@ -474,7 +474,12 @@ const useHotelSearch = () => {
     localStorage.setItem("currentHotel", JSON.stringify(hotel));
     const selectedNationality = localStorage.getItem("hotelSearchForm");
     //  generate slug
-    const slugName = hotel.name.toLowerCase().replace(/\s+/g, "-");
+    const slugName = hotel.name
+      .trim()
+      .split("/")
+      .pop() // Get the last part after splitting by "/"
+      ?.toLowerCase()
+      .replace(/\s+/g, "-") || hotel.name.toLowerCase().replace(/\s+/g, "-");
     let parsedFormData: any;
     if (selectedNationality) {
       parsedFormData = JSON.parse(selectedNationality); // now it's an object

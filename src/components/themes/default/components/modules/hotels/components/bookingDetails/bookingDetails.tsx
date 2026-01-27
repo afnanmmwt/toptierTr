@@ -49,7 +49,6 @@ export default function BookingDetails() {
     return sanitized;
   });
 
-  console.log("hotelDetails", hotelIdFromRedux);
   const finalTotal = markup_price
   // final calcualtion
   // Handle back navigation

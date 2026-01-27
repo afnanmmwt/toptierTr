@@ -1,26 +1,53 @@
-// app/api/image-proxy/route.ts
-import { NextRequest } from "next/server";
+// import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-  const url = req.nextUrl.searchParams.get("url");
-  if (!url) return new Response("Missing url", { status: 400 });
+// export async function GET(request: Request) {
+//   const { searchParams } = new URL(request.url);
+//   const imageUrl = searchParams.get("url");
 
-  try {
-    const upstream = await fetch(url, { cache: "no-store" });
-    if (!upstream.ok) return new Response(`Upstream ${upstream.status}`, { status: 502 });
+//   if (!imageUrl) {
+//     return new NextResponse("Missing image URL", { status: 400 });
+//   }
 
-    const type = upstream.headers.get("content-type") ?? "image/jpeg";
-    const buf = await upstream.arrayBuffer();
+//   try {
+//     // Decode the URL first
+//     const decodedUrl = decodeURIComponent(imageUrl);
 
-    return new Response(buf, {
-      status: 200,
-      headers: {
-        "Content-Type": type,
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=3600",
-      },
-    });
-  } catch {
-    return new Response("Proxy error", { status: 500 });
-  }
-}
+//     const res = await fetch(decodedUrl, {
+//       headers: {
+//         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+//         "Referer": new URL(decodedUrl).origin,
+//       },
+//       // Remove force-cache temporarily to debug
+//       next: { revalidate: 3600 }, // Cache for 1 hour
+//     });
+
+//     if (!res.ok) {
+//       console.error(`Failed to fetch image: ${res.status} ${res.statusText}`);
+//       return new NextResponse("Failed to fetch image", { status: res.status });
+//     }
+
+//     const contentType = res.headers.get("content-type") || "image/jpeg";
+//     const buffer = await res.arrayBuffer();
+
+//     return new NextResponse(buffer, {
+//       headers: {
+//         "Content-Type": contentType,
+//         "Cache-Control": "public, max-age=86400, immutable",
+//         "Access-Control-Allow-Origin": "*",
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Error fetching image:", error);
+//     return new NextResponse("Error fetching image", { status: 500 });
+//   }
+// }
+
+// // Add OPTIONS handler for CORS
+// export async function OPTIONS() {
+//   return new NextResponse(null, {
+//     headers: {
+//       "Access-Control-Allow-Origin": "*",
+//       "Access-Control-Allow-Methods": "GET, OPTIONS",
+//     },
+//   });
+// }

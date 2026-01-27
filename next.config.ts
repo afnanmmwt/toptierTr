@@ -20,7 +20,10 @@ const nextConfig: NextConfig = {
     ignoreDuringBuilds: true,
   },
   images: {
+    unoptimized: true,
+    
     remotePatterns: [
+      
       // Your main domain
       {
         protocol: "https",
@@ -32,6 +35,16 @@ const nextConfig: NextConfig = {
         protocol: "http",
         hostname: "photos.hotelbeds.com",
         pathname: "/**",
+      },
+      {
+        protocol: 'https',
+        hostname: 'content.stuba.com',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+        pathname: '/**',
       },
       {
         protocol: "https",
@@ -69,12 +82,12 @@ const nextConfig: NextConfig = {
         hostname: "**",
         pathname: "/**",
       },
-       {
+      {
         protocol: "http",
         hostname: "photos.hotelbeds.com", // allow hotelbeds images
         pathname: "/**",
       },
-         {
+      {
         protocol: "http",
         hostname: "**",
         pathname: "/**",
