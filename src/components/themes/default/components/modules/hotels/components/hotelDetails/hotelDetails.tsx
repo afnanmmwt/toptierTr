@@ -199,13 +199,13 @@ const HotelsDetails = () => {
     initialCheckout: searchParams.checkout,
     initialNationality: searchParams.nationality,
     onSearchSubmit: async (newForm: any) => {
-      // ✅ Set flag BEFORE updating state to prevent useEffect from running
+      // Set flag BEFORE updating state to prevent useEffect from running
       isUpdatingFromSearch.current = true;
 
-      // ✅ Reset the last fetch key so it doesn't conflict
+      //  Reset the last fetch key so it doesn't conflict
       lastFetchKeyRef.current = "";
 
-      // ✅ Fetch new hotel details
+      // Fetch new hotel details
       await fetchHotelDetails(
         hotel_id,
         newForm.checkin,
@@ -232,11 +232,11 @@ const HotelsDetails = () => {
     },
   });
 
-  // ✅ Use supplier_name from parsedHotel
+  //  Use supplier_name from parsedHotel
   const supplier_name = parsedHotel?.supplier_name || "";
   const { bookingReference } = useAppSelector((state: any) => state.root);
 
-  // ✅ Use component's hotelDetailsData instead of React Query
+  // Use component's hotelDetailsData instead of React Query
   const hotelDetails = hotelDetailsData;
   const isLoading = isLoadingHotelDetails;
 
@@ -440,230 +440,228 @@ const HotelsDetails = () => {
           </div>
         ) : hotelDetails ? (
           <div className="grid grid-cols-12">
-            {hotelDetails?.desc && hotelDetails.desc.trim() !== "" && (
-              <div className="lg:col-span-8 col-span-12 flex flex-col gap-2 lg:pe-4">
-                <h1 className="text-2xl font-[800]">{hotelDetails?.name}</h1>
-                <p className="text-md font-[500] text-[#9297A0] md:hidden block">
-                  {hotelDetails?.address}
-                </p>
-                <div className="flex items-center pb-1">
-                  <div className="flex items-center pt-1">
-                    {Array.from({
-                      length: Math.min(
-                        5,
-                        Math.floor(Number(hotelDetails?.stars) || 0)
-                      ),
-                    }).map((_, i) => (
+
+            <div className="lg:col-span-8 col-span-12 flex flex-col gap-2 lg:pe-4">
+              <h1 className="text-2xl font-[800]">{hotelDetails?.name}</h1>
+              <p className="text-md font-[500] text-[#9297A0] md:hidden block">
+                {hotelDetails?.address}
+              </p>
+              <div className="flex items-center pb-1">
+                <div className="flex items-center pt-1">
+                  {Array.from({
+                    length: Math.min(
+                      5,
+                      Math.floor(Number(hotelDetails?.stars) || 0)
+                    ),
+                  }).map((_, i) => (
+                    <svg
+                      key={i}
+                      width="14"
+                      height="14"
+                      viewBox="0 0 14 14"
+                      fill="#FFD700"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="pl-0.5 first:pl-0"
+                    >
+                      <path d="M7 0l2.236 4.894L14 5.528l-3.382 3.578L11.472 14 7 11.618 2.528 14l.854-4.894L0 5.528 4.764 4.894 7 0z" />
+                    </svg>
+                  ))}
+                  {hotelDetails?.stars > 0 && hotelDetails?.address && (
+                    <span className="pl-2">
                       <svg
-                        key={i}
-                        width="14"
-                        height="14"
-                        viewBox="0 0 14 14"
-                        fill="#FFD700"
+                        width="7"
+                        height="7"
+                        viewBox="0 0 7 8"
+                        fill="none"
                         xmlns="http://www.w3.org/2000/svg"
-                        className="pl-0.5 first:pl-0"
                       >
-                        <path d="M7 0l2.236 4.894L14 5.528l-3.382 3.578L11.472 14 7 11.618 2.528 14l.854-4.894L0 5.528 4.764 4.894 7 0z" />
+                        <circle
+                          cx="3.07317"
+                          cy="3.98436"
+                          r="3.07317"
+                          fill="#4F5E74"
+                        />
                       </svg>
-                    ))}
-                    {hotelDetails?.stars > 0 && hotelDetails?.address && (
-                      <span className="pl-2">
-                        <svg
-                          width="7"
-                          height="7"
-                          viewBox="0 0 7 8"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <circle
-                            cx="3.07317"
-                            cy="3.98436"
-                            r="3.07317"
-                            fill="#4F5E74"
-                          />
-                        </svg>
-                      </span>
-                    )}
-                    <span
-                      className="text-md pl-2 font-[500] text-[#9297A0] line-clamp-2 lg:line-clamp-1"
-                      title={hotelDetails?.address}
-                    >
-                      {hotelDetails?.address}
                     </span>
-                  </div>
-                </div>
-
-                <div className="relative">
-                  {!isExpanded ? (
-                    <div className="text-gray-700 text-base md:text-lg leading-6 md:leading-8 mb-2 md:mb-0">
-                      {(() => {
-                        const desc = hotelDetails?.desc || "";
-                        const temp = document.createElement("div");
-                        temp.innerHTML = desc;
-                        const plainText =
-                          temp.textContent || temp.innerText || "";
-                        const words = plainText.split(" ");
-                        const truncatedWords = words.slice(0, 55).join(" ");
-                        return (
-                          <span>
-                            <span
-                              dangerouslySetInnerHTML={{
-                                __html: truncatedWords,
-                              }}
-                            />{" "}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setIsExpanded(true);
-                              }}
-                              className="text-blue-600 cursor-pointer underline hover:text-blue-800 font-medium text-sm md:text-base pl-4"
-                            >
-                              {dict?.hotelDetails?.readMore}
-                            </button>
-                          </span>
-                        );
-                      })()}
-                    </div>
-                  ) : (
-                    <>
-                      <div
-                        className="text-gray-700 text-base md:text-lg leading-6 md:leading-8 mb-2 md:mb-0"
-                        dangerouslySetInnerHTML={{
-                          __html: hotelDetails?.desc || "",
-                        }}
-                      />
-                      <button
-                        onClick={() => setIsExpanded(false)}
-                        className="text-blue-600 cursor-pointer underline hover:text-blue-800 font-medium text-sm md:text-base mt-2"
-                      >
-                        {dict?.hotelDetails?.readLess}
-                      </button>
-                    </>
                   )}
-                </div>
-
-                <div className="flex md:gap-3 gap-1 mt-8">
-                  <div className="flex gap-1 py-1 bg-[#DBFCE7] rounded-[7.45px] md:px-3 px-1 items-center">
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 18 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_358_1918)">
-                        <path
-                          d="M11.4629 10.1147L12.5361 16.154C12.5481 16.2251 12.5381 16.2982 12.5075 16.3635C12.4768 16.4288 12.427 16.4832 12.3646 16.5194C12.3022 16.5555 12.2303 16.5718 12.1584 16.566C12.0865 16.5602 12.0181 16.5326 11.9623 16.4869L9.42648 14.5836C9.30407 14.4922 9.15536 14.4427 9.00255 14.4427C8.84974 14.4427 8.70103 14.4922 8.57861 14.5836L6.03853 16.4862C5.98279 16.5318 5.91447 16.5594 5.84267 16.5652C5.77087 16.571 5.699 16.5548 5.63666 16.5187C5.57432 16.4826 5.52447 16.4284 5.49376 16.3632C5.46305 16.298 5.45294 16.2251 5.46478 16.154L6.53719 10.1147"
-                          stroke="#246630"
-                          strokeWidth="1.3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M9 10.9011C11.3472 10.9011 13.25 8.99833 13.25 6.65112C13.25 4.30391 11.3472 2.40112 9 2.40112C6.65279 2.40112 4.75 4.30391 4.75 6.65112C4.75 8.99833 6.65279 10.9011 9 10.9011Z"
-                          stroke="#246630"
-                          strokeWidth="1.3"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_358_1918">
-                          <rect
-                            width="17"
-                            height="17"
-                            fill="white"
-                            transform="translate(0.5 0.984375)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                    <p className="text-sm font-[600] text-[#246630] text-ellipsis">
-                      {dict?.hotelDetails?.topRated}
-                    </p>
-                  </div>
-                  <div className="flex gap-1 py-1 bg-[#DBEAFE] rounded-[7.45px] md:px-3 px-1 items-center">
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 17 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_358_1924)">
-                        <path
-                          d="M2.72734 7.0902C2.62395 6.62449 2.63983 6.14021 2.77349 5.68227C2.90716 5.22433 3.15429 4.80755 3.49197 4.47058C3.82964 4.13361 4.24694 3.88736 4.70516 3.75465C5.16337 3.62194 5.64768 3.60708 6.11318 3.71145C6.36939 3.31074 6.72234 2.98098 7.13952 2.75257C7.55669 2.52415 8.02465 2.40442 8.50026 2.40442C8.97587 2.40442 9.44383 2.52415 9.861 2.75257C10.2782 2.98098 10.6311 3.31074 10.8873 3.71145C11.3535 3.60663 11.8387 3.62142 12.2976 3.75445C12.7566 3.88748 13.1744 4.13442 13.5123 4.4723C13.8502 4.81019 14.0971 5.22804 14.2302 5.68699C14.3632 6.14594 14.378 6.63108 14.2732 7.09728C14.6739 7.35349 15.0036 7.70645 15.2321 8.12362C15.4605 8.54079 15.5802 9.00875 15.5802 9.48436C15.5802 9.95997 15.4605 10.4279 15.2321 10.8451C15.0036 11.2623 14.6739 11.6152 14.2732 11.8714C14.3775 12.3369 14.3627 12.8212 14.23 13.2795C14.0973 13.7377 13.851 14.155 13.514 14.4927C13.1771 14.8303 12.7603 15.0775 12.3024 15.2111C11.8444 15.3448 11.3601 15.3607 10.8944 15.2573C10.6385 15.6595 10.2853 15.9907 9.86743 16.2201C9.44955 16.4496 8.98053 16.5699 8.5038 16.5699C8.02707 16.5699 7.55805 16.4496 7.14017 16.2201C6.72229 15.9907 6.36905 15.6595 6.11318 15.2573C5.64768 15.3616 5.16337 15.3468 4.70516 15.2141C4.24694 15.0814 3.82964 14.8351 3.49197 14.4981C3.15429 14.1612 2.90716 13.7444 2.77349 13.2865C2.63983 12.8285 2.62395 12.3442 2.72734 11.8785C2.32356 11.623 1.99097 11.2695 1.7605 10.8509C1.53003 10.4323 1.40918 9.96221 1.40918 9.48436C1.40918 9.00652 1.53003 8.53643 1.7605 8.11784C1.99097 7.69924 2.32356 7.34573 2.72734 7.0902Z"
-                          stroke="#193CB8"
-                          strokeWidth="1.41667"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M6.375 9.48442L7.79167 10.9011L10.625 8.06775"
-                          stroke="#193CB8"
-                          strokeWidth="1.41667"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_358_1924">
-                          <rect
-                            width="17"
-                            height="17"
-                            fill="white"
-                            transform="translate(0 0.984375)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                    <p className="text-[13px] font-[600] text-[#193CB8]">
-                      {dict?.hotelDetails?.freeCancellation}
-                    </p>
-                  </div>
-                  <div className="flex gap-1 py-1 bg-[#F3E8FF] rounded-[7.45px] md:px-3 px-1 items-center">
-                    <svg
-                      width="17"
-                      height="17"
-                      viewBox="0 0 17 18"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <g clipPath="url(#clip0_358_1930)">
-                        <path
-                          d="M14.1668 10.1927C14.1668 13.7344 11.6877 15.5052 8.741 16.5323C8.58669 16.5846 8.41909 16.5821 8.26641 16.5252C5.31266 15.5052 2.8335 13.7344 2.8335 10.1927V5.23441C2.8335 5.04655 2.90812 4.86638 3.04096 4.73354C3.1738 4.6007 3.35397 4.52608 3.54183 4.52608C4.9585 4.52608 6.72933 3.67608 7.96183 2.59941C8.11189 2.4712 8.30279 2.40076 8.50016 2.40076C8.69754 2.40076 8.88843 2.4712 9.0385 2.59941C10.2781 3.68316 12.0418 4.52608 13.4585 4.52608C13.6464 4.52608 13.8265 4.6007 13.9594 4.73354C14.0922 4.86638 14.1668 5.04655 14.1668 5.23441V10.1927Z"
-                          stroke="#6E11B0"
-                          strokeWidth="1.41667"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                        <path
-                          d="M6.375 9.48442L7.79167 10.9011L10.625 8.06775"
-                          stroke="#6E11B0"
-                          strokeWidth="1.41667"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </g>
-                      <defs>
-                        <clipPath id="clip0_358_1930">
-                          <rect
-                            width="17"
-                            height="17"
-                            fill="white"
-                            transform="translate(0 0.984375)"
-                          />
-                        </clipPath>
-                      </defs>
-                    </svg>
-                    <p className="text-[13px] font-[600] text-[#6E11B0]">
-                      {dict?.hotelDetails?.bestPriceGuarantee}
-                    </p>
-                  </div>
+                  <span
+                    className="text-md pl-2 font-[500] text-[#9297A0] line-clamp-2 lg:line-clamp-1"
+                    title={hotelDetails?.address}
+                  >
+                    {hotelDetails?.address}
+                  </span>
                 </div>
               </div>
-            )}
 
+              <div className="relative">
+                {!isExpanded ? (
+                  <div className="text-gray-700 text-base md:text-lg leading-6 md:leading-8 mb-2 md:mb-0">
+                    {(() => {
+                      const desc = hotelDetails?.desc || "";
+                      const temp = document.createElement("div");
+                      temp.innerHTML = desc;
+                      const plainText =
+                        temp.textContent || temp.innerText || "";
+                      const words = plainText.split(" ");
+                      const truncatedWords = words.slice(0, 55).join(" ");
+                      return (
+                        <span>
+                          <span
+                            dangerouslySetInnerHTML={{
+                              __html: truncatedWords,
+                            }}
+                          />{" "}
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsExpanded(true);
+                            }}
+                            className="text-blue-600 cursor-pointer underline hover:text-blue-800 font-medium text-sm md:text-base pl-4"
+                          >
+                            {dict?.hotelDetails?.readMore}
+                          </button>
+                        </span>
+                      );
+                    })()}
+                  </div>
+                ) : (
+                  <>
+                    <div
+                      className="text-gray-700 text-base md:text-lg leading-6 md:leading-8 mb-2 md:mb-0"
+                      dangerouslySetInnerHTML={{
+                        __html: hotelDetails?.desc || "",
+                      }}
+                    />
+                    <button
+                      onClick={() => setIsExpanded(false)}
+                      className="text-blue-600 cursor-pointer underline hover:text-blue-800 font-medium text-sm md:text-base mt-2"
+                    >
+                      {dict?.hotelDetails?.readLess}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              <div className="flex md:gap-3 gap-1 mt-8">
+                <div className="flex gap-1 py-1 bg-[#DBFCE7] rounded-[7.45px] md:px-3 px-1 items-center">
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clipPath="url(#clip0_358_1918)">
+                      <path
+                        d="M11.4629 10.1147L12.5361 16.154C12.5481 16.2251 12.5381 16.2982 12.5075 16.3635C12.4768 16.4288 12.427 16.4832 12.3646 16.5194C12.3022 16.5555 12.2303 16.5718 12.1584 16.566C12.0865 16.5602 12.0181 16.5326 11.9623 16.4869L9.42648 14.5836C9.30407 14.4922 9.15536 14.4427 9.00255 14.4427C8.84974 14.4427 8.70103 14.4922 8.57861 14.5836L6.03853 16.4862C5.98279 16.5318 5.91447 16.5594 5.84267 16.5652C5.77087 16.571 5.699 16.5548 5.63666 16.5187C5.57432 16.4826 5.52447 16.4284 5.49376 16.3632C5.46305 16.298 5.45294 16.2251 5.46478 16.154L6.53719 10.1147"
+                        stroke="#246630"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M9 10.9011C11.3472 10.9011 13.25 8.99833 13.25 6.65112C13.25 4.30391 11.3472 2.40112 9 2.40112C6.65279 2.40112 4.75 4.30391 4.75 6.65112C4.75 8.99833 6.65279 10.9011 9 10.9011Z"
+                        stroke="#246630"
+                        strokeWidth="1.3"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_358_1918">
+                        <rect
+                          width="17"
+                          height="17"
+                          fill="white"
+                          transform="translate(0.5 0.984375)"
+                        />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <p className="text-sm font-[600] text-[#246630] text-ellipsis">
+                    {dict?.hotelDetails?.topRated}
+                  </p>
+                </div>
+                <div className="flex gap-1 py-1 bg-[#DBEAFE] rounded-[7.45px] md:px-3 px-1 items-center">
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 17 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clipPath="url(#clip0_358_1924)">
+                      <path
+                        d="M2.72734 7.0902C2.62395 6.62449 2.63983 6.14021 2.77349 5.68227C2.90716 5.22433 3.15429 4.80755 3.49197 4.47058C3.82964 4.13361 4.24694 3.88736 4.70516 3.75465C5.16337 3.62194 5.64768 3.60708 6.11318 3.71145C6.36939 3.31074 6.72234 2.98098 7.13952 2.75257C7.55669 2.52415 8.02465 2.40442 8.50026 2.40442C8.97587 2.40442 9.44383 2.52415 9.861 2.75257C10.2782 2.98098 10.6311 3.31074 10.8873 3.71145C11.3535 3.60663 11.8387 3.62142 12.2976 3.75445C12.7566 3.88748 13.1744 4.13442 13.5123 4.4723C13.8502 4.81019 14.0971 5.22804 14.2302 5.68699C14.3632 6.14594 14.378 6.63108 14.2732 7.09728C14.6739 7.35349 15.0036 7.70645 15.2321 8.12362C15.4605 8.54079 15.5802 9.00875 15.5802 9.48436C15.5802 9.95997 15.4605 10.4279 15.2321 10.8451C15.0036 11.2623 14.6739 11.6152 14.2732 11.8714C14.3775 12.3369 14.3627 12.8212 14.23 13.2795C14.0973 13.7377 13.851 14.155 13.514 14.4927C13.1771 14.8303 12.7603 15.0775 12.3024 15.2111C11.8444 15.3448 11.3601 15.3607 10.8944 15.2573C10.6385 15.6595 10.2853 15.9907 9.86743 16.2201C9.44955 16.4496 8.98053 16.5699 8.5038 16.5699C8.02707 16.5699 7.55805 16.4496 7.14017 16.2201C6.72229 15.9907 6.36905 15.6595 6.11318 15.2573C5.64768 15.3616 5.16337 15.3468 4.70516 15.2141C4.24694 15.0814 3.82964 14.8351 3.49197 14.4981C3.15429 14.1612 2.90716 13.7444 2.77349 13.2865C2.63983 12.8285 2.62395 12.3442 2.72734 11.8785C2.32356 11.623 1.99097 11.2695 1.7605 10.8509C1.53003 10.4323 1.40918 9.96221 1.40918 9.48436C1.40918 9.00652 1.53003 8.53643 1.7605 8.11784C1.99097 7.69924 2.32356 7.34573 2.72734 7.0902Z"
+                        stroke="#193CB8"
+                        strokeWidth="1.41667"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M6.375 9.48442L7.79167 10.9011L10.625 8.06775"
+                        stroke="#193CB8"
+                        strokeWidth="1.41667"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_358_1924">
+                        <rect
+                          width="17"
+                          height="17"
+                          fill="white"
+                          transform="translate(0 0.984375)"
+                        />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <p className="text-[13px] font-[600] text-[#193CB8]">
+                    {dict?.hotelDetails?.freeCancellation}
+                  </p>
+                </div>
+                <div className="flex gap-1 py-1 bg-[#F3E8FF] rounded-[7.45px] md:px-3 px-1 items-center">
+                  <svg
+                    width="17"
+                    height="17"
+                    viewBox="0 0 17 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <g clipPath="url(#clip0_358_1930)">
+                      <path
+                        d="M14.1668 10.1927C14.1668 13.7344 11.6877 15.5052 8.741 16.5323C8.58669 16.5846 8.41909 16.5821 8.26641 16.5252C5.31266 15.5052 2.8335 13.7344 2.8335 10.1927V5.23441C2.8335 5.04655 2.90812 4.86638 3.04096 4.73354C3.1738 4.6007 3.35397 4.52608 3.54183 4.52608C4.9585 4.52608 6.72933 3.67608 7.96183 2.59941C8.11189 2.4712 8.30279 2.40076 8.50016 2.40076C8.69754 2.40076 8.88843 2.4712 9.0385 2.59941C10.2781 3.68316 12.0418 4.52608 13.4585 4.52608C13.6464 4.52608 13.8265 4.6007 13.9594 4.73354C14.0922 4.86638 14.1668 5.04655 14.1668 5.23441V10.1927Z"
+                        stroke="#6E11B0"
+                        strokeWidth="1.41667"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M6.375 9.48442L7.79167 10.9011L10.625 8.06775"
+                        stroke="#6E11B0"
+                        strokeWidth="1.41667"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </g>
+                    <defs>
+                      <clipPath id="clip0_358_1930">
+                        <rect
+                          width="17"
+                          height="17"
+                          fill="white"
+                          transform="translate(0 0.984375)"
+                        />
+                      </clipPath>
+                    </defs>
+                  </svg>
+                  <p className="text-[13px] font-[600] text-[#6E11B0]">
+                    {dict?.hotelDetails?.bestPriceGuarantee}
+                  </p>
+                </div>
+              </div>
+            </div>
             {hotelDetails && (
               <div className="lg:col-span-4 col-span-12 lg:mt-0 mt-6 pl-8">
                 <h1 className="text-[22px] font-[700]">
