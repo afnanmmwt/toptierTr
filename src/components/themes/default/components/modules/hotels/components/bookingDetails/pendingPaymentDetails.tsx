@@ -5,6 +5,7 @@ import StripeProvider from "@lib/stripeProvider";
 import useDictionary from "@hooks/useDict";
 import useLocale from "@hooks/useLocale";
 import getCurrencySymbol from "@src/utils/getCurrencySymbals";
+import { formatDateMMDDYYYY } from "@src/utils/formatDate";
 import PendingPaymentForm from "./pendingPyamentForm";
 import { useUser } from "@hooks/use-user";
 import { useEffect } from "react";
@@ -53,7 +54,6 @@ export default function PendingPaymentDetails({
     price_markup,
     tax,
   } = invoiceData;
-console.log(invoiceData);
   const roomName = roomData?.room_name || "Standard Room";
   const roomPrice = roomData?.room_price_per_night || 0;
   const quantity = roomData?.room_quantity || 1;
@@ -143,14 +143,14 @@ console.log(invoiceData);
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.checkinDate || "Check-in"}
                 </span>
-                <span className="font-semibold text-[#0F172B]">{checkin}</span>
+                <span className="font-semibold text-[#0F172B]">{formatDateMMDDYYYY(checkin)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.checkoutDate || "Check-out"}
                 </span>
-                <span className="font-semibold text-[#0F172B]">{checkout}</span>
+                <span className="font-semibold text-[#0F172B]">{formatDateMMDDYYYY(checkout)}</span>
               </div>
 
               <div className="flex justify-between">

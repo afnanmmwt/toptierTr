@@ -383,8 +383,11 @@ export default function BookingForm() {
 
   //================= AUTO SAVE BOOKING DATA ===================
   useEffect(() => {
+        console.log("BEFORE Auto-saving booking data...");
+
     // Guard: Only run once, only if user exists, and only if not already saved
     if (!user || hasAutoSaved.current) return;
+    console.log("Auto-saving booking data...");
     const {
       firstName,
       lastName,

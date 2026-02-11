@@ -9,6 +9,7 @@ import useDictionary from "@hooks/useDict";
 import useLocale from "@hooks/useLocale";
 import StripeProvider from "@lib/stripeProvider";
 import getCurrencySymbol from "@src/utils/getCurrencySymbals";
+import { formatDateMMDDYYYY } from "@src/utils/formatDate";
 import { useState } from "react";
 
 
@@ -158,13 +159,13 @@ export default function BookingDetails() {
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.checkinDate}
                 </span>
-                <span className="font-semibold text-[#0F172B]">{checkin}</span>
+                <span className="font-semibold text-[#0F172B]">{formatDateMMDDYYYY(checkin)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">
                   {dict?.bookingDetails?.checkoutDate}
                 </span>
-                <span className="font-semibold text-[#0F172B]">{checkout}</span>
+                <span className="font-semibold text-[#0F172B]">{formatDateMMDDYYYY(checkout)}</span>
               </div>
 
               <div className="flex justify-between">

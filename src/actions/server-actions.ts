@@ -59,7 +59,6 @@ export const fetchAppData = async (payload: appDataPayload) => {
     }
 
     // Ensure baseUrl has a trailing slash or add it
-    console.log('baseUrl:', baseUrl); 
     const url = baseUrl?.endsWith('/') ? `${baseUrl}app` : `${baseUrl}/app`;
     const response = await fetch(`${baseUrl}/app`, {
       method: "POST",
@@ -322,7 +321,6 @@ export async function signIn(
     });
 
     const data = await response.json();
-    console.log("login data", data);
     // Check if login actually succeeded
     if (!response.ok || data?.status === false) {
       return { success: false, error: data?.message || 'Invalid credentials' };
@@ -1021,6 +1019,7 @@ export const hotel_booking = async (payload: BookingPayload) => {
       body: formData,
     });
     const data = await response.json().catch(() => null);
+  
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }

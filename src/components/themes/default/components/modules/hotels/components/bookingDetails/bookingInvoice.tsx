@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
+import { formatDateMMDDYYYY } from "@src/utils/formatDate";
 
 interface Traveller {
   traveller_type: string;
@@ -53,7 +54,7 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
 
   const [isDownloading, setIsDownloading] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
-
+console.log(invoiceDetails); // Debug log to check invoice details structure
   if (!invoiceDetails?.length) {
     return (
       <div className="container">
@@ -725,8 +726,8 @@ const HotelInvoice: React.FC<HotelInvoiceProps> = ({ invoiceDetails }) => {
     const message = `Hotel Booking Confirmation
 Booking Reference: ${bookingData.bookingReference}
 Hotel: ${bookingData.hotel.name}
-Check-in: ${bookingData.room.checkin}
-Check-out: ${bookingData.room.checkout}
+Check-in: ${formatDateMMDDYYYY(bookingData.room.checkin)}
+Check-out: ${formatDateMMDDYYYY(bookingData.room.checkout)}
 Guest: ${travellers[0]?.first_name || "N/A"}
 Total: ${bookingData.total}
 View Invoice: ${invoiceUrl}`;
@@ -835,7 +836,7 @@ View Invoice: ${invoiceUrl}`;
               },
               {
                 label: dict?.hotelInvoice?.bookingInfo?.date,
-                value: bookingData.bookingDate,
+                value: formatDateMMDDYYYY(bookingData.bookingDate),
               },
               {
                 label: dict?.hotelInvoice?.bookingInfo?.location,
@@ -946,13 +947,13 @@ View Invoice: ${invoiceUrl}`;
                   <td className="roomCell">
                     {dict?.hotelInvoice?.roomDetails?.checkin}
                   </td>
-                  <td className="roomCell">{bookingData.room.checkin}</td>
+                  <td className="roomCell">{formatDateMMDDYYYY(bookingData.room.checkin)}</td>
                 </tr>
                 <tr className="roomRow">
                   <td className="roomCell">
                     {dict?.hotelInvoice?.roomDetails?.checkout}
                   </td>
-                  <td className="roomCell">{bookingData.room.checkout}</td>
+                  <td className="roomCell">{formatDateMMDDYYYY(bookingData.room.checkout)}</td>
                 </tr>
                 <tr className="roomRow">
                   <td className="roomCell">
