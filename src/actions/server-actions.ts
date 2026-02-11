@@ -59,9 +59,9 @@ export const fetchAppData = async (payload: appDataPayload) => {
     }
 
     // Ensure baseUrl has a trailing slash or add it
+    console.log('baseUrl:', baseUrl); 
     const url = baseUrl?.endsWith('/') ? `${baseUrl}app` : `${baseUrl}/app`;
-
-    const response = await fetch(url, {
+    const response = await fetch(`${baseUrl}/app`, {
       method: "POST",
       body: formData,
       headers: {
@@ -71,12 +71,10 @@ export const fetchAppData = async (payload: appDataPayload) => {
 
     const data = await response.json().catch(() => null);
     if (!response.ok || data?.status === false) {
-      console.error('fetchAppData failed:', data);
       return { error: data?.message || "Something went wrong" };
     }
     return data;
   } catch (error) {
-    console.error('fetchAppData exception:', error);
     return { error: (error as Error).message || "An error occurred" };
   }
 };
@@ -716,8 +714,6 @@ export const hotel_details = async (payload: HotelDetailsPayload) => {
       },
     });
     const data = await response.json().catch(() => null);
-    console.log('payload ', payload)
-    console.log('hotel details=========', data)
     if (!response.ok || data?.status === false) {
       return { error: data?.message || "Something went wrong" };
     }

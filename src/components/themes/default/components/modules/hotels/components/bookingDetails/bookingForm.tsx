@@ -200,6 +200,8 @@ export default function BookingForm() {
   const selectedRoom = useAppSelector((state: any) => state.root.selectedRoom);
   const hasAutoSaved = useRef(false);
   const { option } = selectedRoom || {};
+  const { cancellation_policy } = option || {};
+  const {additional_info} = option || {};
   const lastRoute = sessionStorage.getItem("lastRoute");
   const { bookingReference } = useAppSelector((state: any) => state.root);
   // const bookingReference_no=useAppSelector((state:any)=> state.root)
@@ -1397,6 +1399,96 @@ export default function BookingForm() {
               </div>
             </AccordionInfoCard>
           </>
+        )}
+
+        {/* Cancellation Policy Display */}
+        {cancellation_policy && cancellation_policy.length > 0 && (
+          <div className="flex flex-col gap-3 mb-4 p-4 border border-red-200 rounded-lg bg-red-50">
+            <h4 className="text-lg font-semibold text-red-600">
+              {dict?.bookingForm?.cancellationPolicy?.title || "Cancellation Policy"}
+            </h4>
+            <div className="space-y-3">
+              {cancellation_policy.map((policy: any, index: number) => (
+                <div
+                  key={index}
+                  className={`p-3 rounded-lg border-l-4 ${
+                    policy.type === 'free'
+                      ? 'bg-green-50 border-green-500'
+                      : 'bg-red-50 border-red-500'
+                  }`}
+                >
+                  <div className="flex items-start gap-2">
+                    <Icon
+                      icon={
+                        policy.type === 'free'
+                          ? 'mdi:check-circle'
+                          : 'mdi:alert-circle'
+                      }
+                      width="20"
+                      height="20"
+                      className={policy.type === 'free' ? 'text-green-600' : 'text-red-600'}
+                    />
+                    <div className="flex-1">
+                      <p className={`font-semibold text-sm mb-1 ${
+                        policy.type === 'free'
+                          ? 'text-green-700'
+                          : 'text-red-700'
+                      }`}>
+                        {policy.text}
+                      </p>
+                      <p className={`text-sm ${
+                        policy.type === 'free'
+                          ? 'text-green-600'
+                          : 'text-red-600'
+                      }`}>
+                        {policy.description}
+                      </p>
+                     
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Additional Info Section */}
+        {additional_info && additional_info.length > 0 && (
+          <div className="flex flex-col gap-3 mb-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+            <h4 className="text-lg font-semibold text-gray-800">
+              Additional Notes
+            </h4>
+            <div className="space-y-3">
+              {additional_info.map((info: any, index: number) => (
+                <div
+                  key={index}
+                  className="p-3 rounded-lg border border-gray-200 bg-white"
+                >
+                  <div className="flex items-start gap-2">
+                    <Icon
+                      icon="mdi:information"
+                      width="20"
+                      height="20"
+                      className="text-gray-700 flex-shrink-0 mt-0.5"
+                    />
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm text-gray-800 mb-1">
+                        {info.type}
+                      </p>
+                      <p className="text-sm text-gray-700 mb-1">
+                        {info.description}
+                      </p>
+                      {info.amount && (
+                        <p className="text-sm font-semibold text-gray-800">
+                          {info.amount}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         <div className="flex item-center gap-1">

@@ -144,7 +144,7 @@ const HotelsDetails = () => {
     }
   }, [hotel_id, slugArr, fetchHotelDetails]);
 
-  // ✅ Modified useEffect - only update if NOT from search
+  // Modified useEffect - only update if NOT from search
   useEffect(() => {
     // Skip if this update came from our own search submission
     if (isUpdatingFromSearch.current) {
@@ -250,7 +250,6 @@ const HotelsDetails = () => {
       }
     }
   }, [hotelDetails?.desc]);
-
   // ... Helper functions ...
   const amenityIcons: Record<string, string> = {
     pool: "mdi:pool",

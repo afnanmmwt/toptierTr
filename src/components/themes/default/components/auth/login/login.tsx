@@ -64,49 +64,112 @@ const Login = ({ dict }: { dict?: any }) => {
   // Handle result of Server Action
 
   useEffect(() => {
-    if (state.success) {
-      toast.success(dict?.login_form?.success_message || "Login successful!");
-      setLoading(false); //  stop loading
-      checkSession?.().then(() => {
-        const { userType, userId } = state;
-        if (userType === "Agent" && userId) {
-          const token = document.cookie
-            .split("; ")
-            .find((row) => row.startsWith("access-token="))
-            ?.split("=")[1];
-
-          if (token && lastRoute !== "/bookings" && !amdminRef) {
-            // ${process.env.NEXT_PUBLIC_AGENT_URL}
-            // http://localhost:3001
-            window.location.href = `${process.env.NEXT_PUBLIC_AGENT_URL}?token=${encodeURIComponent(
-              token
-            )}&user_id=${userId}`;
-            return;
-          }
+    const handleLoginResult = async () => {
+      try {
+        console.log('[Login useEffect] state changed:', state);
+        
+        if (!state) {
+          console.log('[Login useEffect] state is null/undefined, waiting for response');
+          return;
         }
-        router.push(lastRoute === "/bookings" ? "/bookings" : `/${lang}`);
-      });
-    } else if (state.error) {
-      //  handle incorrect credentials
-      setLoading(false);
-      toast.error(state.error || "Invalid email or password");
-      // Optionally show error inline:
-      setError("root", { message: state.error || "Login failed" });
-    }
+
+        if (state.success) {
+          console.log('[Login useEffect] Login successful! userType:', state.userType, 'userId:', state.userId);
+          toast.success(dict?.login_form?.success_message || "Login successful!");
+          setLoading(false);
+          
+          try {
+            console.log('[Login useEffect] Checking session...');
+            await checkSession?.();
+            console.log('[Login useEffect] Session checked');
+            
+            const { userType, userId } = state;
+            if (userType === "Agent" && userId) {
+              console.log('[Login useEffect] User is Agent, checking for token...');
+              const token = document.cookie
+                .split("; ")
+                .find((row) => row.startsWith("access-token="))
+                ?.split("=")[1];
+
+              console.log('[Login useEffect] Token found:', !!token, 'lastRoute:', lastRoute, 'adminRef:', amdminRef);
+              
+              if (token && lastRoute !== "/bookings" && !amdminRef) {
+                console.log('[Login useEffect] Redirecting to agent URL');
+                window.location.href = `${process.env.NEXT_PUBLIC_AGENT_URL}?token=${encodeURIComponent(
+                  token
+                )}&user_id=${userId}`;
+                return;
+              }
+            }
+            
+            console.log('[Login useEffect] Pushing to router, route:', lastRoute === "/bookings" ? "/bookings" : `/${lang}`);
+            router.push(lastRoute === "/bookings" ? "/bookings" : `/${lang}`);
+          } catch (sessionError) {
+            console.error('[Login useEffect] Error during session check:', sessionError);
+            toast.error('Failed to validate session');
+            setLoading(false);
+          }
+        } else if (state.error) {
+          console.error('[Login useEffect] Login failed with error:', state.error);
+          setLoading(false);
+          toast.error(state.error || "Invalid email or password");
+          setError("root", { message: state.error || "Login failed" });
+        } else {
+          console.log('[Login useEffect] State exists but neither success nor error set:', state);
+        }
+      } catch (error) {
+        console.error('[Login useEffect] Unexpected error in login handler:', error);
+        setLoading(false);
+        toast.error('An unexpected error occurred during login');
+      }
+    };
+
+    handleLoginResult();
   }, [state, router, lang, dict, checkSession, lastRoute, setError]);
 
   // Client validation only — then submit hidden form
   const onSubmit = useCallback(async (values: Values) => {
+    console.log('[onSubmit] Callback triggered with values:', values);
     setLoading(true);
-    const hiddenForm = document.getElementById(
-      "hidden-login-form"
-    ) as HTMLFormElement;
-    if (hiddenForm) {
-      (hiddenForm.elements.namedItem("email") as HTMLInputElement).value =
-        values.email;
-      (hiddenForm.elements.namedItem("password") as HTMLInputElement).value =
-        values.password;
-      hiddenForm.requestSubmit();
+    console.log('[onSubmit] Form submitted with values:', values);
+    
+    try {
+      const hiddenForm = document.getElementById(
+        "hidden-login-form"
+      ) as HTMLFormElement;
+      
+      console.log('[onSubmit] Hidden form element found:', !!hiddenForm);
+      
+      if (hiddenForm) {
+        console.log('[onSubmit] Found hidden form, setting values');
+        const emailInput = hiddenForm.elements.namedItem("email") as HTMLInputElement;
+        const passwordInput = hiddenForm.elements.namedItem("password") as HTMLInputElement;
+        
+        console.log('[onSubmit] Email input found:', !!emailInput, 'Password input found:', !!passwordInput);
+        
+        if (emailInput && passwordInput) {
+          emailInput.value = values.email;
+          passwordInput.value = values.password;
+          console.log('[onSubmit] Values set, email:', emailInput.value, 'password:', passwordInput.value);
+          console.log('[onSubmit] About to call requestSubmit()');
+          hiddenForm.requestSubmit();
+          console.log('[onSubmit] requestSubmit() called');
+        } else {
+          console.error('[onSubmit] Email or password input not found in hidden form');
+          console.log('[onSubmit] Email input:', emailInput, 'Password input:', passwordInput);
+          setLoading(false);
+        }
+      } else {
+        console.error('[onSubmit] Hidden form not found');
+        console.log('[onSubmit] Available forms:', document.querySelectorAll('form').length);
+        document.querySelectorAll('form').forEach((form, index) => {
+          console.log(`  Form ${index}:`, form.id || 'no id', form.getAttribute('action') ? 'has action' : 'no action');
+        });
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error('[onSubmit] Error during submission:', error);
+      setLoading(false);
     }
   }, []);
   return (
