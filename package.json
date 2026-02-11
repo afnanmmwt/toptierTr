@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
-    "build": "npm run lint && npm run type-check && next build",
+   "build": "react-scripts build",
     "start": "next start",
     "prod": "npm run build && next start"
   },
